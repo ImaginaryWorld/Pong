@@ -5,7 +5,7 @@ import com.badlogic.gdx.math.Rectangle;
 
 public class Board {
 
-	public int x;
+	public int x, y;
 	double speed;
 	public Rectangle bounds;
 	
@@ -13,7 +13,9 @@ public class Board {
 	{
 		bounds = new Rectangle();
 		x = 250;
-		bounds.y = 60;
+		y = 60;
+		bounds.x = x;
+		bounds.y = y;
 		bounds.width = 100;
 		bounds.height = 20;
 	}
@@ -40,6 +42,6 @@ public class Board {
 	 void setX()
 	 {
 		 x = Gdx.input.getX();
-	 	 bounds.x = x - 50;
+	 	 bounds.x = x;
 	 } 
 }

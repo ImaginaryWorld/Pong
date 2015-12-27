@@ -14,10 +14,10 @@ public class Ball {
 		this.field = field;
 		x = _x; 
 		y = _y;
-		xSpeed = (Math.random() * 6 - 3);
+		xSpeed = (Math.random() * 12 - 6);
 		ySpeed = (Math.random() * 6 - 3);
 		bounds = new Circle();
-		bounds.radius = 19;
+		bounds.radius = 12;
 	}
 	
 	public void updateState(float time)
@@ -45,11 +45,12 @@ public class Ball {
 	
 	boolean hitBall()
 	{
-		if ( (y - bounds.radius) <= (field.playerBoard.bounds.y + 10)
-				&& ( (y - bounds.radius) >= (field.playerBoard.bounds.y - 10) )
-				&& ( ( field.playerBoard.bounds.x < (x + 19) )
-				&& (field.playerBoard.bounds.x + 100) > (x - 19) )
-				&& (ySpeed < 0) )
+		if (((y - bounds.radius) <= (field.playerBoard.bounds.y + field.playerBoard.bounds.height)) &&
+			((y + bounds.radius) >= (field.playerBoard.bounds.y)) &&
+			(field.playerBoard.bounds.x < x + bounds.radius*2) &&
+			((field.playerBoard.bounds.x + field.playerBoard.bounds.width) > x) &&
+			(ySpeed < 0)
+		   )
 		{
 			return true;
 		}

@@ -3,7 +3,6 @@ package com.phuda.pong;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
-import com.phuda.pong.Units.Ball;
 
 public class FieldRenderer {
 	
@@ -23,10 +22,10 @@ public class FieldRenderer {
 	{
 		// Board and ball appears here
 		batch.begin();
-		batch.draw(boardTexture, field.playerBoard.x - 50,
-									   field.playerBoard.bounds.y);
+		batch.draw(boardTexture, field.playerBoard.x,
+							     field.playerBoard.y);
 		for (int i = 0; i < 100; i++){
-			batch.draw(ballTexture, (int)field.balls[i].x - 19, (int)field.balls[i].y);
+			batch.draw(ballTexture, (float)field.balls[i].x, (float)field.balls[i].y);
 		}
 		batch.end();
 	}
