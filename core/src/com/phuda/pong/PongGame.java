@@ -13,16 +13,16 @@ public class PongGame extends ApplicationAdapter {
 	@Override
 	public void create () {
 		batch = new SpriteBatch();
-		img = new Texture("badlogic.jpg");
+		img = new Texture("particle.png");
 	}
 
 	@Override
 	public void render () {
-		Gdx.gl.glClearColor(1, 0, 0, 1);
+		Gdx.gl.glClearColor(0.4f, 0.4f, 0.4f, 0.1f);
 		Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
 		batch.begin();
 		for (int i = 0; i < 100; i++){
-			batch.draw(img, i, i);
+			batch.draw(img, i*10, 200 + (float) (i + Math.sin(i*0.4)*12));
 		}
 		batch.end();
 	}
