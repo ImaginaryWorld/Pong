@@ -42,7 +42,7 @@ public class Board {
 	 
 	 void setSpeed()
 	 {
-		 speed = Gdx.input.getX() - (int)(bounds.width/2) - x;
+		 speed = target_x - x;
 	 }
 	 
 	 void setX()

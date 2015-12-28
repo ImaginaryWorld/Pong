@@ -13,7 +13,7 @@ public class FieldRenderer {
 	FieldRenderer(Field field)
 	{
 		batch = new SpriteBatch();
-		boardTexture = new Texture(Gdx.files.internal("board.jpg"));
+		boardTexture = new Texture(Gdx.files.internal("board.png"));
 		ballTexture = new Texture(Gdx.files.internal("particle.png"));
 		this.field = field;
 	}
@@ -21,6 +21,7 @@ public class FieldRenderer {
 	public void render(float time)
 	{
 		// Board and ball appears here
+		Gdx.gl.glClearColor(.1f, .3f, .3f, 1);
 		batch.begin();
 		batch.draw(boardTexture, field.playerBoard.x,
 							     field.playerBoard.y);
