@@ -32,21 +32,11 @@ public class Board {
 	 {
 		x -= (x - target_x) / SLOWER;
 	 	bounds.x = x;
+	 	speed = target_x - x;
 	 	
 		if (Gdx.input.isTouched())
 		{
-			setSpeed();
-			setX();
+			target_x = Gdx.input.getX() - (int)(bounds.width/2); // set x into center of board
 		}
 	 }
-	 
-	 void setSpeed()
-	 {
-		 speed = target_x - x;
-	 }
-	 
-	 void setX()
-	 {
-		 target_x = Gdx.input.getX() - (int)(bounds.width/2); // set x into center of board
-	 } 
 }

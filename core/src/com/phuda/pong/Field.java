@@ -12,7 +12,7 @@ public class Field {
 	Field()
 	{
 		playerBoard = new Board();
-		for (int i = 0; i < 200; i++){
+		for (int i = 0; i < 3; i++){
 			balls[i] = new Ball(this, 50 + i*5, 300);
 		}
 	}
