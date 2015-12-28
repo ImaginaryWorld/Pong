@@ -11,11 +11,11 @@ public class Board {
 	double speed;
 	public Rectangle bounds;
 	
-	public Board()
+	public Board(int _x, int _y)
 	{
 		bounds = new Rectangle();
-		x = 250;
-		y = 60;
+		x = _x;
+		y = _y;
 		target_x = 250;
 		bounds.x = x;
 		bounds.y = y;
@@ -23,20 +23,39 @@ public class Board {
 		bounds.height = 20;
 	}
 	
-	public void updateState(float time)
+	public void updateState(float time, Ball[] balls)
 	{
 		processAction();
+		checkBalls(balls);
 	}
 	
-	 private void processAction()
-	 {
+	private void processAction() {
 		x -= (x - target_x) / SLOWER;
-	 	bounds.x = x;
-	 	speed = target_x - x;
-	 	
-		if (Gdx.input.isTouched())
-		{
-			target_x = Gdx.input.getX() - (int)(bounds.width/2); // set x into center of board
+		bounds.x = x;
+		speed = target_x - x;
+
+		if (Gdx.input.isTouched()) {
+			if (Gdx.input.getY() > y - 200 && Gdx.input.getY() < y + 200){
+				target_x = Gdx.input.getX() - (int) (bounds.width / 2); // set x
+																		// into
+																		// center of
+																		// board
+			}
 		}
-	 }
+	}
+	private void checkBalls(Ball[] balls){
+		for (int i = 0; i < balls.length; i++){
+			if (balls[i] != null){
+				if (((balls[i].y - balls[i].bounds.radius) <= (bounds.y + bounds.height)) &&
+						((balls[i].y + balls[i].bounds.radius) >= (bounds.y - bounds.height)) &&
+						(bounds.x < balls[i].x + balls[i].bounds.radius*2) &&
+						((bounds.x + bounds.width) > x)){
+					balls[i].ySpeed = - balls[i].ySpeed;
+					System.out.println(speed);
+					balls[i].xSpeed += speed / 10;
+				}
+			}
+		}
+	}
+	 
 }

@@ -27,12 +27,6 @@ public class Ball {
 		/*System.out.println("x = " + x);
 		System.out.println("y = " + y);
 		System.out.println("bounds x = " + (field.playerBoard.bounds.x));*/
-		if (hitBall())
-		{
-			ySpeed = - ySpeed;
-			System.out.println(field.playerBoard.speed);
-			xSpeed += field.playerBoard.speed / 10;
-		}
 		if ( (x < 0 && xSpeed < 0) || (x > 610 && xSpeed > 0) )
 		{
 			xSpeed = -xSpeed;
@@ -42,17 +36,7 @@ public class Ball {
 			ySpeed = - ySpeed;
 		}
 	}
-	
-	boolean hitBall()
-	{
-		return (((y - bounds.radius) <= (field.playerBoard.bounds.y + field.playerBoard.bounds.height)) &&
-				((y + bounds.radius) >= (field.playerBoard.bounds.y)) &&
-				(field.playerBoard.bounds.x < x + bounds.radius*2) &&
-				((field.playerBoard.bounds.x + field.playerBoard.bounds.width) > x) &&
-				(ySpeed < 0)
-			   );
-	}
-	
+
 	public boolean outOfField()
 	{
 		return (y < 0);
