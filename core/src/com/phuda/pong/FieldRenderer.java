@@ -37,7 +37,7 @@ public class FieldRenderer {
 		batch.draw(boardTexture, field.player2Board.x,
 							     field.player2Board.y);
 		// balls
-		for (int i = 0; i < 100; i++){
+		for (int i = 0; i < field.balls.length; i++){
 			if (field.balls[i] != null){
 				batch.draw(ballTexture, (float)field.balls[i].x, (float)field.balls[i].y);
 			}

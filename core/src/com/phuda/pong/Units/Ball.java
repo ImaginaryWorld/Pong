@@ -1,6 +1,7 @@
 package com.phuda.pong.Units;
 
 import com.phuda.pong.Field;
+import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.math.Circle;
 
 public class Ball {
@@ -31,14 +32,10 @@ public class Ball {
 		{
 			xSpeed = -xSpeed;
 		}
-		if (y > 450 && ySpeed > 0)
-		{
-			ySpeed = - ySpeed;
-		}
 	}
 
 	public boolean outOfField()
 	{
-		return (y < 0);
+		return (y < 0 - bounds.radius) || (y > Gdx.graphics.getHeight());
 	}
 }

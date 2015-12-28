@@ -5,7 +5,7 @@ import com.badlogic.gdx.math.Rectangle;
 
 public class Board {
 
-	final int SLOWER = 7;
+	final int SLOWER = 7, TOUCHZONE = 100;
 	
 	public int x, y, target_x;
 	double speed;
@@ -16,7 +16,7 @@ public class Board {
 		bounds = new Rectangle();
 		x = _x;
 		y = _y;
-		target_x = 250;
+		target_x = _x;
 		bounds.x = x;
 		bounds.y = y;
 		bounds.width = 100;
@@ -35,11 +35,10 @@ public class Board {
 		speed = target_x - x;
 
 		if (Gdx.input.isTouched()) {
-			if (Gdx.input.getY() > y - 200 && Gdx.input.getY() < y + 200){
-				target_x = Gdx.input.getX() - (int) (bounds.width / 2); // set x
-																		// into
-																		// center of
-																		// board
+			//System.out.println(Gdx.input.getY());  // omg Y is inverted with graphics Y
+			int touchPosY = (Gdx.input.getY() - Gdx.graphics.getHeight()) * -1; // invert )_)
+			if (touchPosY > y - TOUCHZONE && touchPosY < y + TOUCHZONE){
+				target_x = Gdx.input.getX() - (int) (bounds.width / 2); // set x into center of board
 			}
 		}
 	}
@@ -47,9 +46,9 @@ public class Board {
 		for (int i = 0; i < balls.length; i++){
 			if (balls[i] != null){
 				if (((balls[i].y - balls[i].bounds.radius) <= (bounds.y + bounds.height)) &&
-						((balls[i].y + balls[i].bounds.radius) >= (bounds.y - bounds.height)) &&
-						(bounds.x < balls[i].x + balls[i].bounds.radius*2) &&
-						((bounds.x + bounds.width) > x)){
+						((balls[i].y) >= (bounds.y - bounds.height)) &&
+						(bounds.x < balls[i].x + balls[i].bounds.radius) &&
+						((bounds.x + bounds.width) > balls[i].x)){
 					balls[i].ySpeed = - balls[i].ySpeed;
 					System.out.println(speed);
 					balls[i].xSpeed += speed / 10;

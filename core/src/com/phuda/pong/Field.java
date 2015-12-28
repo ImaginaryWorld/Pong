@@ -1,5 +1,6 @@
 package com.phuda.pong;
 
+import com.badlogic.gdx.Gdx;
 import com.phuda.pong.Units.Ball;
 import com.phuda.pong.Units.Board;
 
@@ -7,14 +8,15 @@ import com.phuda.pong.Units.Board;
 public class Field {
 	
 	public Board player1Board, player2Board;
-	public Ball[] balls = new Ball[200];
+	public Ball[] balls = new Ball[5];
 	
 	Field()
 	{
-		player1Board = new Board(250, 400);
-		player2Board = new Board(250, 50);
-		for (int i = 0; i < 3; i++){
-			balls[i] = new Ball(this, 50 + i*5, 300);
+		// new boards, centered
+		player1Board = new Board(Gdx.graphics.getWidth()/2 - 50, Gdx.graphics.getHeight()/9 * 8 - 20);
+		player2Board = new Board(Gdx.graphics.getWidth()/2 - 50, Gdx.graphics.getHeight()/9);
+		for (int i = 0; i < 5; i++){
+			balls[i] = new Ball(this, Gdx.graphics.getWidth()/2, Gdx.graphics.getHeight()/2);
 		}
 	}
 	
@@ -22,10 +24,12 @@ public class Field {
 	{
 		player1Board.updateState(time, balls);
 		player2Board.updateState(time, balls);
-		for (int i = 0; i < 100; i++){
+		
+		for (int i = 0; i < balls.length; i++){
 			if (balls[i] != null){
 				if (balls[i].outOfField()){ // we lost this ball
 					balls[i] = null;
+					balls[i] = new Ball(this, Gdx.graphics.getWidth()/2, Gdx.graphics.getHeight()/2);
 					continue;
 				}
 				balls[i].updateState(time);
