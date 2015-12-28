@@ -5,7 +5,9 @@ import com.badlogic.gdx.math.Rectangle;
 
 public class Board {
 
-	public int x, y;
+	final int SLOWER = 7;
+	
+	public int x, y, target_x;
 	double speed;
 	public Rectangle bounds;
 	
@@ -14,6 +16,7 @@ public class Board {
 		bounds = new Rectangle();
 		x = 250;
 		y = 60;
+		target_x = 250;
 		bounds.x = x;
 		bounds.y = y;
 		bounds.width = 100;
@@ -27,6 +30,9 @@ public class Board {
 	
 	 private void processAction()
 	 {
+		x -= (x - target_x) / SLOWER;
+	 	bounds.x = x;
+	 	
 		if (Gdx.input.isTouched())
 		{
 			setSpeed();
@@ -36,12 +42,11 @@ public class Board {
 	 
 	 void setSpeed()
 	 {
-		 speed = Gdx.input.getX() - x;
+		 speed = Gdx.input.getX() - (int)(bounds.width/2) - x;
 	 }
 	 
 	 void setX()
 	 {
-		 x = Gdx.input.getX();
-	 	 bounds.x = x;
+		 target_x = Gdx.input.getX() - (int)(bounds.width/2); // set x into center of board
 	 } 
 }

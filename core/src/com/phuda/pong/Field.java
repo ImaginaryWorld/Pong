@@ -13,7 +13,7 @@ public class Field {
 	{
 		playerBoard = new Board();
 		for (int i = 0; i < 200; i++){
-			balls[i] = new Ball(this, 50 + i*2, 300);
+			balls[i] = new Ball(this, 50 + i*5, 300);
 		}
 	}
 	
@@ -21,7 +21,13 @@ public class Field {
 	{
 		playerBoard.updateState(time);
 		for (int i = 0; i < 100; i++){
-			balls[i].updateState(time);
+			if (balls[i] != null){
+				if (balls[i].outOfField()){ // we lost this ball
+					balls[i] = null;
+					continue;
+				}
+				balls[i].updateState(time);
+			}
 		}
 	}
 }

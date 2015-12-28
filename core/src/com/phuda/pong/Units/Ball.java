@@ -45,15 +45,16 @@ public class Ball {
 	
 	boolean hitBall()
 	{
-		if (((y - bounds.radius) <= (field.playerBoard.bounds.y + field.playerBoard.bounds.height)) &&
-			((y + bounds.radius) >= (field.playerBoard.bounds.y)) &&
-			(field.playerBoard.bounds.x < x + bounds.radius*2) &&
-			((field.playerBoard.bounds.x + field.playerBoard.bounds.width) > x) &&
-			(ySpeed < 0)
-		   )
-		{
-			return true;
-		}
-		return false;
+		return (((y - bounds.radius) <= (field.playerBoard.bounds.y + field.playerBoard.bounds.height)) &&
+				((y + bounds.radius) >= (field.playerBoard.bounds.y)) &&
+				(field.playerBoard.bounds.x < x + bounds.radius*2) &&
+				((field.playerBoard.bounds.x + field.playerBoard.bounds.width) > x) &&
+				(ySpeed < 0)
+			   );
+	}
+	
+	public boolean outOfField()
+	{
+		return (y < 0);
 	}
 }
