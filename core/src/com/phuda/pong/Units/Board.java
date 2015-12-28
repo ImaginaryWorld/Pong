@@ -20,7 +20,7 @@ public class Board {
 		bounds.x = x;
 		bounds.y = y;
 		bounds.width = 100;
-		bounds.height = 20;
+		bounds.height = 30;
 	}
 	
 	public void updateState(float time, Ball[] balls)
@@ -45,10 +45,10 @@ public class Board {
 	private void checkBalls(Ball[] balls){
 		for (int i = 0; i < balls.length; i++){
 			if (balls[i] != null){
-				if (((balls[i].y - balls[i].bounds.radius) <= (bounds.y + bounds.height)) &&
-						((balls[i].y) >= (bounds.y - bounds.height)) &&
-						(bounds.x < balls[i].x + balls[i].bounds.radius) &&
-						((bounds.x + bounds.width) > balls[i].x)){
+				if (    (balls[i].y                             <   bounds.y + bounds.height) &&
+						(balls[i].y + balls[i].bounds.radius*2  >   bounds.y) &&
+						(bounds.x                               <   balls[i].x + balls[i].bounds.radius) &&
+						(bounds.x + bounds.width                >   balls[i].x)                                 ){
 					balls[i].ySpeed = - balls[i].ySpeed;
 					System.out.println(speed);
 					balls[i].xSpeed += speed / 10;
