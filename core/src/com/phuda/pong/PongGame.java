@@ -7,6 +7,11 @@ public class PongGame extends Game {
 
 	@Override
 	public void create() {
-		setScreen(new GameScreen(this));
+		System.out.println("start Game");
+		System.out.println("init PongGame");
+		
+		//uncomment this to start game without menu
+		//setScreen(new GameScreen(this));
+		setScreen(new MenuScreen(this));
 	}
 }

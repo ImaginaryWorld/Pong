@@ -12,6 +12,7 @@ public class GameScreen extends PongScreen
 	GameScreen(Game game)
 	{
 		super(game);
+		System.out.println("init GameScreen");
 	}
 	
 	public void show()
@@ -23,12 +24,7 @@ public class GameScreen extends PongScreen
 	public void render(float delta)
 	{
 		Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
-		// I steal this construction from one of the demo-codes
-		// Just wondering why it needs to be done this way
 		//delta = Math.min(0.07f, Gdx.graphics.getDeltaTime());
-		// Updating
-		
-		// UPDATE: commented all this code. i think there is no need
 		field.updateState(delta);
 		renderer.render(delta);
 	}

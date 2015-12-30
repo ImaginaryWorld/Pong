@@ -10,6 +10,7 @@ public class PongScreen implements Screen {
 	
 	PongScreen(Game game)
 	{
+		System.out.println("init PongScreen");
 		this.game = game;
 	}
 	

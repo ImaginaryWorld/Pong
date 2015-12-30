@@ -28,7 +28,7 @@ public class Ball {
 		/*System.out.println("x = " + x);
 		System.out.println("y = " + y);
 		System.out.println("bounds x = " + (field.playerBoard.bounds.x));*/
-		if ( (x < 0 && xSpeed < 0) || (x > 610 && xSpeed > 0) )
+		if ( (x < 0 && xSpeed < 0) || (x > Gdx.graphics.getWidth() - bounds.radius*2 && xSpeed > 0) )
 		{
 			xSpeed = -xSpeed;
 		}

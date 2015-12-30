@@ -12,9 +12,13 @@ public class Field {
 	
 	Field()
 	{
-		// new boards, centered
-		player1Board = new Board(Gdx.graphics.getWidth()/2 - 50, Gdx.graphics.getHeight()/9 * 8 - 20);
-		player2Board = new Board(Gdx.graphics.getWidth()/2 - 50, Gdx.graphics.getHeight()/9);
+		// player 1 aka top player
+		player1Board = new Board(Gdx.graphics.getWidth()/2 - 50,
+								 Gdx.graphics.getHeight()/12 * 11 - 20);
+		// player 2 aka bottom player
+		player2Board = new Board(Gdx.graphics.getWidth()/2 - 50,
+								 Gdx.graphics.getHeight()/12);
+		
 		for (int i = 0; i < 5; i++){
 			balls[i] = new Ball(this, Gdx.graphics.getWidth()/2, Gdx.graphics.getHeight()/2);
 		}

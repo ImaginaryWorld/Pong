@@ -5,7 +5,7 @@ import com.badlogic.gdx.math.Rectangle;
 
 public class Board {
 
-	final int SLOWER = 7, TOUCHZONE = 100;
+	final int SLOWER = 3, TOUCHZONE = 200;
 	
 	public int x, y, target_x;
 	double speed;
@@ -37,6 +37,7 @@ public class Board {
 		if (Gdx.input.isTouched()) {
 			//System.out.println(Gdx.input.getY());  // omg Y is inverted with graphics Y
 			int touchPosY = (Gdx.input.getY() - Gdx.graphics.getHeight()) * -1; // invert )_)
+			
 			if (touchPosY > y - TOUCHZONE && touchPosY < y + TOUCHZONE){
 				target_x = Gdx.input.getX() - (int) (bounds.width / 2); // set x into center of board
 			}
@@ -50,7 +51,7 @@ public class Board {
 						(bounds.x                               <   balls[i].x + balls[i].bounds.radius) &&
 						(bounds.x + bounds.width                >   balls[i].x)                                 ){
 					balls[i].ySpeed = - balls[i].ySpeed;
-					System.out.println(speed);
+					System.out.println("Collision board speed = " + speed);
 					balls[i].xSpeed += speed / 10;
 				}
 			}
