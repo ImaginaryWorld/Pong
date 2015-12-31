@@ -3,26 +3,22 @@ package com.phuda.pong;
 import com.badlogic.gdx.Game;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.GL20;
-import com.badlogic.gdx.graphics.Texture;
-import com.badlogic.gdx.graphics.g2d.BitmapFont;
-import com.badlogic.gdx.graphics.g2d.GlyphLayout;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
+import com.phuda.pong.Units.Button;
 
 public class MenuScreen extends PongScreen
 {
 	//Menu menu;
 	//MenuRenderer menu;
-	BitmapFont font;
-	final GlyphLayout layout;
-	Texture button_tex;
 	SpriteBatch batch;
+	Button start_button, other_button, other2_button;
 
 	MenuScreen(Game game)
 	{
 		super(game);
-		font = new BitmapFont();
-		layout = new GlyphLayout(font, "START");
-		button_tex = new Texture(Gdx.files.internal("booble.png"));
+		start_button = new Button(Gdx.graphics.getWidth()/2, 500, "start.png");
+		other_button = new Button(Gdx.graphics.getWidth()/2, 350, "undef.png");
+		other2_button = new Button(Gdx.graphics.getWidth()/2, 200, "undef.png");
 		System.out.println("init MenuScreen");
 	}
 	
@@ -33,17 +29,22 @@ public class MenuScreen extends PongScreen
 
 	public void render(float delta)
 	{
-		if (Gdx.input.isTouched()) {
+
+		if (start_button.isPressed()){
 			game.setScreen(new GameScreen(game)); // start game
 		}
+		
+		if (other_button.isPressed()){  System.out.println("other_button pressed");  }
+		
+		if (other2_button.isPressed()){  System.out.println("other2_button pressed");  }
 		
 		Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
 		Gdx.gl.glClearColor(.25f, .25f, .25f, 1f);
 		
 		batch.begin();
-		batch.draw(button_tex, Gdx.graphics.getWidth()/2 - button_tex.getWidth()/2, 
-				               Gdx.graphics.getHeight()/2 - button_tex.getHeight()/2);
-		font.draw(batch, "START", Gdx.graphics.getWidth()/2 - layout.width/2, Gdx.graphics.getHeight()/2 + layout.height/2);
+		start_button.draw(batch);
+		other_button.draw(batch);
+		other2_button.draw(batch);
 		batch.end();
 	}
 	
