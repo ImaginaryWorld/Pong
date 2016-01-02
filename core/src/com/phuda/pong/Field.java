@@ -19,7 +19,7 @@ public class Field {
 		player2Board = new Board(Gdx.graphics.getWidth()/2 - 50,
 								 Gdx.graphics.getHeight()/12);
 		
-		for (int i = 0; i < 5; i++){
+		for (int i = 0; i < balls.length; i++){
 			balls[i] = new Ball(this, Gdx.graphics.getWidth()/2, Gdx.graphics.getHeight()/2);
 		}
 	}
