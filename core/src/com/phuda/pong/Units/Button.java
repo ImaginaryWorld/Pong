@@ -2,6 +2,7 @@ package com.phuda.pong.Units;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Texture;
+import com.badlogic.gdx.graphics.Texture.TextureFilter;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.math.MathUtils;
@@ -19,6 +20,7 @@ public class Button {
 	
 	public Button(int _x, int _y, String img_source) {
 		texture = new Texture(Gdx.files.internal(img_source));
+		texture.setFilter(TextureFilter.Linear, TextureFilter.Linear); // smooth resizing
 		height = texture.getHeight();
 		width = texture.getWidth();
 		init_x = _x - width/2;
