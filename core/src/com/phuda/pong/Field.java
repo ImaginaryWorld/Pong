@@ -8,7 +8,7 @@ import com.phuda.pong.Units.Board;
 public class Field {
 	
 	public Board player1Board, player2Board;
-	public Ball[] balls = new Ball[5];
+	public Ball[] balls = new Ball[2];
 	
 	Field()
 	{
@@ -20,7 +20,9 @@ public class Field {
 								 Gdx.graphics.getHeight()/12);
 		
 		for (int i = 0; i < balls.length; i++){
-			balls[i] = new Ball(this, Gdx.graphics.getWidth()/2, Gdx.graphics.getHeight()/2);
+			balls[i] = new Ball(this, (int)(Math.random() * Gdx.graphics.getWidth()),
+					(int)(Math.random() * Gdx.graphics.getHeight() / 2 +
+							Gdx.graphics.getHeight() / 4), i);
 		}
 	}
 	
@@ -33,7 +35,9 @@ public class Field {
 			if (balls[i] != null){
 				if (balls[i].outOfField()){ // we lost this ball
 					balls[i] = null;
-					balls[i] = new Ball(this, Gdx.graphics.getWidth()/2, Gdx.graphics.getHeight()/2);
+					balls[i] = new Ball(this, (int)(Math.random() * Gdx.graphics.getWidth()),
+							(int)(Math.random() * Gdx.graphics.getHeight() / 2 +
+									Gdx.graphics.getHeight() / 4), i);
 					continue;
 				}
 				balls[i].updateState(time);

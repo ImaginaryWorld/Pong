@@ -8,7 +8,7 @@ public class Board {
 	final int SLOWER = 3, TOUCHZONE = 200;
 	
 	public int x, y, target_x;
-	double speed;
+	int speed;
 	public Rectangle bounds;
 	
 	public Board(int _x, int _y)
@@ -25,8 +25,8 @@ public class Board {
 	
 	public void updateState(float time, Ball[] balls)
 	{
-		processAction();
 		checkBalls(balls);
+		processAction();
 	}
 	
 	private void processAction() {
@@ -46,13 +46,22 @@ public class Board {
 	private void checkBalls(Ball[] balls){
 		for (int i = 0; i < balls.length; i++){
 			if (balls[i] != null){
-				if (    (balls[i].y                             <   bounds.y + bounds.height) &&
-						(balls[i].y + balls[i].bounds.radius*2  >   bounds.y) &&
-						(bounds.x                               <   balls[i].x + balls[i].bounds.radius) &&
-						(bounds.x + bounds.width                >   balls[i].x)                                 ){
+				if (    (balls[i].bounds.y                             <=   bounds.y + bounds.height) &&
+						(balls[i].bounds.y + balls[i].bounds.radius*2  >=   bounds.y) &&
+						(bounds.x                               <=   balls[i].bounds.x + balls[i].bounds.radius) &&
+						(bounds.x + bounds.width                >=   balls[i].bounds.x))
+				{
+					if (Math.abs(bounds.x + bounds.width / 2 - balls[i].bounds.x) 
+							> Math.abs(bounds.y + bounds.height/ 2 
+									- balls[i].bounds.y))
 					balls[i].ySpeed = - balls[i].ySpeed;
-					System.out.println("Collision board speed = " + speed);
+					
+					else
+					{
 					balls[i].xSpeed += speed / 10;
+					if (Math.abs(balls[i].xSpeed) < Math.abs(speed))
+						balls[i].xSpeed = speed;
+					}
 				}
 			}
 		}

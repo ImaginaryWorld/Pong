@@ -36,7 +36,8 @@ public class FieldRenderer {
 		// balls
 		for (int i = 0; i < field.balls.length; i++){
 			if (field.balls[i] != null){
-				batch.draw(ballTexture, (float)field.balls[i].x, (float)field.balls[i].y);
+				batch.draw(ballTexture, (float)field.balls[i].bounds.x, 
+						(float)field.balls[i].bounds.y);
 			}
 		}
 		
