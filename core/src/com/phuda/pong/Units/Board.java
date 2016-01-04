@@ -47,11 +47,11 @@ public class Board {
 		for (int i = 0; i < balls.length; i++){
 			if (balls[i] != null){
 				if (    (balls[i].bounds.y                             <=   bounds.y + bounds.height) &&
-						(balls[i].bounds.y + balls[i].bounds.radius*2  >=   bounds.y) &&
-						(bounds.x                               <=   balls[i].bounds.x + balls[i].bounds.radius) &&
+						(balls[i].bounds.y + balls[i].bounds.radius * 2  >=   bounds.y) &&
+						(bounds.x                               <=   balls[i].bounds.x + balls[i].bounds.radius * 2) &&
 						(bounds.x + bounds.width                >=   balls[i].bounds.x))
 				{
-					if (Math.abs(bounds.x + bounds.width / 2 - balls[i].bounds.x) 
+					if (Math.abs((bounds.x + bounds.width / 2 - balls[i].bounds.x)) 
 							> Math.abs(bounds.y + bounds.height/ 2 
 									- balls[i].bounds.y))
 					balls[i].ySpeed = - balls[i].ySpeed;

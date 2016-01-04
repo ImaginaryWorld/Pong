@@ -17,9 +17,9 @@ public class Ball {
 	{
 		this.field = field;
 		while (xSpeed == 0)
-			xSpeed = (int)(Math.random() * 3 - 6);
+			xSpeed = (int)(Math.random() * 10 - 5);
 		while (ySpeed == 0)
-			ySpeed = (int)(Math.random() * 3 - 6);
+			ySpeed = (int)(Math.random() * 10 - 5);
 		bounds = new Circle();
 		bounds.setPosition(_x, _y);
 		bounds.radius = 12;
