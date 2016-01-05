@@ -83,7 +83,7 @@ public class Ball extends Unit{
 				xMeter -= xSpeed;
 				yMeter -= ySpeed;
 			}
-			changeSpeed(board, (int)(board.bounds.x - bounds.radius), 
+			changeSpeed(board, (int)(board.bounds.x - bounds.radius*2), 
 					(int)(board.bounds.y - bounds.radius*2), xMeter, yMeter);
 			System.out.println("Case 1");
 		}
