@@ -42,6 +42,8 @@ public class Ball extends Unit{
 					field.balls[i].ySpeed = ySpeed;
 					this.xSpeed = xTemp;
 					this.ySpeed = yTemp;
+					field.balls[i].lastTouched = this;
+					this.lastTouched = field.balls[i];
 				}
 		
 		if ( (bounds.x < 0 && xSpeed < 0) || 
@@ -78,7 +80,7 @@ public class Ball extends Unit{
 				xMeter -= xSpeed;
 				yMeter -= ySpeed;
 			}
-			changeSpeed((int)board.bounds.x, 
+			changeSpeed(board, (int)board.bounds.x, 
 					(int)board.bounds.y, xMeter, yMeter);
 			System.out.println("Case 1");
 		}
@@ -92,7 +94,7 @@ public class Ball extends Unit{
 				xMeter -= xSpeed;
 				yMeter -= ySpeed;
 			}
-			changeSpeed((int)board.bounds.x, 
+			changeSpeed(board, (int)board.bounds.x, 
 					(int)(board.bounds.y + board.bounds.height), xMeter, yMeter);
 			System.out.println("Case 2");
 		}
@@ -106,7 +108,7 @@ public class Ball extends Unit{
 				xMeter -= xSpeed;
 				yMeter -= ySpeed;
 			}
-			changeSpeed((int)(board.bounds.x + board.bounds.width), 
+			changeSpeed(board, (int)(board.bounds.x + board.bounds.width), 
 					(int)board.bounds.y, xMeter, yMeter);
 			System.out.println("Case 3");
 		}
@@ -120,7 +122,7 @@ public class Ball extends Unit{
 				xMeter -= xSpeed;
 				yMeter -= ySpeed;
 			}
-			changeSpeed((int)(board.bounds.x + board.bounds.width), 
+			changeSpeed(board, (int)(board.bounds.x + board.bounds.width), 
 					(int)(board.bounds.y + board.bounds.height), xMeter, yMeter);
 			System.out.println("Case 4");
 		}
@@ -129,11 +131,13 @@ public class Ball extends Unit{
 			System.out.println("Error in checkBound method");
 		}
 	}
-	private void changeSpeed(int boundX, int boundY, int xMeter, int yMeter)
+	private void changeSpeed(Board board, int boundX, int boundY, int xMeter, int yMeter)
 	{
 		if ((boundX - xMeter) / xSpeed > (boundY - yMeter) / ySpeed)
 		{
-			xSpeed = - xSpeed;
+			xSpeed += board.speed / 10;
+			if (Math.abs(xSpeed) < Math.abs(board.speed))
+				xSpeed = board.speed;
 		}
 		else if ((boundX - xMeter) / xSpeed < (boundY - yMeter) / ySpeed)
 		{
