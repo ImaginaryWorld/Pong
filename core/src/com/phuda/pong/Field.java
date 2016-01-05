@@ -8,7 +8,7 @@ import com.phuda.pong.Units.Board;
 public class Field {
 	
 	public Board player1Board, player2Board;
-	public Ball[] balls = new Ball[2];
+	public Ball[] balls = new Ball[3];
 	
 	Field()
 	{

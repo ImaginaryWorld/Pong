@@ -3,7 +3,7 @@ package com.phuda.pong.Units;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.math.Rectangle;
 
-public class Board {
+public class Board extends Unit{
 
 	final int SLOWER = 3, TOUCHZONE = 200;
 	
@@ -13,6 +13,7 @@ public class Board {
 	
 	public Board(int _x, int _y)
 	{
+		super();
 		bounds = new Rectangle();
 		x = _x;
 		y = _y;
@@ -25,8 +26,9 @@ public class Board {
 	
 	public void updateState(float time, Ball[] balls)
 	{
-		checkBalls(balls);
+		checkBalls(balls, time);
 		processAction();
+		touchTime += time;
 	}
 	
 	private void processAction() {
@@ -43,28 +45,33 @@ public class Board {
 			}
 		}
 	}
-	private void checkBalls(Ball[] balls){
+	private void checkBalls(Ball[] balls, float time){
 		for (int i = 0; i < balls.length; i++){
 			if (balls[i] != null){
 				if (    (balls[i].bounds.y                             <=   bounds.y + bounds.height) &&
 						(balls[i].bounds.y + balls[i].bounds.radius * 2  >=   bounds.y) &&
 						(bounds.x                               <=   balls[i].bounds.x + balls[i].bounds.radius * 2) &&
-						(bounds.x + bounds.width                >=   balls[i].bounds.x))
+						(bounds.x + bounds.width                >=   balls[i].bounds.x) &&
+						noStick(balls[i]))
 				{
-					if (Math.abs((bounds.x + bounds.width / 2 - balls[i].bounds.x)) 
+					/*if (Math.abs((bounds.x + bounds.width / 2 - balls[i].bounds.x + balls[i].bounds.radius)) 
 							> Math.abs(bounds.y + bounds.height/ 2 
-									- balls[i].bounds.y))
+									- balls[i].bounds.y + balls[i].bounds.radius))
 					balls[i].ySpeed = - balls[i].ySpeed;
+					
 					
 					else
 					{
 					balls[i].xSpeed += speed / 10;
 					if (Math.abs(balls[i].xSpeed) < Math.abs(speed))
 						balls[i].xSpeed = speed;
-					}
+					}*/
+					balls[i].checkBound(this);
+					touchTime = 0;
+					balls[i].lastTouched = this;
+					this.lastTouched = balls[i];
 				}
 			}
 		}
 	}
-	 
 }
