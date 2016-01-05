@@ -128,9 +128,10 @@ public class Ball extends Unit{
 					(int)(board.bounds.y + board.bounds.height), xMeter, yMeter);
 			System.out.println("Case 4");
 		}
-		else
+		else // xSpeed = 0
 		{
 			System.out.println("Error in checkBound method");
+			xSpeed = board.speed;
 			ySpeed = - ySpeed; // anyway
 		}
 	}
