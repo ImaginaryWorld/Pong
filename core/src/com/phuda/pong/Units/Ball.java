@@ -149,7 +149,6 @@ public class Ball extends Unit{
 		else if ((boundX - xMeter) / xSpeed < (boundY - yMeter) / ySpeed)
 		{
 			ySpeed = - ySpeed;
-			bounds.y = boundY;
 			xSpeed += board.speed / 5; // give some speed by friction
 		}
 		// ball collide with edge
