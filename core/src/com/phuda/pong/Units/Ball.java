@@ -53,7 +53,7 @@ public class Ball extends Unit{
 		{
 			xSpeed = -xSpeed;
 		}
-		//releaseSpeed();
+		releaseSpeed();
 		touchTime += time;
 	}
 
@@ -62,22 +62,21 @@ public class Ball extends Unit{
 		return (bounds.y < 0 - bounds.radius) || (bounds.y > Gdx.graphics.getHeight());
 	}
 	
-/*	private void releaseSpeed()
+	private void releaseSpeed()
 	{
-		if (xSpeed > 5)
+		if (xSpeed > 10)
 		{
-			xSpeed -= xSpeed / 5;
+			xSpeed -= 1;
 		}
-	}*/
+	}
 
 	public void checkBound(Board board)
 	{
 		int xMeter, yMeter;
-		xMeter = (int)(bounds.x + bounds.radius);
-		yMeter = (int)(bounds.y + bounds.radius);
 		if (xSpeed > 0 && ySpeed > 0) // ball goes right and up
 		{
-			
+			xMeter = (int)(bounds.x + bounds.radius);
+			yMeter = (int)(bounds.y + bounds.radius);
 			while (xMeter > board.bounds.x || yMeter > board.bounds.y)
 			{
 				xMeter -= xSpeed;
@@ -89,22 +88,22 @@ public class Ball extends Unit{
 		}
 		else if (xSpeed > 0 && ySpeed < 0) // ball goes right and down
 		{
-			//xMeter = (int)(bounds.x + bounds.radius);
-			//yMeter = (int)(bounds.y - bounds.radius);
+			xMeter = (int)(bounds.x + bounds.radius);
+			yMeter = (int)(bounds.y - bounds.radius);
 			while (xMeter > board.bounds.x ||
 					yMeter < board.bounds.y + board.bounds.height)
 			{
 				xMeter -= xSpeed;
 				yMeter -= ySpeed;
 			}
-			changeSpeed(board, (int)(board.bounds.x - bounds.radius), 
+			changeSpeed(board, (int)(board.bounds.x - bounds.radius*2), 
 					(int)(board.bounds.y + board.bounds.height), xMeter, yMeter);
 			System.out.println("Case 2");
 		}
 		else if (xSpeed < 0 && ySpeed > 0) // ball goes left and up
 		{
-			//xMeter = (int)(bounds.x - bounds.radius);
-			//yMeter = (int)(bounds.y + bounds.radius);
+			xMeter = (int)(bounds.x - bounds.radius);
+			yMeter = (int)(bounds.y + bounds.radius);
 			while (xMeter < board.bounds.x + board.bounds.width ||
 					yMeter > board.bounds.y)
 			{
@@ -117,8 +116,8 @@ public class Ball extends Unit{
 		}
 		else if (xSpeed < 0 && ySpeed < 0) // ball goes left and down
 		{
-			//xMeter = (int)(bounds.x - bounds.radius);
-			//yMeter = (int)(bounds.y - bounds.radius);
+			xMeter = (int)(bounds.x - bounds.radius);
+			yMeter = (int)(bounds.y - bounds.radius);
 			while (xMeter < board.bounds.x + board.bounds.width ||
 					yMeter < board.bounds.y + board.bounds.height)
 			{
