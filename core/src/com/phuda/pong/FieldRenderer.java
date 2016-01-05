@@ -2,6 +2,7 @@ package com.phuda.pong;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Texture;
+import com.badlogic.gdx.graphics.Texture.TextureFilter;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 
 public class FieldRenderer {
@@ -15,6 +16,7 @@ public class FieldRenderer {
 		batch = new SpriteBatch();
 		boardTexture = new Texture(Gdx.files.internal("board.png"));
 		ballTexture = new Texture(Gdx.files.internal("particle.png"));
+		ballTexture.setFilter(TextureFilter.Linear, TextureFilter.Linear);
 		this.field = field;
 	}
 	
@@ -36,8 +38,10 @@ public class FieldRenderer {
 		// balls
 		for (int i = 0; i < field.balls.length; i++){
 			if (field.balls[i] != null){
-				batch.draw(ballTexture, (float)(field.balls[i].bounds.x), 
-						(float)(field.balls[i].bounds.y));
+				//batch.draw(ballTexture, (float)(field.balls[i].bounds.x), 
+				//		(float)(field.balls[i].bounds.y));
+				batch.draw(ballTexture, field.balls[i].bounds.x, field.balls[i].bounds.y, 
+						field.balls[i].bounds.radius*2, field.balls[i].bounds.radius*2);
 			}
 		}
 		
