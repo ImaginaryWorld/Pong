@@ -22,7 +22,7 @@ public class Field {
 		for (int i = 0; i < balls.length; i++){
 			balls[i] = new Ball(this, (int)(Math.random() * Gdx.graphics.getWidth()),
 					(int)(Math.random() * Gdx.graphics.getHeight() / 2 +
-							Gdx.graphics.getHeight() / 4), (int)(Math.random() * 10 + 15), i);
+							Gdx.graphics.getHeight() / 4), 12, i);
 		}
 	}
 	
@@ -37,7 +37,7 @@ public class Field {
 					balls[i] = null;
 					balls[i] = new Ball(this, (int)(Math.random() * Gdx.graphics.getWidth()),
 							(int)(Math.random() * Gdx.graphics.getHeight() / 2 +
-									Gdx.graphics.getHeight() / 4), (int)(Math.random() * 10 + 15), i);
+									Gdx.graphics.getHeight() / 4), 12, i);
 					continue;
 				}
 				balls[i].updateState(time);
