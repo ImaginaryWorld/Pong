@@ -2,25 +2,30 @@ package com.phuda.pong.Units;
 
 import com.phuda.pong.Field;
 import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.audio.Sound;
 import com.badlogic.gdx.math.Circle;
 
 public class Ball extends Unit{
 
 	public Circle bounds;
 	float lifeTime;
+	Sound sound_bump;
 	
 	public Ball(Field field, int _x, int _y, int _radius, int num)
 	{
 		super();
 		this.field = field;
+		
 		while (Math.abs(xSpeed) < 3)
 			xSpeed = (int)(Math.random() * 10 - 5);
 		while (Math.abs(ySpeed) < 3)
 			ySpeed = (int)(Math.random() * 10 - 5);
+		
 		bounds = new Circle();
 		bounds.setPosition(_x, _y);
-
 		bounds.radius = 12;
+		
+		sound_bump = Gdx.audio.newSound(Gdx.files.internal("sounds/bump.wav"));
 		this.name = Integer.toString(++num);
 
 	}
@@ -45,6 +50,8 @@ public class Ball extends Unit{
 					this.ySpeed = yTemp;
 					field.balls[i].lastTouched = this;
 					this.lastTouched = field.balls[i];
+					
+					playSound();
 				}
 		
 		// walls collide
@@ -52,9 +59,16 @@ public class Ball extends Unit{
 				(bounds.x > Gdx.graphics.getWidth() - bounds.radius * 2 && xSpeed > 0) )
 		{
 			xSpeed = -xSpeed;
+			playSound();
 		}
 		releaseSpeed();
 		touchTime += time;
+	}
+	
+	private void playSound()
+	{
+		long s = sound_bump.play(0.5f);
+		sound_bump.setPitch(s, (float) ((ySpeed + xSpeed) * 0.1f + 0.5f));
 	}
 
 	public boolean outOfField()

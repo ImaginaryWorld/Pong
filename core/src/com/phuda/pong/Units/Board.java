@@ -1,6 +1,7 @@
 package com.phuda.pong.Units;
 
 import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.audio.Sound;
 import com.badlogic.gdx.math.Rectangle;
 import com.phuda.pong.Field;
 import com.phuda.pong.AI.AIBoardController;
@@ -12,6 +13,7 @@ public class Board extends Unit{
 	public int x, y, target_x;
 	public Rectangle bounds;
 	private AIBoardController contr;
+	Sound sound_reflect;
 	
 	public Board(int _x, int _y, String name, Field field, boolean isAI)
 	{
@@ -24,6 +26,7 @@ public class Board extends Unit{
 		bounds.y = y;
 		bounds.width = 100;
 		bounds.height = 30;
+		sound_reflect = Gdx.audio.newSound(Gdx.files.internal("sounds/reflect.wav"));
 		this.name = name;
 		this.field = field;
 		if(isAI)
@@ -68,7 +71,6 @@ public class Board extends Unit{
 	private void checkTouch()
 	{
 		if (Gdx.input.isTouched()) {
-			//System.out.println(Gdx.input.getY());  // omg Y is inverted with graphics Y
 			int touchPosY = (Gdx.input.getY() - Gdx.graphics.getHeight()) * -1; // invert )_)
 			
 			if (touchPosY > y - TOUCHZONE && touchPosY < y + TOUCHZONE){
@@ -79,7 +81,7 @@ public class Board extends Unit{
 	private void checkBalls(Ball[] balls, float time){
 		for (int i = 0; i < balls.length; i++){
 			if (balls[i] != null){
-				if (    (balls[i].bounds.y                             <=   bounds.y + bounds.height) &&
+				if (    (balls[i].bounds.y                      <=   bounds.y + bounds.height) &&
 						(balls[i].bounds.y + balls[i].bounds.radius * 2  >=   bounds.y) &&
 						(bounds.x                               <=   balls[i].bounds.x + balls[i].bounds.radius * 2) &&
 						(bounds.x + bounds.width                >=   balls[i].bounds.x) &&
@@ -90,6 +92,9 @@ public class Board extends Unit{
 					balls[i].touchTime = 0;
 					balls[i].lastTouched = this;
 					this.lastTouched = balls[i];
+					
+					long s = sound_reflect.play(0.6f);
+					sound_reflect.setPitch(s, (float) ((balls[i].ySpeed + balls[i].ySpeed) * 0.1f + 0.5f));
 					// System.out.println(balls[i].lastTouched.name);
 				}
 			}

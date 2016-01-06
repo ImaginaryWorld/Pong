@@ -1,4 +1,4 @@
-package com.phuda.pong.Units;
+package com.phuda.pong.UI;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Texture;
