@@ -10,11 +10,19 @@ public class Field {
 	public Board player1Board, player2Board;
 	public Ball[] balls = new Ball[2];
 	
-	Field()
+	Field(String mode)
 	{
-		// player 1 aka top player
-		player1Board = new Board(Gdx.graphics.getWidth()/2 - 50,
-								 Gdx.graphics.getHeight()/12 * 11 - 20, "top", this, true);
+		if (mode.equals("pvc"))
+		{
+			// player 1 aka top player
+			player1Board = new Board(Gdx.graphics.getWidth()/2 - 50,
+									 Gdx.graphics.getHeight()/12 * 11 - 20, "top", this, true);
+		}
+		else { // player vs player
+			player1Board = new Board(Gdx.graphics.getWidth()/2 - 50,
+					 Gdx.graphics.getHeight()/12 * 11 - 20, "top", this, false);
+		}
+		
 		// player 2 aka bottom player
 		player2Board = new Board(Gdx.graphics.getWidth()/2 - 50,
 								 Gdx.graphics.getHeight()/12, "bottom", this, false);

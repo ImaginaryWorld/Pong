@@ -8,16 +8,18 @@ public class GameScreen extends PongScreen
 {
 	Field field;
 	FieldRenderer renderer;
+	String mode;
 
-	GameScreen(Game game)
+	GameScreen(Game game, String _mode)
 	{
 		super(game);
+		mode = _mode;
 		System.out.println("init GameScreen");
 	}
 	
 	public void show()
 	{
-		field = new Field();
+		field = new Field(mode);
 		renderer = new FieldRenderer(field);
 	}
 

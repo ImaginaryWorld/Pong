@@ -16,8 +16,8 @@ public class MenuScreen extends PongScreen
 	MenuScreen(Game game)
 	{
 		super(game);
-		start_button = new Button(Gdx.graphics.getWidth()/2, 500, "start.png");
-		other_button = new Button(Gdx.graphics.getWidth()/2, 350, "undef.png");
+		start_button = new Button(Gdx.graphics.getWidth()/2, 500, "pvp.png");
+		other_button = new Button(Gdx.graphics.getWidth()/2, 350, "pvc.png");
 		other2_button = new Button(Gdx.graphics.getWidth()/2, 200, "undef.png");
 		System.out.println("init MenuScreen");
 	}
@@ -31,10 +31,12 @@ public class MenuScreen extends PongScreen
 	{
 
 		if (start_button.isPressed()){
-			game.setScreen(new GameScreen(game)); // start game
+			game.setScreen(new GameScreen(game, "pvp")); // start player versus player
 		}
 		
-		if (other_button.isPressed()){  System.out.println("other_button pressed");  }
+		if (other_button.isPressed()){
+			game.setScreen(new GameScreen(game, "pvc")); // start player versus computer
+		}
 		
 		if (other2_button.isPressed()){  System.out.println("other2_button pressed");  }
 		
