@@ -2,16 +2,18 @@ package com.phuda.pong.Units;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.math.Rectangle;
+import com.phuda.pong.Field;
+import com.phuda.pong.AI.AIBoardController;
 
 public class Board extends Unit{
 
 	final int SLOWER = 3, TOUCHZONE = 200;
 	
 	public int x, y, target_x;
-	int speed;
 	public Rectangle bounds;
+	private AIBoardController contr;
 	
-	public Board(int _x, int _y)
+	public Board(int _x, int _y, String name, Field field, boolean isAI)
 	{
 		super();
 		bounds = new Rectangle();
@@ -22,20 +24,49 @@ public class Board extends Unit{
 		bounds.y = y;
 		bounds.width = 100;
 		bounds.height = 30;
+		this.name = name;
+		this.field = field;
+		if(isAI)
+			contr = new AIBoardController(this, field.balls);
 	}
 	
 	public void updateState(float time, Ball[] balls)
 	{
 		checkBalls(balls, time);
-		processAction();
+		processAction(time);
 		touchTime += time;
 	}
 	
-	private void processAction() {
-		x -= (x - target_x) / SLOWER;
+	private void processAction(float time) {
+		
+		x += xSpeed / SLOWER;
 		bounds.x = x;
-		speed = target_x - x;
+		
+		if (contr == null)
+		{
+			checkTouch();
+			xSpeed = target_x - x;
+		}
+		else
+		{
+			if (!contr.catching)
+			{
+				contr.prepare(time);
+			}
+			else
+			{
+				contr.prepareTime -= time;
+				if (contr.prepareTime < 0)
+				{
+					xSpeed = 0;
+					contr.catching = false;
+				}
+			}
+		}
+	}
 
+	private void checkTouch()
+	{
 		if (Gdx.input.isTouched()) {
 			//System.out.println(Gdx.input.getY());  // omg Y is inverted with graphics Y
 			int touchPosY = (Gdx.input.getY() - Gdx.graphics.getHeight()) * -1; // invert )_)
@@ -52,24 +83,14 @@ public class Board extends Unit{
 						(balls[i].bounds.y + balls[i].bounds.radius * 2  >=   bounds.y) &&
 						(bounds.x                               <=   balls[i].bounds.x + balls[i].bounds.radius * 2) &&
 						(bounds.x + bounds.width                >=   balls[i].bounds.x) &&
-						noStick(balls[i]))
+						balls[i].noStick(this))
 				{
-					/*if (Math.abs((bounds.x + bounds.width / 2 - balls[i].bounds.x + balls[i].bounds.radius)) 
-							> Math.abs(bounds.y + bounds.height/ 2 
-									- balls[i].bounds.y + balls[i].bounds.radius))
-					balls[i].ySpeed = - balls[i].ySpeed;
-					
-					
-					else
-					{
-					balls[i].xSpeed += speed / 10;
-					if (Math.abs(balls[i].xSpeed) < Math.abs(speed))
-						balls[i].xSpeed = speed;
-					}*/
 					balls[i].checkBound(this);
 					touchTime = 0;
+					balls[i].touchTime = 0;
 					balls[i].lastTouched = this;
 					this.lastTouched = balls[i];
+					// System.out.println(balls[i].lastTouched.name);
 				}
 			}
 		}
