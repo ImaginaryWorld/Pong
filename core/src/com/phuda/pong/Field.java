@@ -9,6 +9,7 @@ public class Field {
 	
 	public Board player1Board, player2Board;
 	public Ball[] balls = new Ball[2];
+	public Board touchTable[] = new Board[2]; 
 	
 	Field(String mode)
 	{
