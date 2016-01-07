@@ -70,82 +70,20 @@ public class Board extends Unit{
 		}
 	}
 
-	private void checkTouch()
+	void checkTouch()
 	{
-		int touchPosY = (Gdx.input.getY(0) - Gdx.graphics.getHeight()) * -1;  // invert )_)
-		
-		if (Gdx.input.isTouched(0) && Gdx.input.isTouched(1))
+		for (int i = 0; i < 2; i++)
 		{
-			
-			// multitouch and first touch is on this board's side
-			if (touchPosY > y - TOUCHZONE && touchPosY < y + TOUCHZONE)
-			{
-				processTouchTable();
-			}
-			
-			// multitouch and second touch is on this board's side
-			else
-			{
-				touchPosY = (Gdx.input.getY(1) - Gdx.graphics.getHeight()) * -1;
-				if (touchPosY > y - TOUCHZONE && touchPosY < y + TOUCHZONE)
-				{
-					processTouchTable();
-				}
-			}
-		}
-	
-		// only one touch - other board's player
-		else if (Gdx.input.isTouched(0) && field.touchTable[0] == otherBoard())
-		{
-			return;
-		}
-		// only one touch - this board's player
-		else if ((Gdx.input.isTouched(0) && field.touchTable[0] == this)
-				|| (Gdx.input.isTouched(0) && 
-						(touchPosY > y - TOUCHZONE && touchPosY < y + TOUCHZONE)))
-		{
-			field.touchTable[0] = this;
-			field.touchTable[1] = null;
-		}
-		// no touches
-		else if (!Gdx.input.isTouched())
-		{
-			for (int i = 0; i < field.touchTable.length; i++)
-				field.touchTable[i] = null;
-			return;
-		}
-		// multitouch with touching out of touchzone and other errors not processing
-		
-		if (Gdx.input.isTouched(touchNum)) 
-		{
+			if (!Gdx.input.isTouched(i))
+				continue;
+			int touchPosY = (Gdx.input.getY(i) - Gdx.graphics.getHeight()) * -1;  // invert )_)
 			
 			if (touchPosY > y - TOUCHZONE && touchPosY < y + TOUCHZONE){
-				target_x = Gdx.input.getX(touchNum) - (int) (bounds.width / 2); // set x into center of board
+				target_x = Gdx.input.getX(i) - (int) (bounds.width / 2); // set x into center of board
 			}
 		}
 	}
 	
-	private void processTouchTable()
-	{
-		for (int i = 0; i < field.touchTable.length; i++)
-		{
-			// element is our board
-			if (field.touchTable[i] == this)
-			{
-				touchNum = i;
-				return;
-			}
-		}
-		// if first place are not used
-		if (field.touchTable[touchNum] == null)
-			{
-				field.touchTable[0] = this;
-				return;
-			}
-		// otherwise - using second element to write our board in it
-		++touchNum;
-		field.touchTable[touchNum] = this;
-	}
 	
 	private void checkBalls(Ball[] balls, float time){
 		for (int i = 0; i < balls.length; i++){
@@ -170,11 +108,12 @@ public class Board extends Unit{
 		}
 	}
 	
-	private Board otherBoard()
+	// Maybe it will be useful later
+	/*private Board otherBoard()
 	{
 		if (this.name.equals("top"))
 			return field.player2Board;
 		else 
 			return field.player1Board;
-	}
+	}*/
 }
