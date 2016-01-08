@@ -30,8 +30,8 @@ public class FieldRenderer {
 		Gdx.gl.glClearColor(.25f, .25f, .3f, 1f);
 		
 		float allScores = field.player1Board.score + field.player2Board.score;
-		float p1 = (allScores / field.player1Board.score) / allScores;
-		float p2 = (allScores / field.player2Board.score) / allScores;
+		float p1 = field.player1Board.score / allScores;
+		float p2 = field.player2Board.score / allScores;
 		int w = Gdx.graphics.getWidth(), h = Gdx.graphics.getWidth();
 		
 		shapeRenderer.begin(ShapeType.Filled);
