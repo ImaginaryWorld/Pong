@@ -12,9 +12,13 @@ public class Board extends Unit{
 	
 	public int x, y, target_x;
 	public Rectangle bounds;
+	
 	private AIBoardController contr;
-	Sound sound_reflect;
 	int touchNum;
+	
+	public int score = 1;
+	
+	Sound sound_reflect;
 	
 	public Board(int _x, int _y, String name, Field field, boolean isAI)
 	{

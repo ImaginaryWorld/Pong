@@ -4,16 +4,20 @@ import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.Texture.TextureFilter;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
+import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
+import com.badlogic.gdx.graphics.glutils.ShapeRenderer.ShapeType;
 
 public class FieldRenderer {
 	
 	SpriteBatch batch;
+	ShapeRenderer shapeRenderer;
 	Texture boardTexture, ballTexture;
 	Field field;
 	
 	FieldRenderer(Field field)
 	{
 		batch = new SpriteBatch();
+		shapeRenderer = new ShapeRenderer();
 		boardTexture = new Texture(Gdx.files.internal("board.png"));
 		ballTexture = new Texture(Gdx.files.internal("particle.png"));
 		ballTexture.setFilter(TextureFilter.Linear, TextureFilter.Linear);
@@ -24,6 +28,21 @@ public class FieldRenderer {
 	{
 		// Board and ball appears here
 		Gdx.gl.glClearColor(.25f, .25f, .3f, 1f);
+		
+		float allScores = field.player1Board.score + field.player2Board.score;
+		float p1 = (allScores / field.player1Board.score) / allScores;
+		float p2 = (allScores / field.player2Board.score) / allScores;
+		int w = Gdx.graphics.getWidth(), h = Gdx.graphics.getWidth();
+		
+		shapeRenderer.begin(ShapeType.Filled);
+		
+		shapeRenderer.setColor(0.5f, 0.2f, 0.2f, 1); // blue player 1
+		shapeRenderer.rect(0, h/2 + 50, w * p1, 100);
+		
+		shapeRenderer.setColor(0.2f, 0.2f, 0.5f, 1); // red player 2
+		shapeRenderer.rect(w, h/2 + 50, -w * p2, 100);
+		
+		shapeRenderer.end();
 		
 		batch.begin();
 		

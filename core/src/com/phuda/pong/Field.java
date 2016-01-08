@@ -46,6 +46,11 @@ public class Field {
 		for (int i = 0; i < balls.length; i++){
 			if (balls[i] != null){
 				if (balls[i].outOfField()){ // we lost this ball
+					
+					if (balls[i].bounds.y > Gdx.graphics.getHeight() / 2){ // who is winner ?
+					     	player1Board.score += balls[i].bounds.radius;
+					} else  player2Board.score += balls[i].bounds.radius;
+					
 					balls[i] = null;
 					balls[i] = new Ball(this, (int)(Math.random() * Gdx.graphics.getWidth()),
 							(int)(Math.random() * Gdx.graphics.getHeight() / 2 +
