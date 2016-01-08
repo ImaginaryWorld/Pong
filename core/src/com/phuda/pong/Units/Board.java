@@ -35,16 +35,16 @@ public class Board extends Unit{
 		touchNum = 0;
 	}
 	
-	public void updateState(float time, Ball[] balls)
+	public void updateState(float delta, Ball[] balls)
 	{
-		checkBalls(balls, time);
-		processAction(time);
-		touchTime += time;
+		checkBalls(balls, delta);
+		processAction(delta);
+		touchTime += delta;
 	}
 	
-	private void processAction(float time) {
+	private void processAction(float delta) {
 		
-		x += xSpeed / SLOWER;
+		x += xSpeed / SLOWER * 50 * delta;
 		bounds.x = x;
 		
 		if (contr == null)
@@ -56,11 +56,11 @@ public class Board extends Unit{
 		{
 			if (!contr.catching)
 			{
-				contr.prepare(time);
+				contr.prepare(delta);
 			}
 			else
 			{
-				contr.prepareTime -= time;
+				contr.prepareTime -= delta;
 				if (contr.prepareTime < 0)
 				{
 					xSpeed = 0;

@@ -1,6 +1,7 @@
 package com.phuda.pong;
 
 import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.Input;
 import com.phuda.pong.Units.Ball;
 import com.phuda.pong.Units.Board;
 
@@ -34,10 +35,13 @@ public class Field {
 		}
 	}
 	
-	public void updateState(float time)
+	public void updateState(float delta)
 	{
-		player1Board.updateState(time, balls);
-		player2Board.updateState(time, balls);
+		if (Gdx.input.isKeyPressed(Input.Keys.S)) // toggle slow-motion
+			delta = delta * 0.2f;
+		
+		player1Board.updateState(delta, balls);
+		player2Board.updateState(delta, balls);
 		
 		for (int i = 0; i < balls.length; i++){
 			if (balls[i] != null){
@@ -48,7 +52,7 @@ public class Field {
 									Gdx.graphics.getHeight() / 4), 12, i);
 					continue;
 				}
-				balls[i].updateState(time);
+				balls[i].updateState(delta);
 			}
 		}
 	}

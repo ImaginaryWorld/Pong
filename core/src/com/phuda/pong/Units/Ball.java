@@ -30,12 +30,12 @@ public class Ball extends Unit{
 
 	}
 	
-	public void updateState(float time)
+	public void updateState(float delta)
 	{
-		bounds.x = bounds.x + (float)xSpeed;
-		bounds.y = bounds.y + (float)ySpeed;
+		bounds.x += (float)xSpeed * 50 * delta;
+		bounds.y += (float)ySpeed * 50 * delta;
 		vector.add((float)bounds.x, (float)bounds.y);
-		lifeTime += time;
+		lifeTime += delta;
 		
 		// others balls collide
 		for (int i = 0; i < field.balls.length; i++)
@@ -62,7 +62,7 @@ public class Ball extends Unit{
 			playSound();
 		}
 		releaseSpeed();
-		touchTime += time;
+		touchTime += delta;
 	}
 	
 	private void playSound()
