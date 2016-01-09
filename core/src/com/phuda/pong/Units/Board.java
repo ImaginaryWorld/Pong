@@ -17,7 +17,7 @@ public class Board extends Unit{
 	private AIBoardController contr;
 	int touchNum;
 	
-	public int score = 1;
+	public int score = 0;
 	
 	Sound sound_reflect;
 	
