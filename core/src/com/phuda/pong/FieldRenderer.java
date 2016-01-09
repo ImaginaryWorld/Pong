@@ -15,7 +15,9 @@ public class FieldRenderer {
 	ShapeRenderer shapeRenderer;
 	Texture boardTexture, ballTexture;
 	Field field;
-	private BitmapFont font;
+	
+	float scoreShift, target_scoreShift;
+	BitmapFont score_font;
 	
 	FieldRenderer(Field field)
 	{
@@ -26,8 +28,8 @@ public class FieldRenderer {
 		ballTexture.setFilter(TextureFilter.Linear, TextureFilter.Linear);
 		this.field = field;
 		
-		font = new BitmapFont();
-        font.setColor(Color.WHITE);
+		score_font = new BitmapFont();
+		score_font.setColor(Color.WHITE);
 	}
 	
 	public void render(float time)
@@ -36,7 +38,8 @@ public class FieldRenderer {
 		Gdx.gl.glClearColor(.25f, .25f, .3f, 1f);
 		
 		int w = Gdx.graphics.getWidth(), h = Gdx.graphics.getHeight();
-		float scoreShift = -field.player2Board.score + field.player1Board.score;
+		target_scoreShift = -field.player2Board.score + field.player1Board.score;
+		scoreShift += (target_scoreShift - scoreShift) * 0.1;
 		
 		shapeRenderer.begin(ShapeType.Filled);
 		
@@ -50,8 +53,8 @@ public class FieldRenderer {
 		
 		batch.begin();
 		
-		font.draw(batch, Integer.toString(field.player1Board.score), 40, h/2);
-		font.draw(batch, Integer.toString(field.player2Board.score), w - 40, h/2);
+		score_font.draw(batch, Integer.toString(field.player1Board.score), 40, h/2);
+		score_font.draw(batch, Integer.toString(field.player2Board.score), w - 40, h/2);
 		
 		// player 1
 		batch.draw(boardTexture, field.player1Board.bounds.x, 
