@@ -32,15 +32,15 @@ public class FieldRenderer {
 		float allScores = field.player1Board.score + field.player2Board.score;
 		float p1 = field.player1Board.score / allScores;
 		float p2 = field.player2Board.score / allScores;
-		int w = Gdx.graphics.getWidth(), h = Gdx.graphics.getWidth();
+		int w = Gdx.graphics.getWidth(), h = Gdx.graphics.getHeight();
 		
 		shapeRenderer.begin(ShapeType.Filled);
 		
 		shapeRenderer.setColor(0.5f, 0.2f, 0.2f, 1); // blue player 1
-		shapeRenderer.rect(0, h/2 + 50, w * p1, 100);
+		shapeRenderer.rect(0, h/2 - 50 , w * p1, 100);
 		
 		shapeRenderer.setColor(0.2f, 0.2f, 0.5f, 1); // red player 2
-		shapeRenderer.rect(w, h/2 + 50, -w * p2, 100);
+		shapeRenderer.rect(w, h/2 - 50, -w * p2, 100);
 		
 		shapeRenderer.end();
 		
