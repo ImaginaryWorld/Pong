@@ -5,6 +5,7 @@ import com.badlogic.gdx.audio.Sound;
 import com.badlogic.gdx.math.Rectangle;
 import com.phuda.pong.Field;
 import com.phuda.pong.AI.AIBoardController;
+import com.phuda.pong.Exc.TouchException;
 
 public class Board extends Unit{
 
@@ -48,9 +49,6 @@ public class Board extends Unit{
 	
 	private void processAction(float delta) {
 		
-		x += xSpeed / SLOWER * 50 * delta;
-		bounds.x = x;
-		
 		if (contr == null)
 		{
 			checkTouch();
@@ -72,6 +70,24 @@ public class Board extends Unit{
 				}
 			}
 		}
+
+		// if board goes beyond the left or right bound - no movement
+		if ((bounds.x <= 0 && xSpeed <= 0) || (bounds.x >= 
+		Gdx.graphics.getWidth() - bounds.width && xSpeed >= 0))
+		{
+			xSpeed = 0;
+			// beyond left
+			if (bounds.x < 0)
+				bounds.x = 0;
+			// beyond right
+			else if (bounds.x > Gdx.graphics.getWidth() - bounds.width)
+				bounds.x = Gdx.graphics.getWidth() - bounds.width;
+		}
+		else
+		{
+			x += xSpeed / SLOWER * 50 * delta;
+			bounds.x = x;
+		}
 	}
 
 	void checkTouch()
@@ -82,7 +98,8 @@ public class Board extends Unit{
 				continue;
 			int touchPosY = (Gdx.input.getY(i) - Gdx.graphics.getHeight()) * -1;  // invert )_)
 			
-			if (touchPosY > y - TOUCHZONE && touchPosY < y + TOUCHZONE){
+			if (touchPosY > y - TOUCHZONE && touchPosY < y + TOUCHZONE)
+			{
 				target_x = Gdx.input.getX(i) - (int) (bounds.width / 2); // set x into center of board
 			}
 		}
@@ -98,7 +115,14 @@ public class Board extends Unit{
 						(bounds.x + bounds.width                >=   balls[i].bounds.x) &&
 						balls[i].noStick(this))
 				{
-					balls[i].checkBound(this);
+
+					try {
+						balls[i].checkBound(this);
+					} catch (TouchException e) {
+						// TODO Auto-generated catch block
+						e.printStackTrace();
+					}
+					
 					touchTime = 0;
 					balls[i].touchTime = 0;
 					balls[i].lastTouched = this;
@@ -106,7 +130,6 @@ public class Board extends Unit{
 					
 					long s = sound_reflect.play(0.6f);
 					sound_reflect.setPitch(s, (float) ((balls[i].ySpeed + balls[i].ySpeed) * 0.1f + 0.5f));
-					// System.out.println(balls[i].lastTouched.name);
 				}
 			}
 		}

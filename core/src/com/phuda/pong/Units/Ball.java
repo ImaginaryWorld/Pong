@@ -1,6 +1,7 @@
 package com.phuda.pong.Units;
 
 import com.phuda.pong.Field;
+import com.phuda.pong.Exc.TouchException;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.audio.Sound;
 import com.badlogic.gdx.math.Circle;
@@ -84,7 +85,7 @@ public class Ball extends Unit{
 		}
 	}
 
-	public void checkBound(Board board)
+	public void checkBound(Board board) throws TouchException
 	{
 		double xMeter, yMeter;
 		if (xSpeed > 0 && ySpeed > 0) // ball goes right and up
@@ -142,13 +143,15 @@ public class Ball extends Unit{
 			changeSpeed(board, (int)(board.bounds.x + board.bounds.width), 
 					(int)(board.bounds.y + board.bounds.height), xMeter, yMeter);
 		}
-		else // xSpeed = 0
+		else /* maybe it's strange, but we can't have x speed on 0. 
+				Except the cases when something goes wrong*/
 		{
-			System.out.println("Error in checkBound method");
+			handleErr(0);
 			xSpeed = board.xSpeed;
 			ySpeed = - ySpeed; // anyway
 		}
 	}
+	
 	private void changeSpeed(Board board, int boundX, int boundY, double xMeter, double yMeter)
 	{
 		// ball collide with left or right side
@@ -173,5 +176,14 @@ public class Ball extends Unit{
 			ySpeed = - ySpeed;
 
 		}
+	}
+	
+	private void handleErr(int errCode) throws TouchException
+	{
+		String err[] =
+			{
+					"Touching error"
+			};
+		throw new TouchException(err[errCode]);
 	}
 }

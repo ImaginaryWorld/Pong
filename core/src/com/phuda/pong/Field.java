@@ -17,11 +17,11 @@ public class Field {
 		{
 			// player 1 aka top player
 			player1Board = new Board(Gdx.graphics.getWidth()/2 - 50,
-									 Gdx.graphics.getHeight()/12 * 11 - 20, "top", this, true);
+									 Gdx.graphics.getHeight()/12 * 11 - 30, "top", this, true);
 		}
 		else { // player vs player
 			player1Board = new Board(Gdx.graphics.getWidth()/2 - 50,
-					 Gdx.graphics.getHeight()/12 * 11 - 20, "top", this, false);
+					 Gdx.graphics.getHeight()/12 * 11 - 30, "top", this, false);
 		}
 		
 		// player 2 aka bottom player

@@ -47,13 +47,13 @@ public class FieldRenderer {
 		batch.begin();
 		
 		// player 1
-		batch.draw(boardTexture, field.player1Board.x, 
-							     field.player1Board.y,             
+		batch.draw(boardTexture, field.player1Board.bounds.x, 
+				field.player1Board.bounds.y,             
 							     0f, 0f, 100f, 30f, 1f, 1f, 0f,
 				                 0, 0, 100, 30, false, true); // i need only last true that do flip
 		// player 2
-		batch.draw(boardTexture, field.player2Board.x,
-							     field.player2Board.y);
+		batch.draw(boardTexture, field.player2Board.bounds.x, 
+				field.player2Board.bounds.y);
 		// balls
 		for (int i = 0; i < field.balls.length; i++){
 			if (field.balls[i] != null){

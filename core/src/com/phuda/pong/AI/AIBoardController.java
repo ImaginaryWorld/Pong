@@ -59,15 +59,6 @@ public class AIBoardController {
 				(calculateXTouchPoint((int)(yBoardBound - yBallBound), ball) - 
 				(board.bounds.x + board.bounds.width / 2)) / ((yBoardBound -
 						yBallBound) / ball.ySpeed) * 3;
-		if (Math.abs(board.xSpeed) > 2)
-		{
-			System.out.println("Touchpoint - " + calculateXTouchPoint((int)(board.bounds.y - ball.bounds.y), ball));
-			System.out.println("Board center - " + board.bounds.x + board.bounds.width / 2);
-			System.out.println("Time - " + (board.bounds.y - ball.bounds.y) / ball.ySpeed);
-			System.out.println("Speed - " + board.xSpeed);
-			System.out.println("Ball y - " + yBallBound);
-			System.out.println("Board y - " + yBoardBound);
-		}
 	}
 	
 	private int calculateXTouchPoint(int yDist, Ball ball)
