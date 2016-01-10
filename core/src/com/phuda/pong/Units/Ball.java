@@ -164,7 +164,9 @@ public class Ball extends Unit{
 		if ((boundX - xMeter) / xSpeed > (boundY - yMeter) / ySpeed)
 		{
 			xSpeed *= -1;
-			bounds.x = boundX; // don't overlap board 
+			// It's not looking very good, because bounds.x is ball's center, not bound
+			// Also it's not gonna work now, when I'm changed boundX meaning
+			// bounds.x = boundX; // don't overlap board
 			if (Math.abs(xSpeed) < Math.abs(board.xSpeed))
 				xSpeed = board.xSpeed;
 		}
