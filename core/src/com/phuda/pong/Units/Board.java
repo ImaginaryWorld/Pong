@@ -11,7 +11,7 @@ public class Board extends Unit{
 
 	final int SLOWER = 3, TOUCHZONE = 200;
 	
-	public int x, y, target_x;
+    public int target_x;
 	public Rectangle bounds;
 	
 	private AIBoardController contr;
@@ -25,11 +25,9 @@ public class Board extends Unit{
 	{
 		super();
 		bounds = new Rectangle();
-		x = _x;
-		y = _y;
 		target_x = _x;
-		bounds.x = x;
-		bounds.y = y;
+		bounds.x = _x;
+		bounds.y = _y;
 		bounds.width = 100;
 		bounds.height = 30;
 		sound_reflect = Gdx.audio.newSound(Gdx.files.internal("sounds/reflect.wav"));
@@ -52,7 +50,7 @@ public class Board extends Unit{
 		if (contr == null)
 		{
 			checkTouch();
-			xSpeed = target_x - x;
+			xSpeed = target_x - bounds.x;
 		}
 		else
 		{
@@ -72,22 +70,23 @@ public class Board extends Unit{
 		}
 
 		// if board goes beyond the left or right bound - no movement
-		if ((bounds.x <= 0 && xSpeed <= 0) || (bounds.x >= 
-		Gdx.graphics.getWidth() - bounds.width && xSpeed >= 0))
+		if (!((bounds.x <= 0 && xSpeed <= 0) || (bounds.x >= 
+				Gdx.graphics.getWidth() - bounds.width && xSpeed >= 0)))
 		{
-			xSpeed = 0;
-			// beyond left
-			if (bounds.x < 0)
-				bounds.x = 0;
-			// beyond right
-			else if (bounds.x > Gdx.graphics.getWidth() - bounds.width)
-				bounds.x = Gdx.graphics.getWidth() - bounds.width;
+			bounds.x += xSpeed / SLOWER * 50 * delta;
 		}
-		else
-		{
-			x += xSpeed / SLOWER * 50 * delta;
-			bounds.x = x;
-		}
+		// Checking if board goes out of bounds (after x changing but before rendering!)
+		if ((bounds.x <= 0 && xSpeed < 0) || (bounds.x >= 
+			Gdx.graphics.getWidth() - bounds.width && xSpeed > 0))
+			{
+				xSpeed = 0;
+				// beyond left
+				if (bounds.x < 0)
+					bounds.x = 0;
+				// beyond right
+				else if (bounds.x > Gdx.graphics.getWidth() - bounds.width)
+					bounds.x = Gdx.graphics.getWidth() - bounds.width;
+			}
 	}
 
 	void checkTouch()
@@ -98,7 +97,7 @@ public class Board extends Unit{
 				continue;
 			int touchPosY = (Gdx.input.getY(i) - Gdx.graphics.getHeight()) * -1;  // invert )_)
 			
-			if (touchPosY > y - TOUCHZONE && touchPosY < y + TOUCHZONE)
+			if (touchPosY > bounds.y - TOUCHZONE && touchPosY < bounds.y + TOUCHZONE)
 			{
 				target_x = Gdx.input.getX(i) - (int) (bounds.width / 2); // set x into center of board
 			}
