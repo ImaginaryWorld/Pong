@@ -13,7 +13,7 @@ public class FieldRenderer {
 	
 	SpriteBatch batch;
 	ShapeRenderer shapeRenderer;
-	Texture boardTexture, ballTexture;
+	Texture boardTexture, ballTexture, bonusTimeTexture;
 	Field field;
 	
 	float scoreShift, target_scoreShift;
@@ -25,7 +25,8 @@ public class FieldRenderer {
 		shapeRenderer = new ShapeRenderer();
 		boardTexture = new Texture(Gdx.files.internal("board.png"));
 		ballTexture = new Texture(Gdx.files.internal("particle.png"));
-		ballTexture.setFilter(TextureFilter.Linear, TextureFilter.Linear);
+		//ballTexture.setFilter(TextureFilter.Linear, TextureFilter.Linear);
+		bonusTimeTexture = new Texture(Gdx.files.internal("bonus_time.png"));
 		this.field = field;
 		
 		score_font = new BitmapFont();
@@ -34,9 +35,10 @@ public class FieldRenderer {
 	
 	public void render(float time)
 	{
-		// Board and ball appears here
+		// Clear screen
 		Gdx.gl.glClearColor(.25f, .25f, .3f, 1f);
-		
+
+		// Score bar
 		int w = Gdx.graphics.getWidth(), h = Gdx.graphics.getHeight();
 		target_scoreShift = -field.player2Board.score + field.player1Board.score;
 		scoreShift += (target_scoreShift - scoreShift) * 0.1;
@@ -64,6 +66,17 @@ public class FieldRenderer {
 		// player 2
 		batch.draw(boardTexture, field.player2Board.bounds.x, 
 				field.player2Board.bounds.y);
+
+		// bonuses
+		for (int i = 0; i < field.bonuses.length; i++){
+			if (field.bonuses[i] != null){
+				//batch.draw(ballTexture, (float)(field.balls[i].bounds.x),
+				//		(float)(field.balls[i].bounds.y));
+				batch.draw(bonusTimeTexture, field.bonuses[i].bounds.x, field.bonuses[i].bounds.y,
+						field.bonuses[i].bounds.radius*2, field.bonuses[i].bounds.radius*2);
+			}
+		}
+
 		// balls
 		for (int i = 0; i < field.balls.length; i++){
 			if (field.balls[i] != null){
