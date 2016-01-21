@@ -87,51 +87,46 @@ public class Ball extends Unit{
 
 	public void checkBound(Board board) throws TouchException
 	{
-		double xMeter, yMeter, xBoardMeter;
+		double xMeter, yMeter;
 		if (xSpeed > 0 && ySpeed > 0) // ball goes right and up
 		{
 			xMeter = (bounds.x + bounds.radius);
 			yMeter = (bounds.y + bounds.radius);
-			xBoardMeter = board.bounds.x;
-			while (xMeter > xBoardMeter && yMeter > board.bounds.y)
+			while (xMeter > board.bounds.x || yMeter > board.bounds.y)
 			{
-				System.out.println(xMeter + " " + yMeter);
 				xMeter -= xSpeed;
 				yMeter -= ySpeed;
-				xBoardMeter -= board.xSpeed;
 			}
-			changeSpeed(board, (int)(xBoardMeter), 
-					(int)(board.bounds.y), xMeter, yMeter);
+			changeSpeed(board, (int)(board.bounds.x - bounds.radius*2), 
+					(int)(board.bounds.y - bounds.radius*2), xMeter, yMeter);
 			System.out.println("Case 1");
 
 		}
 		else if (xSpeed > 0 && ySpeed < 0) // ball goes right and down
 		{
-			xMeter = (bounds.x + bounds.radius);
-			yMeter = (bounds.y - bounds.radius);
-			xBoardMeter = board.bounds.x;
-			while (xMeter > xBoardMeter && yMeter < board.bounds.y)
+			xMeter = (int)(bounds.x + bounds.radius);
+			yMeter = (int)(bounds.y - bounds.radius);
+			while (xMeter > board.bounds.x ||
+					yMeter < board.bounds.y + board.bounds.height)
 			{
 				xMeter -= xSpeed;
 				yMeter -= ySpeed;
-				xBoardMeter -= board.xSpeed;
 			}
-			changeSpeed(board, (int)(xBoardMeter), 
+			changeSpeed(board, (int)(board.bounds.x - bounds.radius*2), 
 					(int)(board.bounds.y + board.bounds.height), xMeter, yMeter);
 		}
 		else if (xSpeed < 0 && ySpeed > 0) // ball goes left and up
 		{
 			xMeter = (int)(bounds.x - bounds.radius);
 			yMeter = (int)(bounds.y + bounds.radius);
-			xBoardMeter = board.bounds.x + board.bounds.width;
-			while (xMeter < xBoardMeter && yMeter > board.bounds.y)
+			while (xMeter < board.bounds.x + board.bounds.width ||
+					yMeter > board.bounds.y)
 			{
 				xMeter -= xSpeed;
 				yMeter -= ySpeed;
-				xBoardMeter -= board.xSpeed;
 			}
-			changeSpeed(board, (int)(xBoardMeter), 
-					(int)(board.bounds.y), xMeter, yMeter);
+			changeSpeed(board, (int)(board.bounds.x + board.bounds.width), 
+					(int)(board.bounds.y - bounds.radius*2), xMeter, yMeter);
 			System.out.println("Case 3");
 
 		}
@@ -139,14 +134,13 @@ public class Ball extends Unit{
 		{
 			xMeter = (int)(bounds.x - bounds.radius);
 			yMeter = (int)(bounds.y - bounds.radius);
-			xBoardMeter = board.bounds.x + board.bounds.width;
-			while (xMeter < xBoardMeter && yMeter < board.bounds.y)
+			while (xMeter < board.bounds.x + board.bounds.width ||
+					yMeter < board.bounds.y + board.bounds.height)
 			{
 				xMeter -= xSpeed;
 				yMeter -= ySpeed;
-				xBoardMeter -= board.xSpeed;
 			}
-			changeSpeed(board, (int)(xBoardMeter), 
+			changeSpeed(board, (int)(board.bounds.x + board.bounds.width), 
 					(int)(board.bounds.y + board.bounds.height), xMeter, yMeter);
 		}
 		else /* maybe it's strange, but we can't have x speed on 0. 
