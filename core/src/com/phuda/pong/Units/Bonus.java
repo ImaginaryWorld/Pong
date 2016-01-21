@@ -7,8 +7,8 @@ public class Bonus {
 
     public Circle bounds;
     Field field;
-    float time;
-    float target_radius = 32.0f, radius = 0.0f;
+    //float time;
+    float target_radius = (float) (25.0f + Math.random() * 20);
 
 
     public Bonus(Field field, int _x, int _y)
@@ -16,12 +16,12 @@ public class Bonus {
         super();
         this.field = field;
 
-        bounds = new Circle(_x, _y, (int)radius);
+        bounds = new Circle(_x, _y, 0);
     }
 
     public boolean gotBonus(float delta)
     {
-        bounds.radius += (target_radius - bounds.radius) * 0.2;
+        bounds.radius += (target_radius - bounds.radius) * 5 * delta;
         // balls collide
         for (int i = 0; i < field.balls.length; i++)
             if (bounds.overlaps(field.balls[i].bounds))

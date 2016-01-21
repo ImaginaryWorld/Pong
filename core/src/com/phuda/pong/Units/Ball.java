@@ -1,7 +1,8 @@
 package com.phuda.pong.Units;
 
-import com.phuda.pong.Field;
 import com.phuda.pong.Exc.TouchException;
+import com.phuda.pong.Field;
+//import com.phuda.pong.Exc.TouchException;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.audio.Sound;
 import com.badlogic.gdx.math.Circle;
@@ -22,9 +23,7 @@ public class Ball extends Unit{
 		while (Math.abs(ySpeed) < 4)
 			ySpeed = (int)(Math.random() * 12 - 6);
 		
-		bounds = new Circle();
-		bounds.setPosition(_x, _y);
-		bounds.radius = 12;
+		bounds = new Circle(_x, _y, _radius);
 		
 		sound_bump = Gdx.audio.newSound(Gdx.files.internal("sounds/bump.wav"));
 		this.name = Integer.toString(++num);
@@ -56,8 +55,8 @@ public class Ball extends Unit{
 				}
 		
 		// walls collide
-		if ( (bounds.x < 0 && xSpeed < 0) || 
-				(bounds.x > Gdx.graphics.getWidth() - bounds.radius * 2 && xSpeed > 0) )
+		if ( (bounds.x - bounds.radius < 0 && xSpeed < 0) ||
+				(bounds.x + bounds.radius > Gdx.graphics.getWidth() && xSpeed > 0) )
 		{
 			xSpeed = -xSpeed;
 			playSound();
@@ -74,7 +73,7 @@ public class Ball extends Unit{
 
 	public boolean outOfField()
 	{
-		return (bounds.y < 0 - bounds.radius) || (bounds.y > Gdx.graphics.getHeight());
+		return (bounds.y < 0) || (bounds.y > Gdx.graphics.getHeight());
 	}
 	
 	private void releaseSpeed()
@@ -84,6 +83,7 @@ public class Ball extends Unit{
 			xSpeed -= 1;
 		}
 	}
+
 
 	public void checkBound(Board board) throws TouchException
 	{
@@ -97,8 +97,8 @@ public class Ball extends Unit{
 				xMeter -= xSpeed;
 				yMeter -= ySpeed;
 			}
-			changeSpeed(board, (int)(board.bounds.x - bounds.radius*2), 
-					(int)(board.bounds.y - bounds.radius*2), xMeter, yMeter);
+			changeSpeed(board, (int)(board.bounds.x - bounds.radius),
+					(int)(board.bounds.y - bounds.radius), xMeter, yMeter);
 
 		}
 		else if (xSpeed > 0 && ySpeed < 0) // ball goes right and down
@@ -111,7 +111,7 @@ public class Ball extends Unit{
 				xMeter -= xSpeed;
 				yMeter -= ySpeed;
 			}
-			changeSpeed(board, (int)(board.bounds.x - bounds.radius*2), 
+			changeSpeed(board, (int)(board.bounds.x - bounds.radius),
 					(int)(board.bounds.y + board.bounds.height), xMeter, yMeter);
 		}
 		else if (xSpeed < 0 && ySpeed > 0) // ball goes left and up
@@ -124,8 +124,8 @@ public class Ball extends Unit{
 				xMeter -= xSpeed;
 				yMeter -= ySpeed;
 			}
-			changeSpeed(board, (int)(board.bounds.x + board.bounds.width), 
-					(int)(board.bounds.y - bounds.radius*2), xMeter, yMeter);
+			changeSpeed(board, (int)(board.bounds.x + board.bounds.width),
+					(int)(board.bounds.y - bounds.radius), xMeter, yMeter);
 
 		}
 		else if (xSpeed < 0 && ySpeed < 0) // ball goes left and down
@@ -141,7 +141,7 @@ public class Ball extends Unit{
 			changeSpeed(board, (int)(board.bounds.x + board.bounds.width), 
 					(int)(board.bounds.y + board.bounds.height), xMeter, yMeter);
 		}
-		else /* maybe it's strange, but we can't have x speed on 0. 
+		else /* maybe it's strange, but we can't have x speed on 0.
 				Except the cases when something goes wrong*/
 		{
 			handleErr(0);

@@ -114,10 +114,11 @@ public class Board extends Unit{
 	private void checkBalls(Ball[] balls, float time){
 		for (int i = 0; i < balls.length; i++){
 			if (balls[i] != null){
-				if (    (balls[i].bounds.y                      <=   bounds.y + bounds.height) &&
-						(balls[i].bounds.y + balls[i].bounds.radius * 2  >=   bounds.y) &&
-						(bounds.x                               <=   balls[i].bounds.x + balls[i].bounds.radius * 2) &&
-						(bounds.x + bounds.width                >=   balls[i].bounds.x) &&
+                float r = balls[i].bounds.radius;
+				if (    (balls[i].bounds.y - r    <=   bounds.y + bounds.height) &&
+						(balls[i].bounds.y + r    >=   bounds.y) &&
+						(bounds.x                 <=   balls[i].bounds.x + r) &&
+						(bounds.x + bounds.width  >=   balls[i].bounds.x - r) &&
 						balls[i].noStick(this))
 				{
 

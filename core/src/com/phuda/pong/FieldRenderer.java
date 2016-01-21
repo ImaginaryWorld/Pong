@@ -25,8 +25,8 @@ public class FieldRenderer {
 		shapeRenderer = new ShapeRenderer();
 		boardTexture = new Texture(Gdx.files.internal("board.png"));
 		ballTexture = new Texture(Gdx.files.internal("particle.png"));
-		//ballTexture.setFilter(TextureFilter.Linear, TextureFilter.Linear);
 		bonusTimeTexture = new Texture(Gdx.files.internal("bonus_time.png"));
+		bonusTimeTexture.setFilter(TextureFilter.Linear, TextureFilter.Linear);
 		this.field = field;
 		
 		score_font = new BitmapFont();
@@ -41,15 +41,15 @@ public class FieldRenderer {
 		// Score bar
 		int w = Gdx.graphics.getWidth(), h = Gdx.graphics.getHeight();
 		target_scoreShift = -field.player2Board.score + field.player1Board.score;
-		scoreShift += (target_scoreShift - scoreShift) * 0.1;
+		scoreShift += (target_scoreShift - scoreShift) * 0.06;
 		
 		shapeRenderer.begin(ShapeType.Filled);
 		
 		shapeRenderer.setColor(0.5f, 0.2f, 0.2f, 1); // blue player 1
-		shapeRenderer.rect(0, h/2 - 50 , w/2 + scoreShift, 100);
+		shapeRenderer.rect(0, h/4 , w/2 + scoreShift, h/2);
 		
 		shapeRenderer.setColor(0.2f, 0.2f, 0.5f, 1); // red player 2
-		shapeRenderer.rect(w, h/2 - 50, -w/2 + scoreShift, 100);
+		shapeRenderer.rect(w, h/4, -w/2 + scoreShift, h/2);
 		
 		shapeRenderer.end();
 		
@@ -72,8 +72,9 @@ public class FieldRenderer {
 			if (field.bonuses[i] != null){
 				//batch.draw(ballTexture, (float)(field.balls[i].bounds.x),
 				//		(float)(field.balls[i].bounds.y));
-				batch.draw(bonusTimeTexture, field.bonuses[i].bounds.x, field.bonuses[i].bounds.y,
-						field.bonuses[i].bounds.radius*2, field.bonuses[i].bounds.radius*2);
+				float r = field.bonuses[i].bounds.radius;
+				batch.draw(bonusTimeTexture, field.bonuses[i].bounds.x - r, field.bonuses[i].bounds.y - r,
+						r*2, r*2);
 			}
 		}
 
@@ -82,8 +83,9 @@ public class FieldRenderer {
 			if (field.balls[i] != null){
 				//batch.draw(ballTexture, (float)(field.balls[i].bounds.x), 
 				//		(float)(field.balls[i].bounds.y));
-				batch.draw(ballTexture, field.balls[i].bounds.x, field.balls[i].bounds.y, 
-						field.balls[i].bounds.radius*2, field.balls[i].bounds.radius*2);
+				float r = field.balls[i].bounds.radius;
+				batch.draw(ballTexture, field.balls[i].bounds.x - r, field.balls[i].bounds.y - r,
+						r*2, r*2);
 			}
 		}
 		
