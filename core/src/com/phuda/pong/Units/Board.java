@@ -64,10 +64,16 @@ public class Board extends Unit{
 				if (contr.prepareTime < 0)
 				{
 					xSpeed = 0;
+					contr.prepareTime = 0;
 					contr.catching = false;
 				}
 			}
+			
+			if (contr.prepareTime != 0 && delta != 0 && xSpeed == 0)
+				xSpeed = (target_x - (bounds.x + bounds.width / 2)) 
+				/ (contr.prepareTime / delta) * 3;
 		}
+		
 
 		// if board goes beyond the left or right bound - no movement
 		if (!((bounds.x <= 0 && xSpeed <= 0) || (bounds.x >= 

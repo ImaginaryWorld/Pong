@@ -23,7 +23,7 @@ public class AIBoardController {
 		{
 			if (board.name.equals("top"))
 			{
-				if (balls[i].ySpeed > (board.bounds.y + balls[i].bounds.radius - balls[i].bounds.y) / 50)
+				if (balls[i].ySpeed > (board.bounds.y - balls[i].bounds.y + balls[i].bounds.radius) / 50)
 				{
 					if (balls[i].bounds.y + balls[i].bounds.radius < board.bounds.y)
 					{
@@ -33,9 +33,11 @@ public class AIBoardController {
 					}
 				}
 			}
-			else if (balls[i].ySpeed < (board.bounds.y - balls[i].bounds.y) / 50)
+			else if (balls[i].ySpeed < (board.bounds.y + board.bounds.height - balls[i].bounds.y 
+					+ balls[i].bounds.radius) / 50)
 			{
-				if (balls[i].bounds.y - balls[i].bounds.radius > board.bounds.y + board.bounds.height)
+				if (balls[i].bounds.y - balls[i].bounds.radius > board.bounds.y 
+						+ board.bounds.height)
 				{
 					startPreparing(balls[i], balls[i].bounds.y - balls[i].bounds.radius,
 							board.bounds.y + board.bounds.height, time);
@@ -47,18 +49,11 @@ public class AIBoardController {
 	
 	void startPreparing(Ball ball, float yBallBound, float yBoardBound, float time)
 	{
-		changeSpeed(ball, yBallBound, yBoardBound);
+		board.target_x = 
+				calculateXTouchPoint((int)(yBoardBound - yBallBound), ball);
 		catching = true;
 		if ((yBoardBound - yBallBound) / (float)ball.ySpeed > 0)
 			prepareTime = (board.bounds.y - ball.bounds.y) / (float)ball.ySpeed * time;
-	}
-	
-	public void changeSpeed(Ball ball, float yBallBound, float yBoardBound)
-	{
-		board.xSpeed = 
-				(calculateXTouchPoint((int)(yBoardBound - yBallBound), ball) - 
-				(board.bounds.x + board.bounds.width / 2)) / ((yBoardBound -
-						yBallBound) / ball.ySpeed) * 3;
 	}
 	
 	private int calculateXTouchPoint(int yDist, Ball ball)

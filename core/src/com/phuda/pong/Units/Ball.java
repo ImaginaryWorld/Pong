@@ -17,10 +17,10 @@ public class Ball extends Unit{
 		super();
 		this.field = field;
 		
-		while (Math.abs(xSpeed) < 3)
-			xSpeed = (int)(Math.random() * 10 - 5);
-		while (Math.abs(ySpeed) < 3)
-			ySpeed = (int)(Math.random() * 10 - 5);
+		while (Math.abs(xSpeed) < 4)
+			xSpeed = (int)(Math.random() * 12 - 6);
+		while (Math.abs(ySpeed) < 4)
+			ySpeed = (int)(Math.random() * 12 - 6);
 		
 		bounds = new Circle();
 		bounds.setPosition(_x, _y);
@@ -99,7 +99,6 @@ public class Ball extends Unit{
 			}
 			changeSpeed(board, (int)(board.bounds.x - bounds.radius*2), 
 					(int)(board.bounds.y - bounds.radius*2), xMeter, yMeter);
-			System.out.println("Case 1");
 
 		}
 		else if (xSpeed > 0 && ySpeed < 0) // ball goes right and down
@@ -127,7 +126,6 @@ public class Ball extends Unit{
 			}
 			changeSpeed(board, (int)(board.bounds.x + board.bounds.width), 
 					(int)(board.bounds.y - bounds.radius*2), xMeter, yMeter);
-			System.out.println("Case 3");
 
 		}
 		else if (xSpeed < 0 && ySpeed < 0) // ball goes left and down

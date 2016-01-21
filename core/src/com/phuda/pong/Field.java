@@ -37,6 +37,7 @@ public class Field {
 	
 	public void updateState(float delta)
 	{
+		
 		if (Gdx.input.isKeyPressed(Input.Keys.S)) // toggle slow-motion
 			delta = delta * 0.2f;
 		
