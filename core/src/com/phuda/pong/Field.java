@@ -10,28 +10,26 @@ import com.phuda.pong.Units.Bonus;
 public class Field {
 	
 	public Board player1Board, player2Board;
-	public Ball[] balls;
+	public Ball[] balls = new Ball[2];
 	public Bonus[] bonuses = new Bonus[3];
 	
-	Field(String mode, int ballsCount, int ai)
+	Field(String mode)
 	{
-        balls = new Ball[ballsCount];
-
 		if (mode.equals("pvc"))
 		{
 			// Player 1 aka top player.
 			player1Board = new Board(Gdx.graphics.getWidth()/2 - 50,
-									 Gdx.graphics.getHeight()/12 * 11 - 30, "top", this, true, ai);
+									 Gdx.graphics.getHeight()/12 * 11 - 30, "top", this, true);
 		}
 		else { 
 			// Player vs player.
 			player1Board = new Board(Gdx.graphics.getWidth()/2 - 50,
-					 Gdx.graphics.getHeight()/12 * 11 - 30, "top", this, false, 0);
+					 Gdx.graphics.getHeight()/12 * 11 - 30, "top", this, false);
 		}
 		
 		// Player 2 aka bottom player.
 		player2Board = new Board(Gdx.graphics.getWidth()/2 - 50,
-								 Gdx.graphics.getHeight()/12, "bottom", this, false, 0);
+								 Gdx.graphics.getHeight()/12, "bottom", this, false);
 
 		// Bonuses generation.
 		for (int i = 0; i < bonuses.length; i++) {
