@@ -19,7 +19,7 @@ public class Field {
 		{
 			// Player 1 aka top player
 			player1Board = new Board(Gdx.graphics.getWidth()/2 - 50,
-									 Gdx.graphics.getHeight()/12 * 11 - 30, "top", this, 1);
+									 Gdx.graphics.getHeight()/12 * 11 - 30, "top", this, 2);
 		}
 		else { 
 			// Player vs player

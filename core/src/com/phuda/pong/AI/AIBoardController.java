@@ -73,7 +73,6 @@ public class AIBoardController {
 	{
 		// More than 5 renders before ball will be passed
 		if ((yBoardBound - yBallBound) / (float)ball.ySpeed > 5) {
-			System.out.println((yBoardBound - yBallBound) / (float)ball.ySpeed);
 			/* 
 			 * AI start moving only if random number is more than 3, 6 or 9
 			 * for each difficulty level. Mark that catching must become true anyway,
