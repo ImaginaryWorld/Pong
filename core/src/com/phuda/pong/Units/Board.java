@@ -22,7 +22,7 @@ public class Board extends Unit{
 	
 	Sound sound_reflect;
 	
-	public Board(int _x, int _y, String name, Field field, boolean isAI)
+	public Board(int _x, int _y, String name, Field field, int difficultyLevel)
 	{
 		super();
 		bounds = new Rectangle();
@@ -34,8 +34,9 @@ public class Board extends Unit{
 		sound_reflect = Gdx.audio.newSound(Gdx.files.internal("sounds/reflect.wav"));
 		this.name = name;
 		this.field = field;
-		if(isAI)
-			contr = new AIBoardController(this, field.balls, 1);
+		// Set difficulty level to 0 to create human player
+		if (difficultyLevel != 0)
+			contr = new AIBoardController(this, field.balls, difficultyLevel);
 	}
 	
 	public void updateState(float delta, Ball[] balls)
