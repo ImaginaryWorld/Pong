@@ -52,9 +52,9 @@ public class Slider {
             }
         }
         sx += (ux - sx) / 5;
-        float slide = (float)(x - base.getWidth()/2 + offset + ux) /
-                (float)((x + base.getWidth()/2 - offset) - (x - base.getWidth()/2 + offset));
-        value = (int)MathUtils.lerp(min, max , slide - 1.1f);
+
+        float slide = (float) (ux - x + base.getWidth()/2 - offset) / (base.getWidth() - offset*2);
+        value = (int)MathUtils.lerp(min, max , slide);
     }
 
     public void draw(SpriteBatch batch){
