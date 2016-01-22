@@ -9,17 +9,20 @@ public class GameScreen extends PongScreen
 	Field field;
 	FieldRenderer renderer;
 	String mode;
+    int ballsCount, ai;
 
-	GameScreen(Game game, String _mode)
+	GameScreen(Game game, String _mode, int _ballsCount, int _ai)
 	{
 		super(game);
 		mode = _mode;
+        ballsCount = _ballsCount;
+        ai = _ai;
 		System.out.println("init GameScreen");
 	}
 	
 	public void show()
 	{
-		field = new Field(mode);
+		field = new Field(mode, ballsCount, ai);
 		renderer = new FieldRenderer(field);
 	}
 

@@ -47,7 +47,7 @@ public class Button {
 	public boolean isPressed() {
 		if (Gdx.input.isTouched()) {
 			int x = Gdx.input.getX();
-			int y = (Gdx.input.getY() - Gdx.graphics.getHeight()) * -1; // invert )_)
+			int y = (Gdx.input.getY() - Gdx.graphics.getHeight()) * -1;
 			over = (rect.contains(x, y));
 			if (rect.contains(x, y)){ press = true; }
 			if (press) {
