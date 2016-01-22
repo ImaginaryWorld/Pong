@@ -34,7 +34,7 @@ public class Board extends Unit{
 		this.name = name;
 		this.field = field;
 		if(isAI)
-			contr = new AIBoardController(this, field.balls);
+			contr = new AIBoardController(this, field.balls, 1);
 		touchNum = 0;
 	}
 	

@@ -5,13 +5,29 @@ import com.phuda.pong.Units.Ball;
 import com.phuda.pong.Units.Board;
 
 public class AIBoardController {
+	/*
+	 *  Constants to exclude mistakes related with wrong difficulty meaning
+	 *  (easy, medium, hard)
+	 */
+	final int elvl = 1;
+	final int mlvl = 2;
+	final int hlvl = 3;
+	
+	int difficultyLevel;
 	Board board;
 	Ball[] balls;
 	public boolean catching;
 	public float prepareTime;
 	
-	public AIBoardController(Board board, Ball[] balls)
+	public AIBoardController(Board board, Ball[] balls, int difficultyLevel)
 	{
+		if (difficultyLevel == elvl || difficultyLevel == mlvl || difficultyLevel == hlvl)
+			this.difficultyLevel = difficultyLevel;
+		else
+		{
+			// There will be exception handling... maybe
+			System.out.println("Wrong difficulty level!");
+		}
 		this.board = board;
 		this.balls = balls;
 		catching = false;
@@ -49,7 +65,14 @@ public class AIBoardController {
 	
 	void startPreparing(Ball ball, float yBallBound, float yBoardBound, float time)
 	{
-		board.target_x = 
+		/* 
+		 * AI start moving only if random number is more than 3, 6 or 9
+		 * for each difficulty level. Mark that catching must become true anyway,
+		 * because we actually need AI to pass this ball.
+		 * In easy words AI will be thinking that he'll catch the ball, but won't
+		 */
+		if (Math.random() * 10 <= difficultyLevel * 3)
+			board.target_x = 
 				calculateXTouchPoint((int)(yBoardBound - yBallBound), ball);
 		catching = true;
 		if ((yBoardBound - yBallBound) / (float)ball.ySpeed > 0)
