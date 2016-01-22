@@ -6,7 +6,7 @@ import com.phuda.pong.Units.Ball;
 import com.phuda.pong.Units.Board;
 import com.phuda.pong.Units.Bonus;
 
-// Class that controls game field.
+// Class that controls game field
 public class Field {
 	
 	public Board player1Board, player2Board;
@@ -17,28 +17,28 @@ public class Field {
 	{
 		if (mode.equals("pvc"))
 		{
-			// Player 1 aka top player.
+			// Player 1 aka top player
 			player1Board = new Board(Gdx.graphics.getWidth()/2 - 50,
 									 Gdx.graphics.getHeight()/12 * 11 - 30, "top", this, 1);
 		}
 		else { 
-			// Player vs player.
+			// Player vs player
 			player1Board = new Board(Gdx.graphics.getWidth()/2 - 50,
 					 Gdx.graphics.getHeight()/12 * 11 - 30, "top", this, 0);
 		}
 		
-		// Player 2 aka bottom player.
+		// Player 2 aka bottom player
 		player2Board = new Board(Gdx.graphics.getWidth()/2 - 50,
 								 Gdx.graphics.getHeight()/12, "bottom", this, 0);
 
-		// Bonuses generation.
+		// Bonuses generation
 		for (int i = 0; i < bonuses.length; i++) {
 			bonuses[i] = new Bonus(this, (int) (Math.random() * Gdx.graphics.getWidth()),
 					(int) (Math.random() * Gdx.graphics.getHeight() / 2 +
 							Gdx.graphics.getHeight() / 4));
 		}
 
-		// Balls generation.
+		// Balls generation
 		for (int i = 0; i < balls.length; i++){
 			balls[i] = new Ball(this, (int)(Math.random() * Gdx.graphics.getWidth()),
 					(int)(Math.random() * Gdx.graphics.getHeight() / 2 +
@@ -48,7 +48,7 @@ public class Field {
 	
 	public void updateState(float delta)
 	{
-		// Toggle slow-motion.
+		// Toggle slow-motion
 		if (Gdx.input.isKeyPressed(Input.Keys.S))
 			delta = delta * 0.2f;
 		
