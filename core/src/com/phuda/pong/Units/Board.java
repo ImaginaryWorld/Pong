@@ -8,14 +8,15 @@ import com.phuda.pong.AI.AIBoardController;
 import com.phuda.pong.Exc.TouchException;
 
 public class Board extends Unit{
-
-	final int SLOWER = 3, TOUCHZONE = 200;
-	
+	// Slows the board's movement
+	final int SLOWER = Gdx.graphics.getWidth() / 400,
+	// Zone on y axis in which player can affect board
+			TOUCHZONE = Gdx.graphics.getHeight() / 5;
+	// Board's disposition variables
     public int target_x;
 	public Rectangle bounds;
-	
+	// AI
 	private AIBoardController contr;
-	int touchNum;
 	
 	public int score = 0;
 	
@@ -35,7 +36,6 @@ public class Board extends Unit{
 		this.field = field;
 		if(isAI)
 			contr = new AIBoardController(this, field.balls, 1);
-		touchNum = 0;
 	}
 	
 	public void updateState(float delta, Ball[] balls)
@@ -71,7 +71,7 @@ public class Board extends Unit{
 			
 			if (contr.prepareTime != 0 && delta != 0 && xSpeed == 0)
 				xSpeed = (target_x - (bounds.x + bounds.width / 2)) 
-				/ (contr.prepareTime / delta) * 3;
+				/ (contr.prepareTime / delta) * SLOWER;
 		}
 		
 
@@ -81,18 +81,8 @@ public class Board extends Unit{
 		{
 			bounds.x += xSpeed / SLOWER * 50 * delta;
 		}
-		// Checking if board goes out of bounds (after x changing but before rendering!)
-		if ((bounds.x <= 0 && xSpeed < 0) || (bounds.x >= 
-			Gdx.graphics.getWidth() - bounds.width && xSpeed > 0))
-			{
-				xSpeed = 0;
-				// beyond left
-				if (bounds.x < 0)
-					bounds.x = 0;
-				// beyond right
-				else if (bounds.x > Gdx.graphics.getWidth() - bounds.width)
-					bounds.x = Gdx.graphics.getWidth() - bounds.width;
-			}
+		// Stops the board if it goes out of bound (after x changing but before rendering!)
+		outOfBoundStop();
 	}
 
 	void checkTouch()
@@ -101,11 +91,13 @@ public class Board extends Unit{
 		{
 			if (!Gdx.input.isTouched(i))
 				continue;
-			int touchPosY = (Gdx.input.getY(i) - Gdx.graphics.getHeight()) * -1;  // invert )_)
+			// invert )_)
+			int touchPosY = (Gdx.input.getY(i) - Gdx.graphics.getHeight()) * -1;
 			
 			if (touchPosY > bounds.y - TOUCHZONE && touchPosY < bounds.y + TOUCHZONE)
 			{
-				target_x = Gdx.input.getX(i) - (int) (bounds.width / 2); // set x into center of board
+				// set x into center of board
+				target_x = Gdx.input.getX(i) - (int) (bounds.width / 2);
 			}
 		}
 	}
@@ -141,12 +133,18 @@ public class Board extends Unit{
 		}
 	}
 	
-	// Maybe it will be useful later
-	/*private Board otherBoard()
+	void outOfBoundStop()
 	{
-		if (this.name.equals("top"))
-			return field.player2Board;
-		else 
-			return field.player1Board;
-	}*/
+		if ((bounds.x <= 0 && xSpeed < 0) || (bounds.x >= 
+				Gdx.graphics.getWidth() - bounds.width && xSpeed > 0))
+				{
+					xSpeed = 0;
+					// beyond left
+					if (bounds.x < 0)
+						bounds.x = 0;
+					// beyond right
+					else if (bounds.x > Gdx.graphics.getWidth() - bounds.width)
+						bounds.x = Gdx.graphics.getWidth() - bounds.width;
+		}
+	}
 }
