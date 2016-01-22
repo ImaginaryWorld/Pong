@@ -1,6 +1,7 @@
 package com.phuda.pong.AI;
 
 import com.badlogic.gdx.Gdx;
+import com.phuda.pong.Exc.AIException;
 import com.phuda.pong.Units.Ball;
 import com.phuda.pong.Units.Board;
 
@@ -25,8 +26,13 @@ public class AIBoardController {
 			this.difficultyLevel = difficultyLevel;
 		else
 		{
-			// There will be exception handling... maybe
-			System.out.println("Wrong difficulty level!");
+			// Exception handling
+			try {
+				handleErr(0);
+			} catch (AIException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
 		}
 		this.board = board;
 		this.balls = balls;
@@ -87,5 +93,15 @@ public class AIBoardController {
 		else if (x < 0)
 			x = - x;
 		return x;
+	}
+	
+	private void handleErr(int errcode) throws AIException
+	{
+		String[] err = 
+			{
+					"Difficulty level's error"
+			};
+		
+		throw new AIException(err[errcode]);
 	}
 }
