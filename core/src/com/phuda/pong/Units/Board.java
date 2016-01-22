@@ -94,10 +94,10 @@ public class Board extends Unit {
 				continue;
 			// Invert )_)
 			int touchPosY = (Gdx.input.getY(i) - Gdx.graphics.getHeight()) * -1;
-			
+			// Checking if touch is on player's side
 			if (touchPosY > bounds.y - TOUCHZONE && touchPosY < bounds.y + TOUCHZONE) {
-				// set x into center of board
-				target_x = Gdx.input.getX(i) - (int) (bounds.width / 2);
+				// Setting the point where board will move to
+				target_x = Gdx.input.getX(i) - (int)(bounds.width / 2);
 			}
 		}
 	}
