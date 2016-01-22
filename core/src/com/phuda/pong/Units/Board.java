@@ -21,7 +21,7 @@ public class Board extends Unit{
 	
 	Sound sound_reflect;
 	
-	public Board(int _x, int _y, String name, Field field, boolean isAI)
+	public Board(int _x, int _y, String name, Field field, boolean isAI, int ai)
 	{
 		super();
 		bounds = new Rectangle();
@@ -34,7 +34,7 @@ public class Board extends Unit{
 		this.name = name;
 		this.field = field;
 		if(isAI)
-			contr = new AIBoardController(this, field.balls, 1);
+			contr = new AIBoardController(this, field.balls, ai);
 		touchNum = 0;
 	}
 	
