@@ -6,41 +6,37 @@ import com.badlogic.gdx.math.Circle;
 import com.phuda.pong.Exc.TouchException;
 import com.phuda.pong.Field;
 
-public class Ball extends Unit{
-
+public class Ball extends Unit {
+	// Ball's disposition variable
 	public Circle bounds;
-	float lifeTime;
+	// Sound
 	Sound sound_bump;
 	
-	public Ball(Field field, int _x, int _y, int _radius, int num)
-	{
+	public Ball(Field field, int _x, int _y, int _radius, int num) {
 		super();
+		// Multipliers that depends on screens width and height
+		int wm = Gdx.graphics.getWidth() / 125;
+		int hm = Gdx.graphics.getHeight() / 150;
 		this.field = field;
-		
-		while (Math.abs(xSpeed) < 4)
-			xSpeed = (int)(Math.random() * 12 - 6);
-		while (Math.abs(ySpeed) < 4)
-			ySpeed = (int)(Math.random() * 12 - 6);
-		
 		bounds = new Circle(_x, _y, _radius);
-		
-		sound_bump = Gdx.audio.newSound(Gdx.files.internal("sounds/bump.wav"));
+		// Randomizing ball's x and y axle speed with using multipliers
+		while (Math.abs(xSpeed) < wm)
+			xSpeed = (int)(Math.random() * wm * 4 - wm * 2);
+		while (Math.abs(ySpeed) < hm)
+			ySpeed = (int)(Math.random() * hm * 4 - hm * 2);
 		this.name = Integer.toString(++num);
-
+		sound_bump = Gdx.audio.newSound(Gdx.files.internal("sounds/bump.wav"));
 	}
 	
-	public void updateState(float delta)
-	{
-		bounds.x += (float)(xSpeed * 50 * delta);
-		bounds.y += (float)(ySpeed * 50 * delta);
-		vector.add((float)bounds.x, (float)bounds.y);
-		lifeTime += delta;
-		
-		// others balls collide
+	public void updateState(float delta) {
+		// Updating ball's position
+		bounds.x += xSpeed * 50 * delta;
+		bounds.y += ySpeed * 50 * delta;
+		vector.add(bounds.x, bounds.y);
+		// Checking if this ball collides with others
 		for (int i = 0; i < field.balls.length; i++)
 			if (this != field.balls[i])
-				if (bounds.overlaps(field.balls[i].bounds))
-				{
+				if (bounds.overlaps(field.balls[i].bounds)) {
 					double xTemp = field.balls[i].xSpeed;
 					double yTemp = field.balls[i].ySpeed;
 					field.balls[i].xSpeed = xSpeed;
@@ -49,14 +45,13 @@ public class Ball extends Unit{
 					this.ySpeed = yTemp;
 					field.balls[i].lastTouched = this;
 					this.lastTouched = field.balls[i];
-					
+					// Sound
 					playSound();
 				}
 		
-		// walls collide
+		// Walls collide
 		if ( (bounds.x - bounds.radius < 0 && xSpeed < 0) ||
-				(bounds.x + bounds.radius > Gdx.graphics.getWidth() && xSpeed > 0) )
-		{
+				(bounds.x + bounds.radius > Gdx.graphics.getWidth() && xSpeed > 0) ) {
 			xSpeed = -xSpeed;
 			playSound();
 		}
@@ -64,8 +59,7 @@ public class Ball extends Unit{
 		touchTime += delta;
 	}
 	
-	private void playSound()
-	{
+	private void playSound() {
 		long s = sound_bump.play(0.5f);
 		sound_bump.setPitch(s, (float) ((ySpeed + xSpeed) * 0.1f + 0.5f));
 	}

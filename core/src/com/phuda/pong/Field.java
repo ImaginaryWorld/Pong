@@ -17,8 +17,7 @@ public class Field {
 	{
         balls = new Ball[ballsCount];
 
-		if (mode.equals("pvc"))
-		{
+		if (mode.equals("pvc")) {
 			// Player 1 aka top player.
 			player1Board = new Board(Gdx.graphics.getWidth()/2 - 50,
 									 Gdx.graphics.getHeight()/12 * 11 - 30, "top", this, ai);
@@ -48,8 +47,7 @@ public class Field {
 		}
 	}
 	
-	public void updateState(float delta)
-	{
+	public void updateState(float delta) {
 		// Toggle slow-motion.
 		if (Gdx.input.isKeyPressed(Input.Keys.S))
 			delta = delta * 0.2f;
@@ -59,11 +57,11 @@ public class Field {
 		
 		
 		
-		for (int i = 0; i < balls.length; i++){
-			if (balls[i] != null){
-				if (balls[i].outOfField()){
+		for (int i = 0; i < balls.length; i++) {
+			if (balls[i] != null) {
+				if (balls[i].outOfField()) {
 					// Who is winner ?
-					if (balls[i].bounds.y > Gdx.graphics.getHeight() / 2){
+					if (balls[i].bounds.y > Gdx.graphics.getHeight() / 2) {
 					     	player1Board.score += balls[i].bounds.radius;
 					} else  player2Board.score += balls[i].bounds.radius;
 					
@@ -77,9 +75,9 @@ public class Field {
 			}
 		}
 
-		for (int i = 0; i < bonuses.length; i++){
-			if (bonuses[i] != null){
-				if (bonuses[i].gotBonus(delta)){
+		for (int i = 0; i < bonuses.length; i++) {
+			if (bonuses[i] != null) {
+				if (bonuses[i].gotBonus(delta)) {
 					bonuses[i] = null;
 					bonuses[i] = new Bonus(this, (int) (Math.random() * Gdx.graphics.getWidth()),
 							(int) (Math.random() * Gdx.graphics.getHeight() / 2 +
