@@ -61,15 +61,12 @@ public class Ball extends Unit {
 		touchTime += delta;
 	}
 
-	public boolean outOfField()
-	{
+	public boolean outOfField() {
 		return (bounds.y < 0) || (bounds.y > Gdx.graphics.getHeight());
 	}
 
-	private void releaseSpeed()
-	{
-		if (xSpeed > 10)
-		{
+	private void releaseSpeed() {
+		if (xSpeed > 10) {
 			xSpeed -= 1;
 		}
 	}
@@ -81,13 +78,9 @@ public class Ball extends Unit {
 			// Right and top ball's sides coordinates
 			xMeter = (bounds.x + bounds.radius);
 			yMeter = (bounds.y + bounds.radius);
-			/*
-			 * Calculating last position in which ball not overlaps board
-			 * To make everything right we must add board's speed in formula
-			 * Just do this carefully!
-			 */
+			 // Calculating last position in which ball not overlaps board
 			while (xMeter > board.bounds.x || yMeter > board.bounds.y) {
-				xMeter -= xSpeed - board.xSpeed;
+				xMeter -= xSpeed;
 				yMeter -= ySpeed;
 			}
 			changeSpeed(board, (int)(board.bounds.x - bounds.radius),
@@ -98,14 +91,10 @@ public class Ball extends Unit {
 			// Right and bottom ball's sides coordinates
 			xMeter = (int)(bounds.x + bounds.radius);
 			yMeter = (int)(bounds.y - bounds.radius);
-			/*
-			 * Calculating last position in which ball not overlaps board
-			 * To make everything right we must add board's speed in formula
-			 * Just do this carefully!
-			 */
+			// Calculating last position in which ball not overlaps board
 			while (xMeter > board.bounds.x ||
 					yMeter < board.bounds.y + board.bounds.height) {
-				xMeter -= xSpeed - board.xSpeed;
+				xMeter -= xSpeed;
 				yMeter -= ySpeed;
 			}
 			changeSpeed(board, (int)(board.bounds.x - bounds.radius),
@@ -116,14 +105,10 @@ public class Ball extends Unit {
 			// Left and top ball's sides coordinates
 			xMeter = (int)(bounds.x - bounds.radius);
 			yMeter = (int)(bounds.y + bounds.radius);
-			/*
-			 * Calculating last position in which ball not overlaps board
-			 * To make everything right we must add board's speed in formula
-			 * Just do this carefully!
-			 */
+			// Calculating last position in which ball not overlaps board
 			while (xMeter < board.bounds.x + board.bounds.width ||
 					yMeter > board.bounds.y) {
-				xMeter -= xSpeed - board.xSpeed;
+				xMeter -= xSpeed;
 				yMeter -= ySpeed;
 			}
 			changeSpeed(board, (int)(board.bounds.x + board.bounds.width),
@@ -135,14 +120,10 @@ public class Ball extends Unit {
 			// Left and bottom ball's sides coordinates
 			xMeter = (int)(bounds.x - bounds.radius);
 			yMeter = (int)(bounds.y - bounds.radius);
-			/*
-			 * Calculating last position in which ball not overlaps board
-			 * To make everything right we must add board's speed in formula
-			 * Just do this carefully!
-			 */
+			// Calculating last position in which ball not overlaps board
 			while (xMeter < board.bounds.x + board.bounds.width ||
 					yMeter < board.bounds.y + board.bounds.height) {
-				xMeter -= xSpeed - board.xSpeed;
+				xMeter -= xSpeed;
 				yMeter -= ySpeed;
 			}
 			changeSpeed(board, (int)(board.bounds.x + board.bounds.width), 
