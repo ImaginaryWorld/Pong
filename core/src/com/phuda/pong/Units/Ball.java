@@ -74,8 +74,7 @@ public class Ball extends Unit {
 		}
 	}
 
-	public void checkBound(Board board) throws TouchException
-	{
+	public void checkBound(Board board) throws TouchException {
 		double xMeter, yMeter;
 		// Ball goes right and up
 		if (xSpeed > 0 && ySpeed > 0) {
@@ -88,7 +87,7 @@ public class Ball extends Unit {
 			 * Just do this carefully!
 			 */
 			while (xMeter > board.bounds.x || yMeter > board.bounds.y) {
-				xMeter -= xSpeed;
+				xMeter -= xSpeed - board.xSpeed;
 				yMeter -= ySpeed;
 			}
 			changeSpeed(board, (int)(board.bounds.x - bounds.radius),
@@ -106,7 +105,7 @@ public class Ball extends Unit {
 			 */
 			while (xMeter > board.bounds.x ||
 					yMeter < board.bounds.y + board.bounds.height) {
-				xMeter -= xSpeed;
+				xMeter -= xSpeed - board.xSpeed;
 				yMeter -= ySpeed;
 			}
 			changeSpeed(board, (int)(board.bounds.x - bounds.radius),
@@ -124,7 +123,7 @@ public class Ball extends Unit {
 			 */
 			while (xMeter < board.bounds.x + board.bounds.width ||
 					yMeter > board.bounds.y) {
-				xMeter -= xSpeed;
+				xMeter -= xSpeed - board.xSpeed;
 				yMeter -= ySpeed;
 			}
 			changeSpeed(board, (int)(board.bounds.x + board.bounds.width),
@@ -143,7 +142,7 @@ public class Ball extends Unit {
 			 */
 			while (xMeter < board.bounds.x + board.bounds.width ||
 					yMeter < board.bounds.y + board.bounds.height) {
-				xMeter -= xSpeed;
+				xMeter -= xSpeed - board.xSpeed;
 				yMeter -= ySpeed;
 			}
 			changeSpeed(board, (int)(board.bounds.x + board.bounds.width), 
