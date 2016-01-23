@@ -1,11 +1,10 @@
 package com.phuda.pong.Units;
 
-import com.phuda.pong.Exc.TouchException;
-import com.phuda.pong.Field;
-import com.phuda.pong.Exc.TouchException;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.audio.Sound;
 import com.badlogic.gdx.math.Circle;
+import com.phuda.pong.Exc.TouchException;
+import com.phuda.pong.Field;
 
 public class Ball extends Unit{
 
@@ -32,8 +31,8 @@ public class Ball extends Unit{
 	
 	public void updateState(float delta)
 	{
-		bounds.x += (float)xSpeed * 50 * delta;
-		bounds.y += (float)ySpeed * 50 * delta;
+		bounds.x += (float)(xSpeed * 50 * delta);
+		bounds.y += (float)(ySpeed * 50 * delta);
 		vector.add((float)bounds.x, (float)bounds.y);
 		lifeTime += delta;
 		

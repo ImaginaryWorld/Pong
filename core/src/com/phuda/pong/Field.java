@@ -21,17 +21,17 @@ public class Field {
 		{
 			// Player 1 aka top player.
 			player1Board = new Board(Gdx.graphics.getWidth()/2 - 50,
-									 Gdx.graphics.getHeight()/12 * 11 - 30, "top", this, true, ai);
+									 Gdx.graphics.getHeight()/12 * 11 - 30, "top", this, ai);
 		}
 		else { 
 			// Player vs player.
 			player1Board = new Board(Gdx.graphics.getWidth()/2 - 50,
-					 Gdx.graphics.getHeight()/12 * 11 - 30, "top", this, false, 0);
+					 Gdx.graphics.getHeight()/12 * 11 - 30, "top", this, 0);
 		}
 		
 		// Player 2 aka bottom player.
 		player2Board = new Board(Gdx.graphics.getWidth()/2 - 50,
-								 Gdx.graphics.getHeight()/12, "bottom", this, false, 0);
+								 Gdx.graphics.getHeight()/12, "bottom", this, 0);
 
 		// Bonuses generation.
 		for (int i = 0; i < bonuses.length; i++) {
