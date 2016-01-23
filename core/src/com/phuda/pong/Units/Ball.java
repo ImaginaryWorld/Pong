@@ -74,19 +74,19 @@ public class Ball extends Unit {
 		}
 	}
 
-	private void playSound() {
-		long s = sound_bump.play(0.5f);
-		sound_bump.setPitch(s, (float) ((ySpeed + xSpeed) * 0.1f + 0.5f));
-	}
-
 	public void checkBound(Board board) throws TouchException
 	{
 		double xMeter, yMeter;
 		// Ball goes right and up
 		if (xSpeed > 0 && ySpeed > 0) {
+			// Right and top ball's sides coordinates
 			xMeter = (bounds.x + bounds.radius);
 			yMeter = (bounds.y + bounds.radius);
-			// Calculating last position in which ball not overlaps board
+			/*
+			 * Calculating last position in which ball not overlaps board
+			 * To make everything right we must add board's speed in formula
+			 * Just do this carefully!
+			 */
 			while (xMeter > board.bounds.x || yMeter > board.bounds.y) {
 				xMeter -= xSpeed;
 				yMeter -= ySpeed;
@@ -96,9 +96,14 @@ public class Ball extends Unit {
 		}
 		// Ball goes right and down
 		else if (xSpeed > 0 && ySpeed < 0) {
+			// Right and bottom ball's sides coordinates
 			xMeter = (int)(bounds.x + bounds.radius);
 			yMeter = (int)(bounds.y - bounds.radius);
-			// Calculating last position in which ball not overlaps board
+			/*
+			 * Calculating last position in which ball not overlaps board
+			 * To make everything right we must add board's speed in formula
+			 * Just do this carefully!
+			 */
 			while (xMeter > board.bounds.x ||
 					yMeter < board.bounds.y + board.bounds.height) {
 				xMeter -= xSpeed;
@@ -109,9 +114,14 @@ public class Ball extends Unit {
 		}
 		// Ball goes left and up
 		else if (xSpeed < 0 && ySpeed > 0) {
+			// Left and top ball's sides coordinates
 			xMeter = (int)(bounds.x - bounds.radius);
 			yMeter = (int)(bounds.y + bounds.radius);
-			// Calculating last position in which ball not overlaps board
+			/*
+			 * Calculating last position in which ball not overlaps board
+			 * To make everything right we must add board's speed in formula
+			 * Just do this carefully!
+			 */
 			while (xMeter < board.bounds.x + board.bounds.width ||
 					yMeter > board.bounds.y) {
 				xMeter -= xSpeed;
@@ -123,9 +133,14 @@ public class Ball extends Unit {
 		}
 		// Ball goes left and down
 		else if (xSpeed < 0 && ySpeed < 0) {
+			// Left and bottom ball's sides coordinates
 			xMeter = (int)(bounds.x - bounds.radius);
 			yMeter = (int)(bounds.y - bounds.radius);
-			// Calculating last position in which ball not overlaps board
+			/*
+			 * Calculating last position in which ball not overlaps board
+			 * To make everything right we must add board's speed in formula
+			 * Just do this carefully!
+			 */
 			while (xMeter < board.bounds.x + board.bounds.width ||
 					yMeter < board.bounds.y + board.bounds.height) {
 				xMeter -= xSpeed;
@@ -148,20 +163,23 @@ public class Ball extends Unit {
 	
 	private void changeSpeed(Board board, int boundX, int boundY, double xMeter, double yMeter) {
 		// Ball collide with left or right side
-		if ((boundX - xMeter) / xSpeed > (boundY - yMeter) / ySpeed)
-		{
+		if (Math.abs(boundX - xMeter) / (Math.abs(xSpeed) + Math.abs(board.xSpeed)) > (boundY - yMeter) / ySpeed) {
 			xSpeed *= -1;
-			bounds.x = boundX; // don't overlap board 
+			// Don't overlap board - new center of ball in radius distance from board's side
+			bounds.x = boundX + bounds.radius;
+			// If ball speed are too slow it receives a board's speed
 			if (Math.abs(xSpeed) < Math.abs(board.xSpeed))
 				xSpeed = board.xSpeed;
 		}
-		// ball collide with top or bottom side
-		else if ((boundX - xMeter) / xSpeed < (boundY - yMeter) / ySpeed)
-		{
+		// Ball collide with top or bottom side
+		else if (Math.abs(boundX - xMeter) / (Math.abs(xSpeed) + Math.abs(board.xSpeed)) < (boundY - yMeter) / ySpeed) {
+			// Don't overlap board - new center of ball in radius distance from board's side
+			bounds.y = boundY + bounds.radius;
 			ySpeed = - ySpeed;
-			xSpeed += board.xSpeed / 5; // give some speed by friction
+			// Give some speed by friction
+			xSpeed += board.xSpeed / 5;
 		}
-		// ball collide with edge
+		// Ball collide with edge
 		else
 		{
 			System.out.println("Edge collide");
@@ -170,14 +188,15 @@ public class Ball extends Unit {
 
 		}
 	}
-	
-	private void handleErr(int errCode) throws TouchException
-	{
-		// Later there can be more touching errors
-		String err[] =
-			{
-					"Touching error"
-			};
+
+	private void playSound() {
+		long s = sound_bump.play(0.5f);
+		sound_bump.setPitch(s, (float) ((ySpeed + xSpeed) * 0.1f + 0.5f));
+	}
+
+	private void handleErr(int errCode) throws TouchException {
+		// Later there can be more touching errors in array
+		String err[] = { "Touching error" };
 		throw new TouchException(err[errCode]);
 	}
 }
