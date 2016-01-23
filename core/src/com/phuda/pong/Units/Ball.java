@@ -15,8 +15,8 @@ public class Ball extends Unit {
 	public Ball(Field field, int _x, int _y, int _radius, int num) {
 		super();
 		// Multipliers that depends on screens width and height
-		int wm = Gdx.graphics.getWidth() / 125;
-		int hm = Gdx.graphics.getHeight() / 150;
+		int wm = 2 + Gdx.graphics.getWidth() / 200;
+		int hm = 2 + Gdx.graphics.getHeight() / 300;
 		this.field = field;
 		bounds = new Circle(_x, _y, _radius);
 		// Randomizing ball's x and y axle speed with using multipliers
