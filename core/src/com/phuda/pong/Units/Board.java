@@ -9,7 +9,7 @@ import com.phuda.pong.Exc.TouchException;
 
 public class Board extends Unit {
 	// Slows the board's movement
-	final int SLOWER = Gdx.graphics.getWidth() / 400,
+	final int SLOWER = 4000 / Gdx.graphics.getWidth(),
 	// Zone on y axis in which player can affect board
 	TOUCHZONE = Gdx.graphics.getHeight() / 5;
 	// Board's disposition variables
@@ -53,7 +53,7 @@ public class Board extends Unit {
 		// Human
 		if (contr == null) {
 			checkTouch();
-			xSpeed = target_x - bounds.x;
+			xSpeed = (target_x - bounds.x) / SLOWER;
 		}
 		// AI
 		else {
@@ -75,14 +75,14 @@ public class Board extends Unit {
 			// Calculate speed of AI board if it have some time to throw back the ball
 			if (contr.prepareTime != 0 && delta != 0 && xSpeed == 0)
 				xSpeed = (target_x - (bounds.x + bounds.width / 2))
-						/ (contr.prepareTime / delta) * SLOWER;
+						/ (contr.prepareTime / delta);
 		}
 
 
-		// If board goes beyond the left or right bound - no movement
+		// If board goes beyond the left or right bound - no movement to this bound side
 		if (!((bounds.x <= 0 && xSpeed <= 0) || (bounds.x >=
 				Gdx.graphics.getWidth() - bounds.width && xSpeed >= 0))) {
-			bounds.x += xSpeed / SLOWER * 50 * delta;
+			bounds.x += xSpeed * 50 * delta;
 		}
 		// Stops the board if it goes out of bound (after x changing but before rendering!)
 		outOfBoundStop();
