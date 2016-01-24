@@ -11,7 +11,7 @@ public class Field {
 	
 	public Board player1Board, player2Board;
 	public Ball[] balls;
-	public Bonus[] bonuses = new Bonus[3];
+	public Bonus[] bonuses = new Bonus[2];
 	
 	Field(String mode, int ballsCount, int ai)
 	{
@@ -34,7 +34,7 @@ public class Field {
 		for (int i = 0; i < bonuses.length; i++) {
 			bonuses[i] = new Bonus(this, (int) (Math.random() * Gdx.graphics.getWidth()),
                     (int) (Math.random() * Gdx.graphics.getHeight() / 2 +
-                            Gdx.graphics.getHeight() / 4));
+                            Gdx.graphics.getHeight() / 4), "timeSlower");
 		}
 		// Balls generation.
 		for (int i = 0; i < balls.length; i++){
@@ -67,7 +67,12 @@ public class Field {
 									Gdx.graphics.getHeight() / 4), 12, i);
 					continue;
 				}
-				balls[i].updateState(delta);
+                int y = Gdx.graphics.getHeight() / 2;
+                if       ( (balls[i].bounds.y > y && player1Board.ability.equals("timeSlower"))
+                        || (balls[i].bounds.y < y && player2Board.ability.equals("timeSlower")) )
+				    balls[i].updateState(delta * 0.4f);
+                else
+                    balls[i].updateState(delta);
 			}
 		}
 
@@ -77,7 +82,7 @@ public class Field {
 					bonuses[i] = null;
 					bonuses[i] = new Bonus(this, (int) (Math.random() * Gdx.graphics.getWidth()),
 							(int) (Math.random() * Gdx.graphics.getHeight() / 2 +
-									Gdx.graphics.getHeight() / 4));
+									Gdx.graphics.getHeight() / 4), "timeSlower");
 				}
 
 			}

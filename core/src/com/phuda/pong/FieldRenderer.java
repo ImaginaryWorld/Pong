@@ -47,12 +47,16 @@ public class FieldRenderer {
 		
 		shapeRenderer.begin(ShapeType.Filled);
         // blue player 1
-		shapeRenderer.setColor(0.5f, 0.2f, 0.2f, 1);
-		shapeRenderer.rect(0, h/4 , w/2 + scoreShift, h/2);
+        shapeRenderer.setColor(0.5f, 0.2f, 0.2f, 1);
+        shapeRenderer.rect(0, h/4 , w/2 + scoreShift, h/2);
         // red player 2
-		shapeRenderer.setColor(0.2f, 0.2f, 0.5f, 1);
-		shapeRenderer.rect(w, h/4, -w/2 + scoreShift, h/2);
-		shapeRenderer.end();
+        shapeRenderer.setColor(0.2f, 0.2f, 0.5f, 1);
+        shapeRenderer.rect(w, h/4, -w/2 + scoreShift, h/2);
+        // abilities bars
+        shapeRenderer.setColor(0.2f, 0.5f, 0.7f, 1);
+        shapeRenderer.rect(0, h-h/4, w, h/8 * field.player1Board.abilityTimer / 10);
+        shapeRenderer.rect(0, h/4 , w, -h/8 * field.player2Board.abilityTimer / 10);
+        shapeRenderer.end();
 
 
 		batch.begin();
@@ -72,9 +76,14 @@ public class FieldRenderer {
 		// bonuses
 		for (Bonus bonus : field.bonuses){
 			if (bonus != null){
+                Texture tex = bonusTimeTexture;
+                if (bonus.type.equals("timeSlower"))
+                    tex = bonusTimeTexture;
+
 				float r = bonus.bounds.radius;
-				batch.draw(bonusTimeTexture, bonus.bounds.x - r, bonus.bounds.y - r,
-						r*2, r*2);
+                batch.draw(tex, bonus.bounds.x - r, bonus.bounds.y - r,
+                        r, r, r*2, r*2, 1, 1, bonus.rotation, 0, 0,
+                        bonusTimeTexture.getWidth(), bonusTimeTexture.getHeight(), false, false);
 			}
 		}
 

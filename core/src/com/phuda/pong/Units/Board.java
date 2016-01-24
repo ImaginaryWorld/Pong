@@ -20,6 +20,8 @@ public class Board extends Unit {
 	private AIBoardController contr;
 	// Score of this board
 	public int score = 0;
+    public String ability = "none";
+    public float abilityTimer;
 	// Sound
 	Sound sound_reflect;
 
@@ -63,6 +65,11 @@ public class Board extends Unit {
 		processAction(delta);
 		// Checking collisions with the balls (second - after board "turn")
 		checkAllBounds2(balls);
+
+        if (!ability.equals("none"))
+            abilityTimer -= delta;
+            if (abilityTimer < 0)
+                ability = "none";
 	}
 
 	private void processAction(float delta) {

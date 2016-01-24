@@ -9,6 +9,7 @@ import com.phuda.pong.Field;
 public class Ball extends Unit {
 	// Ball's disposition variable
 	public Circle bounds;
+    Board lastTouchedBoard;
 	// Sound
 	Sound sound_bump;
 	
@@ -30,8 +31,8 @@ public class Ball extends Unit {
 	
 	public void updateState(float delta) {
 		// Updating ball's position
-		bounds.x += xSpeed;
-		bounds.y += ySpeed;
+		bounds.x += xSpeed * delta * 70;
+		bounds.y += ySpeed * delta * 70;
 		vector.add(bounds.x, bounds.y);
 		// Checking if this ball collides with others
 		for (int i = 0; i < field.balls.length; i++)
@@ -70,12 +71,15 @@ public class Ball extends Unit {
 		}
 	}
 
+    void saveLastBoard(Board board) { lastTouchedBoard = board; }
+
 	void boardCollision(Board board, float yBound) {
 		// Don't overlap board - new center of ball in radius distance from board's side
 		bounds.y = yBound;
 		ySpeed = - ySpeed;
 		// Give some speed by friction
 		xSpeed += board.xSpeed / 5;
+        saveLastBoard(board);
 	}
 
 	void sideBoardCollision(Board board, float xBound) {
@@ -85,6 +89,7 @@ public class Ball extends Unit {
 		// If ball's speed are too low it receives a board's speed
 		if (Math.abs(xSpeed) < Math.abs(board.xSpeed))
 			xSpeed = board.xSpeed;
+        saveLastBoard(board);
 	}
 
 	void angleBoardCollision(Board board, boolean ballTurn) {
@@ -93,6 +98,7 @@ public class Ball extends Unit {
 		else
 			xSpeed = board.xSpeed;
 		ySpeed = -ySpeed;
+        saveLastBoard(board);
 	}
 
 	private void playSound() {
