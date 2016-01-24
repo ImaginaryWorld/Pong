@@ -27,18 +27,15 @@ public class Field {
 			player1Board = new Board(Gdx.graphics.getWidth()/2 - 50,
 					 Gdx.graphics.getHeight()/12 * 11 - 30, "top", this, 0);
 		}
-		
 		// Player 2 aka bottom player.
 		player2Board = new Board(Gdx.graphics.getWidth()/2 - 50,
 								 Gdx.graphics.getHeight()/12, "bottom", this, 0);
-
 		// Bonuses generation.
 		for (int i = 0; i < bonuses.length; i++) {
 			bonuses[i] = new Bonus(this, (int) (Math.random() * Gdx.graphics.getWidth()),
 					(int) (Math.random() * Gdx.graphics.getHeight() / 2 +
 							Gdx.graphics.getHeight() / 4));
 		}
-
 		// Balls generation.
 		for (int i = 0; i < balls.length; i++){
 			balls[i] = new Ball(this, (int)(Math.random() * Gdx.graphics.getWidth()),
@@ -51,21 +48,20 @@ public class Field {
 		// Toggle slow-motion.
 		if (Gdx.input.isKeyPressed(Input.Keys.S))
 			delta = delta * 0.2f;
-		
+		// Updating state of boards
 		player1Board.updateState(delta, balls);
 		player2Board.updateState(delta, balls);
-		
-		
-		
+		// Updating state of balls
 		for (int i = 0; i < balls.length; i++) {
 			if (balls[i] != null) {
 				if (balls[i].outOfField()) {
 					// Who is winner ?
 					if (balls[i].bounds.y > Gdx.graphics.getHeight() / 2) {
-					     	player1Board.score += balls[i].bounds.radius;
-					} else  player2Board.score += balls[i].bounds.radius;
-					
-					balls[i] = null;
+						player1Board.score += balls[i].bounds.radius;
+					}
+					else
+						player2Board.score += balls[i].bounds.radius;
+					// Replacing this ball with a new one
 					balls[i] = new Ball(this, (int)(Math.random() * Gdx.graphics.getWidth()),
 							(int)(Math.random() * Gdx.graphics.getHeight() / 2 +
 									Gdx.graphics.getHeight() / 4), 12, i);

@@ -12,13 +12,13 @@ public class Ball extends Unit {
 	// Sound
 	Sound sound_bump;
 	
-	public Ball(Field field, int _x, int _y, int _radius, int num) {
+	public Ball(Field field, int x, int y, int radius, int num) {
 		super();
 		// Multipliers that depends on screens width and height
 		int wm = 2 + Gdx.graphics.getWidth() / 200;
 		int hm = 2 + Gdx.graphics.getHeight() / 300;
 		this.field = field;
-		bounds = new Circle(_x, _y, _radius);
+		bounds = new Circle(x, y, radius);
 		// Randomizing ball's x and y axle speed with using multipliers
 		while (Math.abs(xSpeed) < wm)
 			xSpeed = (int)(Math.random() * wm * 4 - wm * 2);
@@ -30,8 +30,8 @@ public class Ball extends Unit {
 	
 	public void updateState(float delta) {
 		// Updating ball's position
-		bounds.x += xSpeed * 50 * delta;
-		bounds.y += ySpeed * 50 * delta;
+		bounds.x += xSpeed;
+		bounds.y += ySpeed;
 		vector.add(bounds.x, bounds.y);
 		// Checking if this ball collides with others
 		for (int i = 0; i < field.balls.length; i++)
@@ -50,7 +50,6 @@ public class Ball extends Unit {
 					// Sound
 					playSound();
 				}
-		
 		// Walls collide
 		if ( (bounds.x - bounds.radius < 0 && xSpeed < 0) ||
 				(bounds.x + bounds.radius > Gdx.graphics.getWidth() && xSpeed > 0) ) {
@@ -66,107 +65,34 @@ public class Ball extends Unit {
 	}
 
 	private void releaseSpeed() {
-		if (xSpeed > 10) {
+		if (xSpeed > Gdx.graphics.getWidth() / 50) {
 			xSpeed -= 1;
 		}
 	}
 
-	public void checkBound(Board board) throws TouchException {
-		double xMeter, yMeter;
-		// Ball goes right and up
-		if (xSpeed > 0 && ySpeed > 0) {
-			// Right and top ball's sides coordinates
-			xMeter = (bounds.x + bounds.radius);
-			yMeter = (bounds.y + bounds.radius);
-			 // Calculating last position in which ball not overlaps board
-			while (xMeter > board.bounds.x || yMeter > board.bounds.y) {
-				xMeter -= xSpeed;
-				yMeter -= ySpeed;
-			}
-			changeSpeed(board, (int)(board.bounds.x - bounds.radius),
-					(int)(board.bounds.y - bounds.radius), xMeter, yMeter);
-		}
-		// Ball goes right and down
-		else if (xSpeed > 0 && ySpeed < 0) {
-			// Right and bottom ball's sides coordinates
-			xMeter = (int)(bounds.x + bounds.radius);
-			yMeter = (int)(bounds.y - bounds.radius);
-			// Calculating last position in which ball not overlaps board
-			while (xMeter > board.bounds.x ||
-					yMeter < board.bounds.y + board.bounds.height) {
-				xMeter -= xSpeed;
-				yMeter -= ySpeed;
-			}
-			changeSpeed(board, (int)(board.bounds.x - bounds.radius),
-					(int)(board.bounds.y + board.bounds.height), xMeter, yMeter);
-		}
-		// Ball goes left and up
-		else if (xSpeed < 0 && ySpeed > 0) {
-			// Left and top ball's sides coordinates
-			xMeter = (int)(bounds.x - bounds.radius);
-			yMeter = (int)(bounds.y + bounds.radius);
-			// Calculating last position in which ball not overlaps board
-			while (xMeter < board.bounds.x + board.bounds.width ||
-					yMeter > board.bounds.y) {
-				xMeter -= xSpeed;
-				yMeter -= ySpeed;
-			}
-			changeSpeed(board, (int)(board.bounds.x + board.bounds.width),
-					(int)(board.bounds.y - bounds.radius), xMeter, yMeter);
-
-		}
-		// Ball goes left and down
-		else if (xSpeed < 0 && ySpeed < 0) {
-			// Left and bottom ball's sides coordinates
-			xMeter = (int)(bounds.x - bounds.radius);
-			yMeter = (int)(bounds.y - bounds.radius);
-			// Calculating last position in which ball not overlaps board
-			while (xMeter < board.bounds.x + board.bounds.width ||
-					yMeter < board.bounds.y + board.bounds.height) {
-				xMeter -= xSpeed;
-				yMeter -= ySpeed;
-			}
-			changeSpeed(board, (int)(board.bounds.x + board.bounds.width), 
-					(int)(board.bounds.y + board.bounds.height), xMeter, yMeter);
-		}
-		/*
-		 * Maybe it's strange, but we can't have x speed on 0.
-		 * Except the cases when something goes wrong
-		 */
-		else {
-			handleErr(0);
-			xSpeed = board.xSpeed;
-			// Anyway
-			ySpeed = - ySpeed;
-		}
+	void boardCollision(Board board, float yBound) {
+		// Don't overlap board - new center of ball in radius distance from board's side
+		bounds.y = yBound;
+		ySpeed = - ySpeed;
+		// Give some speed by friction
+		xSpeed += board.xSpeed / 5;
 	}
-	
-	private void changeSpeed(Board board, int boundX, int boundY, double xMeter, double yMeter) {
-		// Ball collide with left or right side
-		if (Math.abs(boundX - xMeter) / (Math.abs(xSpeed) + Math.abs(board.xSpeed)) > (boundY - yMeter) / ySpeed) {
-			xSpeed *= -1;
-			// Don't overlap board - new center of ball in radius distance from board's side
-			bounds.x = boundX + bounds.radius;
-			// If ball speed are too slow it receives a board's speed
-			if (Math.abs(xSpeed) < Math.abs(board.xSpeed))
-				xSpeed = board.xSpeed;
-		}
-		// Ball collide with top or bottom side
-		else if (Math.abs(boundX - xMeter) / (Math.abs(xSpeed) + Math.abs(board.xSpeed)) < (boundY - yMeter) / ySpeed) {
-			// Don't overlap board - new center of ball in radius distance from board's side
-			bounds.y = boundY + bounds.radius;
-			ySpeed = - ySpeed;
-			// Give some speed by friction
-			xSpeed += board.xSpeed / 5;
-		}
-		// Ball collide with edge
-		else
-		{
-			System.out.println("Edge collide");
-			xSpeed = - xSpeed;
-			ySpeed = - ySpeed;
 
-		}
+	void sideBoardCollision(Board board, float xBound) {
+		xSpeed *= -1;
+		// Don't overlap board - new center of ball in radius distance from board's side
+		bounds.x = xBound;
+		// If ball's speed are too low it receives a board's speed
+		if (Math.abs(xSpeed) < Math.abs(board.xSpeed))
+			xSpeed = board.xSpeed;
+	}
+
+	void angleBoardCollision(Board board, boolean ballTurn) {
+		if (ballTurn)
+			xSpeed = -xSpeed;
+		else
+			xSpeed = board.xSpeed;
+		ySpeed = -ySpeed;
 	}
 
 	private void playSound() {
