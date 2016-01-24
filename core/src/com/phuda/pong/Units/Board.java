@@ -142,14 +142,19 @@ public class Board extends Unit {
 
 		for (Ball ball : balls) {
 			if (ball.lastTouched != this) {
+				// Collision with board's top bound points
 				if (checkBallCollision(topBounds, ball) != 0)
 					ball.boardCollision(this, bounds.y + bounds.height + ball.bounds.radius);
+				// Collision with board's bottom bound points
 				else if (checkBallCollision(bottomBounds, ball) != 0)
 					ball.boardCollision(this, bounds.y - ball.bounds.radius);
+				// Collision with board's left bound points
 				else if (checkBallCollision(leftBounds, ball) != 0)
 					ball.sideBoardCollision(this, bounds.x - ball.bounds.radius);
+				// Collision with board's right bound points
 				else if (checkBallCollision(rightBounds, ball) != 0)
 					ball.sideBoardCollision(this, bounds.x + bounds.width + ball.bounds.radius);
+				// Collision with angle points
 				else if ((point = checkBallCollision(angles, ball)) != 0)
 					handleAngleCase(point, ball);
 			}
@@ -163,29 +168,34 @@ public class Board extends Unit {
 
 		for (Ball ball : balls) {
 			if (ball.lastTouched != this) {
+				// Collision with board's top bound points
 				if (checkBallCollision(topBounds, ball) != 0) {
 					if (enterSideFromTop(ball))
 						spotXBound(ball);
 					else
 						ball.angleBoardCollision(this, false);
 				}
+				// Collision with board's bottom bound points
 				else if (checkBallCollision(bottomBounds, ball) != 0) {
 					if (enterSideFromBottom(ball))
 						spotXBound(ball);
 					else
 						ball.angleBoardCollision(this, false);
 				}
+				// Collision with board's left bound points
 				else if (checkBallCollision(leftBounds, ball) != 0) {
 					if (enterSideFromTop(ball) || enterSideFromBottom(ball))
 						spotXBound(ball);
 					else
 						ball.angleBoardCollision(this, false);
 				}
+				// Collision with board's right bound points
 				else if (checkBallCollision(rightBounds, ball) != 0)
 					if (enterSideFromTop(ball) || enterSideFromBottom(ball))
 						spotXBound(ball);
 					else
 						ball.angleBoardCollision(this, false);
+				// Collision with angle points
 				else if ((point = checkBallCollision(angles, ball)) != 0) {
 					ball.angleBoardCollision(this, false);
 				}
@@ -193,7 +203,7 @@ public class Board extends Unit {
 		}
 	}
 
-	//
+	// Defines two cases of side hit - for left and right bound
 	void spotXBound(Ball ball) {
 		if (xSpeed > 0)
 			ball.sideBoardCollision(this, bounds.x + bounds.width + ball.bounds.radius);
@@ -201,27 +211,33 @@ public class Board extends Unit {
 			ball.sideBoardCollision(this, bounds.x - ball.bounds.radius);
 	}
 
+	// Defines if ball was really hit by board's side not angle (calculations for cases when ball are closer to board's top)
 	boolean enterSideFromTop(Ball ball) {
 		return bounds.y + bounds.height - ball.bounds.y > ball.bounds.radius;
 	}
 
+	// Defines if ball was really hit by board's side not angle (calculations for cases when ball are closer to board's bottom)
 	boolean enterSideFromBottom(Ball ball) {
 		return ball.bounds.y - bounds.y > ball.bounds.radius;
 	}
 
+	// Angle cases are very special, so there's an extra method for them
 	void handleAngleCase(int point, Ball ball) {
+		// Would-be left bound's angles cases - when ball really came in point through board's top or bottom
 		if ((point == 1 || point == 2) && ball.xSpeed < 0) {
 			if (point == 1)
 				ball.boardCollision(this, bounds.y - ball.bounds.radius);
 			else
 				ball.boardCollision(this, bounds.y + bounds.height + ball.bounds.radius);
 		}
+		// Would-be right bound's angles cases - when ball really came in point through board's top or bottom
 		else if ((point == 3 || point == 4) && ball.xSpeed > 0) {
 			if (point == 3)
 				ball.boardCollision(this, bounds.y - ball.bounds.radius);
 			else
 				ball.boardCollision(this, bounds.y + bounds.height + ball.bounds.radius);
 		}
+		// True angle cases
 		else
 			ball.angleBoardCollision(this, true);
 	}
@@ -250,10 +266,10 @@ public class Board extends Unit {
 		if ((bounds.x <= 0 && xSpeed < 0) || (bounds.x >=
 				Gdx.graphics.getWidth() - bounds.width && xSpeed > 0)) {
 			xSpeed = 0;
-			// beyond left
+			// Beyond left
 			if (bounds.x < 0)
 				bounds.x = 0;
-				// beyond right
+			// Beyond right
 			else if (bounds.x > Gdx.graphics.getWidth() - bounds.width)
 				bounds.x = Gdx.graphics.getWidth() - bounds.width;
 		}
