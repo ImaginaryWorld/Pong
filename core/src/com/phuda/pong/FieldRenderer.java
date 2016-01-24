@@ -8,6 +8,8 @@ import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer.ShapeType;
+import com.phuda.pong.Units.Ball;
+import com.phuda.pong.Units.Bonus;
 
 public class FieldRenderer {
 	
@@ -44,15 +46,15 @@ public class FieldRenderer {
 		scoreShift += (target_scoreShift - scoreShift) * 0.06;
 		
 		shapeRenderer.begin(ShapeType.Filled);
-		
-		shapeRenderer.setColor(0.5f, 0.2f, 0.2f, 1); // blue player 1
+        // blue player 1
+		shapeRenderer.setColor(0.5f, 0.2f, 0.2f, 1);
 		shapeRenderer.rect(0, h/4 , w/2 + scoreShift, h/2);
-		
-		shapeRenderer.setColor(0.2f, 0.2f, 0.5f, 1); // red player 2
+        // red player 2
+		shapeRenderer.setColor(0.2f, 0.2f, 0.5f, 1);
 		shapeRenderer.rect(w, h/4, -w/2 + scoreShift, h/2);
-		
 		shapeRenderer.end();
-		
+
+
 		batch.begin();
 		
 		score_font.draw(batch, Integer.toString(field.player1Board.score), 40, h/2);
@@ -62,29 +64,25 @@ public class FieldRenderer {
 		batch.draw(boardTexture, field.player1Board.bounds.x, 
 				field.player1Board.bounds.y,             
 							     0f, 0f, 100f, 30f, 1f, 1f, 0f,
-				                 0, 0, 100, 30, false, true); // i need only last true that do flip
+				                 0, 0, 100, 30, false, true);
 		// player 2
 		batch.draw(boardTexture, field.player2Board.bounds.x, 
 				field.player2Board.bounds.y);
 
 		// bonuses
-		for (int i = 0; i < field.bonuses.length; i++){
-			if (field.bonuses[i] != null){
-				//batch.draw(ballTexture, (float)(field.balls[i].bounds.x),
-				//		(float)(field.balls[i].bounds.y));
-				float r = field.bonuses[i].bounds.radius;
-				batch.draw(bonusTimeTexture, field.bonuses[i].bounds.x - r, field.bonuses[i].bounds.y - r,
+		for (Bonus bonus : field.bonuses){
+			if (bonus != null){
+				float r = bonus.bounds.radius;
+				batch.draw(bonusTimeTexture, bonus.bounds.x - r, bonus.bounds.y - r,
 						r*2, r*2);
 			}
 		}
 
 		// balls
-		for (int i = 0; i < field.balls.length; i++){
-			if (field.balls[i] != null){
-				//batch.draw(ballTexture, (float)(field.balls[i].bounds.x), 
-				//		(float)(field.balls[i].bounds.y));
-				float r = field.balls[i].bounds.radius;
-				batch.draw(ballTexture, field.balls[i].bounds.x - r, field.balls[i].bounds.y - r,
+		for (Ball ball : field.balls){
+			if (ball != null){
+				float r = ball.bounds.radius;
+				batch.draw(ballTexture, ball.bounds.x - r, ball.bounds.y - r,
 						r*2, r*2);
 			}
 		}

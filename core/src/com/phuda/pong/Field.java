@@ -33,8 +33,8 @@ public class Field {
 		// Bonuses generation.
 		for (int i = 0; i < bonuses.length; i++) {
 			bonuses[i] = new Bonus(this, (int) (Math.random() * Gdx.graphics.getWidth()),
-					(int) (Math.random() * Gdx.graphics.getHeight() / 2 +
-							Gdx.graphics.getHeight() / 4));
+                    (int) (Math.random() * Gdx.graphics.getHeight() / 2 +
+                            Gdx.graphics.getHeight() / 4));
 		}
 		// Balls generation.
 		for (int i = 0; i < balls.length; i++){
