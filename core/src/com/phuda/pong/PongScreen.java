@@ -7,7 +7,7 @@ import com.badlogic.gdx.Screen;
 public class PongScreen implements Screen {
 
 	Game game;
-	
+
 	PongScreen(Game game)
 	{
 		System.out.println("init PongScreen");

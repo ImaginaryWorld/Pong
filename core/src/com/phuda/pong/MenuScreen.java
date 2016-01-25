@@ -12,6 +12,7 @@ public class MenuScreen extends PongScreen
 	//Menu menu;
 	//MenuRenderer menu;
 	SpriteBatch batch;
+    String images_path;
 	Button start_pvp_button, start_pvc_button, other2_button;
     Slider balls_slider, ai_mode_slider;
 
@@ -20,11 +21,16 @@ public class MenuScreen extends PongScreen
 		super(game);
         int y = (int) (Gdx.graphics.getHeight() / 3 * 1.5);
         int x = Gdx.graphics.getWidth() / 4;
-		start_pvp_button = new Button(x,   y,       "pvp.png");
-		start_pvc_button = new Button(x*2, y + y/3, "pvc.png");
-		other2_button =    new Button(x*3, y,       "undef.png");
 
-        balls_slider = new Slider(x*2, y - y/2, 1, 20, 2, "Balls count: ");
+        if (Gdx.graphics.getWidth() >= 999)
+            images_path = "images_hi/";
+        else
+            images_path = "images_low/";
+		start_pvp_button = new Button(x,   y,      images_path + "pvp.png");
+		start_pvc_button = new Button(x*2, y + y/3,images_path + "pvc.png");
+		other2_button =    new Button(x*3, y,      images_path + "undef.png");
+
+        balls_slider = new Slider(x*2, y - y/2, 1, 6, 2, "Balls count: ");
         ai_mode_slider = new Slider(x*2, y - (int)(y/1.2), 1, 3, 2, "AI strength: ");
 		System.out.println("init MenuScreen");
 	}

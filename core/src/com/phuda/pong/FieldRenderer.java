@@ -14,21 +14,30 @@ import com.phuda.pong.Units.Bonus;
 public class FieldRenderer {
 	
 	SpriteBatch batch;
+    String images_path;
 	ShapeRenderer shapeRenderer;
-	Texture boardTexture, ballTexture, bonusTimeTexture;
-	Field field;
-	
+    Texture boardRedTexture, boardBlueTexture, ballTexture, bonusTimeTexture;
+    Field field;
+
 	float scoreShift, target_scoreShift;
 	BitmapFont score_font;
 	
 	FieldRenderer(Field field)
 	{
+        // Initialize some stuff
 		batch = new SpriteBatch();
 		shapeRenderer = new ShapeRenderer();
-		boardTexture = new Texture(Gdx.files.internal("board.png"));
-		ballTexture = new Texture(Gdx.files.internal("particle.png"));
-		bonusTimeTexture = new Texture(Gdx.files.internal("bonus_time.png"));
+
+        if (Gdx.graphics.getWidth() >= 999)
+            images_path = "images_hi/";
+        else
+            images_path = "images_low/";
+		boardRedTexture = new Texture(Gdx.files.internal(images_path + "board_red.png"));
+        boardBlueTexture = new Texture(Gdx.files.internal(images_path + "board_blue.png"));
+		ballTexture = new Texture(Gdx.files.internal(images_path + "particle.png"));
+		bonusTimeTexture = new Texture(Gdx.files.internal(images_path + "bonus_time.png"));
 		bonusTimeTexture.setFilter(TextureFilter.Linear, TextureFilter.Linear);
+
 		this.field = field;
 		
 		score_font = new BitmapFont();
@@ -66,12 +75,10 @@ public class FieldRenderer {
 		score_font.draw(batch, Integer.toString(field.player2Board.score), w - 40, h/2);
 		
 		// player 1
-		batch.draw(boardTexture, field.player1Board.bounds.x, 
-				field.player1Board.bounds.y,             
-							     0f, 0f, 100f, 30f, 1f, 1f, 0f,
-				                 0, 0, 100, 30, false, true);
+		batch.draw(boardRedTexture, field.player1Board.bounds.x,
+				field.player1Board.bounds.y);
 		// player 2
-		batch.draw(boardTexture, field.player2Board.bounds.x, 
+		batch.draw(boardBlueTexture, field.player2Board.bounds.x,
 				field.player2Board.bounds.y);
 
 		// balls

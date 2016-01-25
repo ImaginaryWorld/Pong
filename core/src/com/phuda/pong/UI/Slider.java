@@ -17,10 +17,15 @@ public class Slider {
     private Rectangle rect;
     private Texture base, unit;
     private BitmapFont font;
+    private String images_path;
 
     public Slider(int _x, int _y, int _min, int _max, int defValue, String _label){
-        base = new Texture(Gdx.files.internal("slider_base.png"));
-        unit = new Texture(Gdx.files.internal("slider_unit.png"));
+        if (Gdx.graphics.getWidth() >= 999)
+            images_path = "images_hi/";
+        else
+            images_path = "images_low/";
+        base = new Texture(Gdx.files.internal(images_path + "slider_base.png"));
+        unit = new Texture(Gdx.files.internal(images_path + "slider_unit.png"));
 
         offset = unit.getWidth()/2;
 
