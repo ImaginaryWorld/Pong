@@ -25,6 +25,6 @@ public class Bonus extends Unit {
     public void updateState(float delta) {
         time += delta / 5;
         rotation = MathUtils.sin(time) * 180 + initialRotation;
-        bounds.radius += (target_radius - bounds.radius) * 5 * delta;
+        bounds.radius += (target_radius - bounds.radius) * 5 * delta - time;
     }
 }

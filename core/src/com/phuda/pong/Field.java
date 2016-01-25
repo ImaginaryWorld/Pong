@@ -99,7 +99,7 @@ public class Field {
 
 	private void updateBonuses(float delta) {
 		for (int i = 0; i < bonuses.length; i++) {
-			if (bonuses[i] == null)
+			if (bonuses[i] == null || bonuses[i].bounds.radius < 1)
 				bonuses[i] = new Bonus(this, (int) (Math.random() * Gdx.graphics.getWidth()),
 						(int) (Math.random() * Gdx.graphics.getHeight() / 2 +
 								Gdx.graphics.getHeight() / 4), "timeSlower");
