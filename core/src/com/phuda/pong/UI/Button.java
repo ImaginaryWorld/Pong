@@ -17,11 +17,9 @@ public class Button {
 	private Rectangle rect;
 	private Texture texture;
 	private boolean press, over;
-    private String images_path;
 	
 	public Button(int _x, int _y, String img_source) {
 
-        images_path = "images_low/";
 		texture = new Texture(Gdx.files.internal(img_source));
 		texture.setFilter(TextureFilter.Linear, TextureFilter.Linear); // smooth resizing
 		height = texture.getHeight();

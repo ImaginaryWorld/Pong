@@ -12,7 +12,6 @@ public class MenuScreen extends PongScreen
 	//Menu menu;
 	//MenuRenderer menu;
 	SpriteBatch batch;
-    String images_path;
 	Button start_pvp_button, start_pvc_button, other2_button;
     Slider balls_slider, ai_mode_slider;
 
@@ -22,7 +21,7 @@ public class MenuScreen extends PongScreen
         int y = (int) (Gdx.graphics.getHeight() / 3 * 1.5);
         int x = Gdx.graphics.getWidth() / 4;
 
-        images_path = "images_low/";
+        String images_path = "images_low/";
 		start_pvp_button = new Button(x,   y,      images_path + "pvp.png");
 		start_pvc_button = new Button(x*2, y + y/3,images_path + "pvc.png");
 		other2_button =    new Button(x*3, y,      images_path + "undef.png");

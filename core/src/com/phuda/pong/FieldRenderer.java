@@ -14,7 +14,6 @@ import com.phuda.pong.Units.Bonus;
 public class FieldRenderer {
 	
 	SpriteBatch batch;
-    String images_path;
 	ShapeRenderer shapeRenderer;
     Texture boardRedTexture, boardBlueTexture, ballTexture, bonusTimeTexture;
     Field field;
@@ -28,7 +27,7 @@ public class FieldRenderer {
 		batch = new SpriteBatch();
 		shapeRenderer = new ShapeRenderer();
 
-        images_path = "images_low/";
+        String images_path = "images_low/";
 		boardRedTexture = new Texture(Gdx.files.internal(images_path + "board_red.png"));
         boardBlueTexture = new Texture(Gdx.files.internal(images_path + "board_blue.png"));
 		ballTexture = new Texture(Gdx.files.internal(images_path + "particle.png"));
