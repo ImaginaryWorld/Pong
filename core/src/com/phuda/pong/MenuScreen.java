@@ -21,7 +21,7 @@ public class MenuScreen extends PongScreen
         int y = (int) (Gdx.graphics.getHeight() / 3 * 1.5);
         int x = Gdx.graphics.getWidth() / 4;
 
-        String images_path = "images_low/";
+        String images_path = "images_hi/";
 		start_pvp_button = new Button(x,   y,      images_path + "pvp.png");
 		start_pvc_button = new Button(x*2, y + y/3,images_path + "pvc.png");
 		other2_button =    new Button(x*3, y,      images_path + "undef.png");

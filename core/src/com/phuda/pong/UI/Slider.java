@@ -20,7 +20,7 @@ public class Slider {
 
     public Slider(int _x, int _y, int _min, int _max, int defValue, String _label){
 
-        String images_path = "images_low/";
+        String images_path = "images_hi/";
         base = new Texture(Gdx.files.internal(images_path + "slider_base.png"));
         unit = new Texture(Gdx.files.internal(images_path + "slider_unit.png"));
 

@@ -29,10 +29,11 @@ public class FieldRenderer {
 		batch = new SpriteBatch();
 		shapeRenderer = new ShapeRenderer();
 
-        String images_path = "images_low/";
+        String images_path = "images_hi/";
 		boardRedTexture = new Texture(Gdx.files.internal(images_path + "board_red.png"));
         boardBlueTexture = new Texture(Gdx.files.internal(images_path + "board_blue.png"));
 		ballTexture = new Texture(Gdx.files.internal(images_path + "particle.png"));
+        ballTexture.setFilter(TextureFilter.Linear, TextureFilter.Linear);
 		bonusTimeTexture = new Texture(Gdx.files.internal(images_path + "bonus_time.png"));
         bonusTimeTexture.setFilter(TextureFilter.Linear, TextureFilter.Linear);
         bonusSplitterTexture = new Texture(Gdx.files.internal(images_path + "bonus_splitter.png"));
