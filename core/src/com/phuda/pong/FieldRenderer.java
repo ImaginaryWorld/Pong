@@ -28,10 +28,7 @@ public class FieldRenderer {
 		batch = new SpriteBatch();
 		shapeRenderer = new ShapeRenderer();
 
-        if (Gdx.graphics.getWidth() >= 999)
-            images_path = "images_hi/";
-        else
-            images_path = "images_low/";
+        images_path = "images_low/";
 		boardRedTexture = new Texture(Gdx.files.internal(images_path + "board_red.png"));
         boardBlueTexture = new Texture(Gdx.files.internal(images_path + "board_blue.png"));
 		ballTexture = new Texture(Gdx.files.internal(images_path + "particle.png"));

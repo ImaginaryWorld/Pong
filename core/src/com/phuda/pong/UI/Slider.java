@@ -20,10 +20,8 @@ public class Slider {
     private String images_path;
 
     public Slider(int _x, int _y, int _min, int _max, int defValue, String _label){
-        if (Gdx.graphics.getWidth() >= 999)
-            images_path = "images_hi/";
-        else
-            images_path = "images_low/";
+
+        images_path = "images_low/";
         base = new Texture(Gdx.files.internal(images_path + "slider_base.png"));
         unit = new Texture(Gdx.files.internal(images_path + "slider_unit.png"));
 
