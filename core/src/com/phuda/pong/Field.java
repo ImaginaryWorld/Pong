@@ -12,6 +12,8 @@ public class Field {
 	public Board player1Board, player2Board;
 	public Ball[] balls;
 	public Bonus[] bonuses = new Bonus[2];
+	// Map for names of effects on the field
+	public final String effectsMap[] = {"timeSlower"};
 	
 	Field(String mode, int ballsCount, int ai)
 	{
@@ -79,11 +81,13 @@ public class Field {
 				}
 				int y = Gdx.graphics.getHeight() / 2;
 				// Slowing ball if necessary
-				if       ( (balls[i].bounds.y > y && player1Board.ability.equals("timeSlower"))
-						|| (balls[i].bounds.y < y && player2Board.ability.equals("timeSlower")) )
-					balls[i].updateState(delta * 0.4f);
-				else
-					balls[i].updateState(delta);
+				for (int j = 0; j < effectsMap.length; j++) {
+					if       ( (balls[i].bounds.y > y && player1Board.abilities[j].isActive)
+							|| (balls[i].bounds.y < y && player2Board.abilities[j].isActive) )
+						balls[i].updateState(delta * 0.4f);
+					else
+						balls[i].updateState(delta);
+				}
 			}
 		}
 	}

@@ -4,6 +4,7 @@ import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.audio.Sound;
 import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.math.Vector2;
+import com.phuda.pong.Effects.PlayerAbility;
 import com.phuda.pong.Field;
 import com.phuda.pong.AI.AIBoardController;
 
@@ -21,8 +22,7 @@ public class Board extends Unit {
 	// Score of this board
 	public int score = 0;
 	// Ability variables
-    public String ability = "none";
-    public float abilityTimer;
+    public PlayerAbility[] abilities = {new PlayerAbility("timeSlower")};
 	// Sound
 	Sound sound_reflect;
 
@@ -112,10 +112,12 @@ public class Board extends Unit {
 	}
 
 	private void updateAbility(float delta) {
-		if (!ability.equals("none"))
-			abilityTimer -= delta;
-		if (abilityTimer < 0)
-			ability = "none";
+		for (PlayerAbility ability: abilities) {
+			if (ability.isActive)
+				ability.timer -= delta;
+			if (ability.timer < 0)
+				ability.isActive = false;
+		}
 	}
 
 	private void checkTouch() {
@@ -311,6 +313,18 @@ public class Board extends Unit {
 				return j + 1;
 			}
 		return 0;
+	}
+
+	public void engageAbility(String abilityName) {
+		for (PlayerAbility ability : abilities) {
+			if (ability.name.equals(abilityName)) {
+				ability.isActive = true;
+				ability.timer = 10.0f;
+				System.out.print(this.name);
+				System.out.print(" got a bonus: ");
+				System.out.println(ability.name);
+			}
+		}
 	}
 
 	void outOfBoundStop() {

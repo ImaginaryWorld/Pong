@@ -54,8 +54,9 @@ public class FieldRenderer {
         shapeRenderer.rect(w, h/4, -w/2 + scoreShift, h/2);
         // abilities bars
         shapeRenderer.setColor(0.2f, 0.5f, 0.7f, 1);
-        shapeRenderer.rect(0, h-h/4, w, h/8 * field.player1Board.abilityTimer / 10);
-        shapeRenderer.rect(0, h/4 , w, -h/8 * field.player2Board.abilityTimer / 10);
+		// That's just a crutch, but later there can be more than one bonus
+        shapeRenderer.rect(0, h-h/4, w, h/8 * field.player1Board.abilities[0].timer / 10);
+        shapeRenderer.rect(0, h/4 , w, -h/8 * field.player2Board.abilities[0].timer / 10);
         shapeRenderer.end();
 
 

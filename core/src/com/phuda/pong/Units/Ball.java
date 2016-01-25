@@ -32,9 +32,7 @@ public class Ball extends Unit {
 	public void updateState(float delta) {
 		touchTime += delta;
 		// Updating ball's position
-		bounds.x += xSpeed * delta * 70;
-		bounds.y += ySpeed * delta * 70;
-		vector.add(bounds.x, bounds.y);
+		updatePosition(delta);
 		// Check collisions with balls
 		checkCollidesWithBalls(field.balls);
 		// Check collisions with bonuses
@@ -43,6 +41,12 @@ public class Ball extends Unit {
 		checkCollidesWithWalls();
 		// Speed decreasing
 		releaseSpeed();
+	}
+
+	private void updatePosition(float delta) {
+		bounds.x += xSpeed * delta * 70;
+		bounds.y += ySpeed * delta * 70;
+		vector.add(bounds.x, bounds.y);
 	}
 
 	private void checkCollidesWithBalls(Ball[] balls) {
@@ -64,11 +68,7 @@ public class Ball extends Unit {
 				if (bounds.overlaps(bonuses[i].bounds))
 				{
 					// Somebody got a bonus!
-					lastTouchedBoard.ability = bonuses[i].name;
-					lastTouchedBoard.abilityTimer = 10.0f;
-					System.out.print(lastTouchedBoard.name);
-					System.out.print(" got a bonus: ");
-					System.out.println(lastTouchedBoard.ability);
+					lastTouchedBoard.engageAbility(bonuses[i].name);
 					// Deleting bonus
 					bonuses[i] = null;
 				}
