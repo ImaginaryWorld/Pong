@@ -12,7 +12,7 @@ public class Field {
 	int screenWidth, screenHeight;
 	public Board player1Board, player2Board;
 	public Ball[] balls;
-	public Bonus[] bonuses = new Bonus[2];
+	public Bonus[] bonuses;
 	// Map for names of effects on the field
 	public final String effectsMap[] = {"timeSlower", "ballSplitter"};
 	
@@ -32,19 +32,12 @@ public class Field {
 			// Player vs player
 			player1Board = new Board(screenWidth, screenHeight, "top", this, 0);
 		}
-		// Player 2 aka bottom player.
-		player2Board = new Board(Gdx.graphics.getWidth()/2 - 50,
-								 Gdx.graphics.getHeight()/12, "bottom", this, 0);
-		// Balls generation.
-		for (int i = 0; i < balls.length; i++){
-			balls[i] = new Ball(this, (int)(Math.random() * Gdx.graphics.getWidth()),
-					(int)(Math.random() * Gdx.graphics.getHeight() / 2 +
-							Gdx.graphics.getHeight() / 4), 12, i);
-		}
-		// Bonuses generation.
-		for (int i = 0; i < bonuses.length; i++) {
-			bonuses[i] = newBonus();
-		}
+		// Player 2 aka bottom player
+		player2Board = new Board(screenWidth, screenHeight, "bottom", this, 0);
+		// Bonuses generation
+		bonuses = new Bonus[2];
+		for (int i = 0; i < bonuses.length; i++)
+			bonuses[i] = new Bonus(this, screenWidth, screenHeight, "timeSlower");
 	}
 	
 	public void updateState(float delta) {
@@ -65,31 +58,20 @@ public class Field {
 	}
 
 	private void updateBalls(float delta) {
-        int y = Gdx.graphics.getHeight() / 2;
-        for (int i = 0; i < balls.length; i++) {
-            if (balls[i] != null) {
-                if (balls[i].outOfField()) {
-                    // Who is winner ?
-                    if (balls[i].bounds.y > Gdx.graphics.getHeight() / 2) {
-                        player1Board.score += balls[i].bounds.radius;
-                    }
-					else {
-                        player2Board.score += balls[i].bounds.radius;
-                    }
-                    // Replacing this ball with a new one
-                    balls[i] = new Ball(this, (int)(Math.random() * Gdx.graphics.getWidth()),
-							(int)(Math.random() * Gdx.graphics.getHeight() / 2 +
-									Gdx.graphics.getHeight() / 4), 12, i);
-                    continue;
-                }
-                else if (  player1Board.abilities[1].isActive && balls[i].justTouchedBoard
-                        && balls[i].bounds.y > y
-                        || player2Board.abilities[1].isActive && balls[i].justTouchedBoard
-                        && balls[i].bounds.y < y) {
-                    balls[i] = new Ball(this, (int)balls[i].bounds.x, (int)balls[i].bounds.y,
-                            (int)(balls[i].bounds.radius * 0.8f), i);
-                    System.out.println("There are i really want a three small balls");
-                }
+		for (int i = 0; i < balls.length; i++) {
+			if (balls[i] != null) {
+				if (balls[i].outOfField()) {
+					// Who is winner ?
+					if (balls[i].bounds.y > Gdx.graphics.getHeight() / 2) {
+						player1Board.score += balls[i].bounds.radius;
+					}
+					else
+						player2Board.score += balls[i].bounds.radius;
+					// Replacing this ball with a new one
+					balls[i] = new Ball(this, screenWidth, screenHeight, i);
+					continue;
+				}
+				int y = Gdx.graphics.getHeight() / 2;
 				// Slowing ball if necessary
                 if       ( (balls[i].bounds.y > y && player1Board.abilities[0].isActive)
                         || (balls[i].bounds.y < y && player2Board.abilities[0].isActive) )
