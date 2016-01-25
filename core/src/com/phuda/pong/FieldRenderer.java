@@ -73,11 +73,19 @@ public class FieldRenderer {
 		batch.draw(boardTexture, field.player2Board.bounds.x, 
 				field.player2Board.bounds.y);
 
+		// balls
+		for (Ball ball : field.balls){
+			if (ball != null){
+				float r = ball.bounds.radius;
+				batch.draw(ballTexture, ball.bounds.x - r, ball.bounds.y - r, r*2, r*2);
+			}
+		}
+
 		// bonuses
 		for (Bonus bonus : field.bonuses){
 			if (bonus != null){
                 Texture tex = bonusTimeTexture;
-                if (bonus.type.equals("timeSlower"))
+                if (bonus.name.equals("timeSlower"))
                     tex = bonusTimeTexture;
 
 				float r = bonus.bounds.radius;
@@ -86,16 +94,6 @@ public class FieldRenderer {
                         bonusTimeTexture.getWidth(), bonusTimeTexture.getHeight(), false, false);
 			}
 		}
-
-		// balls
-		for (Ball ball : field.balls){
-			if (ball != null){
-				float r = ball.bounds.radius;
-				batch.draw(ballTexture, ball.bounds.x - r, ball.bounds.y - r,
-						r*2, r*2);
-			}
-		}
-		
 		batch.end();
 	}
 	

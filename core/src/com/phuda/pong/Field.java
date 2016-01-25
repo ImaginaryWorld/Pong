@@ -30,17 +30,17 @@ public class Field {
 		// Player 2 aka bottom player.
 		player2Board = new Board(Gdx.graphics.getWidth()/2 - 50,
 								 Gdx.graphics.getHeight()/12, "bottom", this, 0);
-		// Bonuses generation.
-		for (int i = 0; i < bonuses.length; i++) {
-			bonuses[i] = new Bonus(this, (int) (Math.random() * Gdx.graphics.getWidth()),
-                    (int) (Math.random() * Gdx.graphics.getHeight() / 2 +
-                            Gdx.graphics.getHeight() / 4), "timeSlower");
-		}
 		// Balls generation.
 		for (int i = 0; i < balls.length; i++){
 			balls[i] = new Ball(this, (int)(Math.random() * Gdx.graphics.getWidth()),
 					(int)(Math.random() * Gdx.graphics.getHeight() / 2 +
 							Gdx.graphics.getHeight() / 4), 12, i);
+		}
+		// Bonuses generation.
+		for (int i = 0; i < bonuses.length; i++) {
+			bonuses[i] = new Bonus(this, (int) (Math.random() * Gdx.graphics.getWidth()),
+					(int) (Math.random() * Gdx.graphics.getHeight() / 2 +
+							Gdx.graphics.getHeight() / 4), "timeSlower");
 		}
 	}
 	
@@ -49,9 +49,19 @@ public class Field {
 		if (Gdx.input.isKeyPressed(Input.Keys.S))
 			delta = delta * 0.2f;
 		// Updating state of boards
+		updateBoards(delta);
+		// Updating state of balls
+		updateBalls(delta);
+		// Updating bonuses
+		updateFeatures(delta);
+	}
+
+	private void updateBoards(float delta) {
 		player1Board.updateState(delta, balls);
 		player2Board.updateState(delta, balls);
-		// Updating state of balls
+	}
+
+	private void updateBalls(float delta) {
 		for (int i = 0; i < balls.length; i++) {
 			if (balls[i] != null) {
 				if (balls[i].outOfField()) {
@@ -67,25 +77,29 @@ public class Field {
 									Gdx.graphics.getHeight() / 4), 12, i);
 					continue;
 				}
-                int y = Gdx.graphics.getHeight() / 2;
-                if       ( (balls[i].bounds.y > y && player1Board.ability.equals("timeSlower"))
-                        || (balls[i].bounds.y < y && player2Board.ability.equals("timeSlower")) )
-				    balls[i].updateState(delta * 0.4f);
-                else
-                    balls[i].updateState(delta);
+				int y = Gdx.graphics.getHeight() / 2;
+				// Slowing ball if necessary
+				if       ( (balls[i].bounds.y > y && player1Board.ability.equals("timeSlower"))
+						|| (balls[i].bounds.y < y && player2Board.ability.equals("timeSlower")) )
+					balls[i].updateState(delta * 0.4f);
+				else
+					balls[i].updateState(delta);
 			}
 		}
+	}
 
+	private void updateFeatures(float delta) {
+		// Bonuses update
+		updateBonuses(delta);
+	}
+
+	private void updateBonuses(float delta) {
 		for (int i = 0; i < bonuses.length; i++) {
-			if (bonuses[i] != null) {
-				if (bonuses[i].gotBonus(delta)) {
-					bonuses[i] = null;
-					bonuses[i] = new Bonus(this, (int) (Math.random() * Gdx.graphics.getWidth()),
-							(int) (Math.random() * Gdx.graphics.getHeight() / 2 +
-									Gdx.graphics.getHeight() / 4), "timeSlower");
-				}
-
-			}
+			if (bonuses[i] == null)
+				bonuses[i] = new Bonus(this, (int) (Math.random() * Gdx.graphics.getWidth()),
+						(int) (Math.random() * Gdx.graphics.getHeight() / 2 +
+								Gdx.graphics.getHeight() / 4), "timeSlower");
+			bonuses[i].updateState(delta);
 		}
 	}
 }

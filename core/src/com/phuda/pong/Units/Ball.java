@@ -3,6 +3,7 @@ package com.phuda.pong.Units;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.audio.Sound;
 import com.badlogic.gdx.math.Circle;
+import com.badlogic.gdx.math.MathUtils;
 import com.phuda.pong.Exc.TouchException;
 import com.phuda.pong.Field;
 
@@ -21,8 +22,7 @@ public class Ball extends Unit {
 		this.field = field;
 		bounds = new Circle(x, y, radius);
 		// Randomizing ball's x and y axle speed with using multipliers
-		while (Math.abs(xSpeed) < wm)
-			xSpeed = (int)(Math.random() * wm * 4 - wm * 2);
+		xSpeed = (int)(Math.random() * wm * 4 - wm * 2);
 		while (Math.abs(ySpeed) < hm)
 			ySpeed = (int)(Math.random() * hm * 4 - hm * 2);
 		this.name = Integer.toString(++num);
@@ -30,75 +30,113 @@ public class Ball extends Unit {
 	}
 	
 	public void updateState(float delta) {
+		touchTime += delta;
 		// Updating ball's position
 		bounds.x += xSpeed * delta * 70;
 		bounds.y += ySpeed * delta * 70;
 		vector.add(bounds.x, bounds.y);
-		// Checking if this ball collides with others
-		for (int i = 0; i < field.balls.length; i++)
-			if (this != field.balls[i])
-				if (bounds.overlaps(field.balls[i].bounds)) {
-					// Balls exchange their speeds
-					double xTemp = field.balls[i].xSpeed;
-					double yTemp = field.balls[i].ySpeed;
-					field.balls[i].xSpeed = xSpeed;
-					field.balls[i].ySpeed = ySpeed;
-					this.xSpeed = xTemp;
-					this.ySpeed = yTemp;
-					// Setting fields that refers to last touched unit
-					field.balls[i].lastTouched = this;
-					this.lastTouched = field.balls[i];
+		// Check collisions with balls
+		checkCollidesWithBalls(field.balls);
+		// Check collisions with bonuses
+		checkCollidesWithBonuses(field.bonuses);
+		// Checking if ball hit the wall
+		checkCollidesWithWalls();
+		// Speed decreasing
+		releaseSpeed();
+	}
+
+	private void checkCollidesWithBalls(Ball[] balls) {
+		for (Ball ball : balls)
+			if (this != ball)
+				if (bounds.overlaps(ball.bounds)) {
+					// Balls exchange their speeds and sets last touched unit
+					ballsExchange(ball);
 					// Sound
 					playSound();
 				}
-		// Walls collide
+	}
+
+	private void checkCollidesWithBonuses(Bonus[] bonuses) {
+		if (lastTouchedBoard == null)
+			return;
+		for (int i = 0; i < bonuses.length; i++)
+			if (bonuses[i] != null)
+				if (bounds.overlaps(bonuses[i].bounds))
+				{
+					// Somebody got a bonus!
+					lastTouchedBoard.ability = bonuses[i].name;
+					lastTouchedBoard.abilityTimer = 10.0f;
+					System.out.print(lastTouchedBoard.name);
+					System.out.print(" got a bonus: ");
+					System.out.println(lastTouchedBoard.ability);
+					// Deleting bonus
+					bonuses[i] = null;
+				}
+	}
+
+	private void checkCollidesWithWalls() {
 		if ( (bounds.x - bounds.radius < 0 && xSpeed < 0) ||
 				(bounds.x + bounds.radius > Gdx.graphics.getWidth() && xSpeed > 0) ) {
 			xSpeed = -xSpeed;
 			playSound();
 		}
-		releaseSpeed();
-		touchTime += delta;
+	}
+
+	private void releaseSpeed() {
+		if (xSpeed > Gdx.graphics.getWidth() / 40) {
+			xSpeed -= 1;
+		}
+	}
+
+	private void ballsExchange(Ball ball) {
+		double xTemp = ball.xSpeed;
+		double yTemp = ball.ySpeed;
+		// Speed exchanging
+		ball.xSpeed = xSpeed;
+		ball.ySpeed = ySpeed;
+		this.xSpeed = xTemp;
+		this.ySpeed = yTemp;
+		// Setting fields that refers to last touched unit
+		ball.lastTouched = this;
+		this.lastTouched = ball;
 	}
 
 	public boolean outOfField() {
 		return (bounds.y < 0) || (bounds.y > Gdx.graphics.getHeight());
 	}
 
-	private void releaseSpeed() {
-		if (xSpeed > Gdx.graphics.getWidth() / 50) {
-			xSpeed -= 1;
-		}
-	}
-
-    void saveLastBoard(Board board) { lastTouchedBoard = board; }
-
-	void boardCollision(Board board, float yBound) {
+	public void boardCollision(Board board, float yBound) {
 		// Don't overlap board - new center of ball in radius distance from board's side
 		bounds.y = yBound;
 		ySpeed = - ySpeed;
 		// Give some speed by friction
 		xSpeed += board.xSpeed / 5;
-        saveLastBoard(board);
 	}
 
-	void sideBoardCollision(Board board, float xBound) {
+	public void sideBoardCollision(Board board, float xBound) {
 		xSpeed *= -1;
 		// Don't overlap board - new center of ball in radius distance from board's side
 		bounds.x = xBound;
 		// If ball's speed are too low it receives a board's speed
 		if (Math.abs(xSpeed) < Math.abs(board.xSpeed))
 			xSpeed = board.xSpeed;
-        saveLastBoard(board);
 	}
 
-	void angleBoardCollision(Board board, boolean ballTurn) {
-		if (ballTurn)
+	public void angleBoardCollision(Board board, boolean ySpeedChange) {
+		// Changing xSpeed
+		if (board.xSpeed == 0)
 			xSpeed = -xSpeed;
+		else if ((board.xSpeed > 0 && xSpeed > 0) || (board.xSpeed < 0 && xSpeed < 0))
+			xSpeed += board.xSpeed;
 		else
-			xSpeed = board.xSpeed;
-		ySpeed = -ySpeed;
-        saveLastBoard(board);
+			xSpeed = -xSpeed + board.xSpeed;
+		// Changing ySpeed
+		if (ySpeedChange)
+			ySpeed = -ySpeed;
+	}
+
+	public void saveLastBoard(Board board) {
+		lastTouchedBoard = board;
 	}
 
 	private void playSound() {

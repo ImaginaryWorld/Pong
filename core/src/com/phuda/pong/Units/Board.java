@@ -20,6 +20,7 @@ public class Board extends Unit {
 	private AIBoardController contr;
 	// Score of this board
 	public int score = 0;
+	// Ability variables
     public String ability = "none";
     public float abilityTimer;
 	// Sound
@@ -27,35 +28,20 @@ public class Board extends Unit {
 
 	public Board(int x, int y, String name, Field field, int difficultyLevel) {
 		super();
-		target_x = x;
-		bounds = new Rectangle();
-		bounds.x = x;
-		bounds.y = y;
-		bounds.width = 100;
-		bounds.height = 30;
-		topBounds = new Vector2[9];
-		for (int i = 0; i < topBounds.length; i++)
-			topBounds[i] = new Vector2(bounds.x + bounds.width / 10 * (i + 1), bounds.y + bounds.height);
-		bottomBounds = new Vector2[9];
-		for (int i = 0; i < bottomBounds.length; i++)
-			bottomBounds[i] = new Vector2(bounds.x + bounds.width / 10 * (i + 1), bounds. y);
-		leftBounds = new Vector2[2];
-		for (int i = 0; i < leftBounds.length; i++)
-			leftBounds[i] = new Vector2(bounds.x, bounds.y + bounds.height / 3 * (i + 1));
-		rightBounds = new Vector2[2];
-		for (int i = 0; i < rightBounds.length; i++)
-			rightBounds[i] = new Vector2(bounds.x + bounds.width, bounds.y + bounds.height / 3 * (i + 1));
-		angles = new Vector2[4];
-		angles[0] = new Vector2(bounds.x, bounds.y);
-		angles[1] = new Vector2(bounds.x, bounds.y + bounds.height);
-		angles[2] = new Vector2(bounds.x + bounds.width, bounds.y);
-		angles[3] = new Vector2(bounds.x + bounds.width, bounds.y + bounds.height);
+		this.target_x = x;
+		this.bounds = new Rectangle();
+		this.bounds.x = x;
+		this.bounds.y = y;
+		this.bounds.width = 100;
+		this.bounds.height = 30;
+		// Setting points of board's bounds
+		setBoundsPoints();
 		this.name = name;
-		sound_reflect = Gdx.audio.newSound(Gdx.files.internal("sounds/reflect.wav"));
 		this.field = field;
+		this.sound_reflect = Gdx.audio.newSound(Gdx.files.internal("sounds/reflect.wav"));
 		// Set difficulty level to 0 to create human player
 		if (difficultyLevel != 0)
-			contr = new AIBoardController(this, field.balls, difficultyLevel);
+			this.contr = new AIBoardController(this, field.balls, difficultyLevel);
 	}
 
 	public void updateState(float delta, Ball[] balls) {
@@ -65,11 +51,8 @@ public class Board extends Unit {
 		processAction(delta);
 		// Checking collisions with the balls (second - after board "turn")
 		checkAllBounds2(balls);
-
-        if (!ability.equals("none"))
-            abilityTimer -= delta;
-            if (abilityTimer < 0)
-                ability = "none";
+		// Updating ability
+		updateAbility(delta);
 	}
 
 	private void processAction(float delta) {
@@ -113,7 +96,7 @@ public class Board extends Unit {
 		outOfBoundStop();
 	}
 
-	void updateVectors() {
+	private void updateVectors() {
 		for (int i = 0; i < topBounds.length; i++)
 			topBounds[i].x = bounds.x + 10 * (i + 1);
 		for (int i = 0; i < bottomBounds.length; i++)
@@ -128,7 +111,14 @@ public class Board extends Unit {
 		angles[3].x = bounds.x + bounds.width;
 	}
 
-	void checkTouch() {
+	private void updateAbility(float delta) {
+		if (!ability.equals("none"))
+			abilityTimer -= delta;
+		if (abilityTimer < 0)
+			ability = "none";
+	}
+
+	private void checkTouch() {
 		for (int i = 0; i < 2; i++) {
 			if (!Gdx.input.isTouched(i))
 				continue;
@@ -142,9 +132,29 @@ public class Board extends Unit {
 		}
 	}
 
+	private void setBoundsPoints() {
+		topBounds = new Vector2[9];
+		for (int i = 0; i < topBounds.length; i++)
+			topBounds[i] = new Vector2(bounds.x + bounds.width / 10 * (i + 1), bounds.y + bounds.height);
+		bottomBounds = new Vector2[9];
+		for (int i = 0; i < bottomBounds.length; i++)
+			bottomBounds[i] = new Vector2(bounds.x + bounds.width / 10 * (i + 1), bounds. y);
+		leftBounds = new Vector2[2];
+		for (int i = 0; i < leftBounds.length; i++)
+			leftBounds[i] = new Vector2(bounds.x, bounds.y + bounds.height / 3 * (i + 1));
+		rightBounds = new Vector2[2];
+		for (int i = 0; i < rightBounds.length; i++)
+			rightBounds[i] = new Vector2(bounds.x + bounds.width, bounds.y + bounds.height / 3 * (i + 1));
+		angles = new Vector2[4];
+		angles[0] = new Vector2(bounds.x, bounds.y);
+		angles[1] = new Vector2(bounds.x, bounds.y + bounds.height);
+		angles[2] = new Vector2(bounds.x + bounds.width, bounds.y);
+		angles[3] = new Vector2(bounds.x + bounds.width, bounds.y + bounds.height);
+	}
+
 	// Checking bounds after ball's "turn"
 	private void checkAllBounds(Ball[] balls) {
-		// Vector that refers to the point that ball contains
+		// Number of vector that refers to the point which ball contains
 		int point;
 
 		for (Ball ball : balls) {
@@ -180,37 +190,48 @@ public class Board extends Unit {
 					if (enterSideFromTop(ball))
 						spotXBound(ball);
 					else
-						ball.angleBoardCollision(this, false);
+						handleAngleCase2(true, ball);
 				}
 				// Collision with board's bottom bound points
 				else if (checkBallCollision(bottomBounds, ball) != 0) {
 					if (enterSideFromBottom(ball))
 						spotXBound(ball);
 					else
-						ball.angleBoardCollision(this, false);
+						handleAngleCase2(false, ball);
 				}
 				// Collision with board's left bound points
 				else if (checkBallCollision(leftBounds, ball) != 0) {
 					if (enterSideFromTop(ball) || enterSideFromBottom(ball))
 						spotXBound(ball);
-					else
-						ball.angleBoardCollision(this, false);
+					else {
+						if (bounds.y > ball.bounds.y)
+							handleAngleCase2(false, ball);
+						else
+							handleAngleCase2(true, ball);
+					}
 				}
 				// Collision with board's right bound points
 				else if (checkBallCollision(rightBounds, ball) != 0)
 					if (enterSideFromTop(ball) || enterSideFromBottom(ball))
 						spotXBound(ball);
-					else
-						ball.angleBoardCollision(this, false);
+					else {
+						if (bounds.y > ball.bounds.y)
+							handleAngleCase2(false, ball);
+						else
+							handleAngleCase2(true, ball);
+					}
 				// Collision with angle points
 				else if ((point = checkBallCollision(angles, ball)) != 0) {
-					ball.angleBoardCollision(this, false);
+					if (point == 1 || point == 2)
+						handleAngleCase2(false, ball);
+					else
+						handleAngleCase2(true, ball);
 				}
 			}
 		}
 	}
 
-	// Defines two cases of side hit - for left and right bound
+	// Defines two cases of side hit - for right and left bound
 	void spotXBound(Ball ball) {
 		if (xSpeed > 0)
 			ball.sideBoardCollision(this, bounds.x + bounds.width + ball.bounds.radius);
@@ -218,14 +239,14 @@ public class Board extends Unit {
 			ball.sideBoardCollision(this, bounds.x - ball.bounds.radius);
 	}
 
-	// Defines if ball was really hit by board's side not angle (calculations for cases when ball are closer to board's top)
+	// Defines if ball was really hit by board's side not angle (calculations for cases when ball's center are above the board's top)
 	boolean enterSideFromTop(Ball ball) {
-		return bounds.y + bounds.height - ball.bounds.y > ball.bounds.radius;
+		return bounds.y + bounds.height - ball.bounds.y > 0;
 	}
 
-	// Defines if ball was really hit by board's side not angle (calculations for cases when ball are closer to board's bottom)
+	// Defines if ball was really hit by board's side not angle (calculations for cases when ball's center are below the board's bottom)
 	boolean enterSideFromBottom(Ball ball) {
-		return ball.bounds.y - bounds.y > ball.bounds.radius;
+		return ball.bounds.y - bounds.y > 0;
 	}
 
 	// Angle cases are very special, so there's an extra method for them
@@ -249,6 +270,28 @@ public class Board extends Unit {
 			ball.angleBoardCollision(this, true);
 	}
 
+	// Angle cases are very special, so there's an extra method for them
+	void handleAngleCase2(boolean topHit, Ball ball) {
+		// If ball goes up
+		if (ball.ySpeed > 0) {
+			// Faces top side
+			if (topHit)
+				ball.angleBoardCollision(this, false);
+			// Faces bottom side
+			else
+				ball.angleBoardCollision(this, true);
+		}
+		// If ball goes down
+		else {
+			// Faces top side
+			if (topHit)
+				ball.angleBoardCollision(this, true);
+			// Faces bottom side
+			else
+				ball.angleBoardCollision(this, false);
+		}
+	}
+
 	/*
 	 * Checking if ball overlaps with board's bound points. If so - changing meaning of
 	 * touchTime (both board's and ball's) and creating collision sound
@@ -264,6 +307,7 @@ public class Board extends Unit {
 				ball.touchTime = 0;
 				ball.lastTouched = this;
 				this.lastTouched = ball;
+				ball.saveLastBoard(this);
 				return j + 1;
 			}
 		return 0;
