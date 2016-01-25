@@ -8,46 +8,39 @@ import com.phuda.pong.Units.Bonus;
 
 // Class that controls game field.
 public class Field {
-	
+	int screenWidth, screenHeight;
 	public Board player1Board, player2Board;
 	public Ball[] balls;
-	public Bonus[] bonuses = new Bonus[2];
+	public Bonus[] bonuses;
 	// Map for names of effects on the field
 	public final String effectsMap[] = {"timeSlower"};
 	
-	Field(String mode, int ballsCount, int ai)
+	Field(String mode, int ballsCount, int ai, int screenWidth, int screenHeight)
 	{
-        balls = new Ball[ballsCount];
-
+		this.screenWidth = screenWidth;
+		this.screenHeight = screenHeight;
+		// Balls generation
+		balls = new Ball[ballsCount];
+		for (int i = 0; i < balls.length; i++)
+			balls[i] = new Ball(this, screenWidth, screenHeight, i);
 		if (mode.equals("pvc")) {
-			// Player 1 aka top player.
-			player1Board = new Board(Gdx.graphics.getWidth()/2 - 50,
-									 Gdx.graphics.getHeight()/12 * 11 - 30, "top", this, ai);
+			// Player 1 aka top player
+			player1Board = new Board(screenWidth, screenHeight, "top", this, ai);
 		}
 		else { 
-			// Player vs player.
-			player1Board = new Board(Gdx.graphics.getWidth()/2 - 50,
-					 Gdx.graphics.getHeight()/12 * 11 - 30, "top", this, 0);
+			// Player vs player
+			player1Board = new Board(screenWidth, screenHeight, "top", this, 0);
 		}
-		// Player 2 aka bottom player.
-		player2Board = new Board(Gdx.graphics.getWidth()/2 - 50,
-								 Gdx.graphics.getHeight()/12, "bottom", this, 0);
-		// Balls generation.
-		for (int i = 0; i < balls.length; i++){
-			balls[i] = new Ball(this, (int)(Math.random() * Gdx.graphics.getWidth()),
-					(int)(Math.random() * Gdx.graphics.getHeight() / 2 +
-							Gdx.graphics.getHeight() / 4), 12, i);
-		}
-		// Bonuses generation.
-		for (int i = 0; i < bonuses.length; i++) {
-			bonuses[i] = new Bonus(this, (int) (Math.random() * Gdx.graphics.getWidth()),
-					(int) (Math.random() * Gdx.graphics.getHeight() / 2 +
-							Gdx.graphics.getHeight() / 4), "timeSlower");
-		}
+		// Player 2 aka bottom player
+		player2Board = new Board(screenWidth, screenHeight, "bottom", this, 0);
+		// Bonuses generation
+		bonuses = new Bonus[2];
+		for (int i = 0; i < bonuses.length; i++)
+			bonuses[i] = new Bonus(this, screenWidth, screenHeight, "timeSlower");
 	}
 	
 	public void updateState(float delta) {
-		// Toggle slow-motion.
+		// Toggle slow-motion
 		if (Gdx.input.isKeyPressed(Input.Keys.S))
 			delta = delta * 0.2f;
 		// Updating state of boards
@@ -74,9 +67,7 @@ public class Field {
 					else
 						player2Board.score += balls[i].bounds.radius;
 					// Replacing this ball with a new one
-					balls[i] = new Ball(this, (int)(Math.random() * Gdx.graphics.getWidth()),
-							(int)(Math.random() * Gdx.graphics.getHeight() / 2 +
-									Gdx.graphics.getHeight() / 4), 12, i);
+					balls[i] = new Ball(this, screenWidth, screenHeight, i);
 					continue;
 				}
 				int y = Gdx.graphics.getHeight() / 2;
@@ -100,9 +91,7 @@ public class Field {
 	private void updateBonuses(float delta) {
 		for (int i = 0; i < bonuses.length; i++) {
 			if (bonuses[i] == null || bonuses[i].bounds.radius < 1)
-				bonuses[i] = new Bonus(this, (int) (Math.random() * Gdx.graphics.getWidth()),
-						(int) (Math.random() * Gdx.graphics.getHeight() / 2 +
-								Gdx.graphics.getHeight() / 4), "timeSlower");
+				bonuses[i] = new Bonus(this, screenWidth,screenHeight, "timeSlower");
 			bonuses[i].updateState(delta);
 		}
 	}
