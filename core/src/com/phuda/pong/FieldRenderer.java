@@ -9,10 +9,11 @@ import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer.ShapeType;
 import com.phuda.pong.Units.Ball;
+import com.phuda.pong.Units.Board;
 import com.phuda.pong.Units.Bonus;
 
 public class FieldRenderer {
-	
+	final int w = Gdx.graphics.getWidth(), h = Gdx.graphics.getHeight();
 	SpriteBatch batch;
 	ShapeRenderer shapeRenderer;
     Texture boardRedTexture, boardBlueTexture, ballTexture;
@@ -79,13 +80,9 @@ public class FieldRenderer {
 		
 		score_font.draw(batch, Integer.toString(field.player1Board.score), 40, h/2);
 		score_font.draw(batch, Integer.toString(field.player2Board.score), w - 40, h/2);
-		
-		// player 1
-		batch.draw(boardRedTexture, field.player1Board.bounds.x,
-				field.player1Board.bounds.y);
-		// player 2
-		batch.draw(boardBlueTexture, field.player2Board.bounds.x,
-				field.player2Board.bounds.y);
+		// Boards
+		drawBoards(field.player1Board, field.player2Board);
+
 
 		// balls
 		for (Ball ball : field.balls){
@@ -112,5 +109,12 @@ public class FieldRenderer {
 		}
 		batch.end();
 	}
-	
+
+	private void drawBoards(Board board1, Board board2) {
+		// player 1
+		batch.draw(boardRedTexture, board1.bounds.x, board1.bounds.y, board1.bounds.width, board1.bounds.height);
+		// player 2
+		batch.draw(boardBlueTexture, board2.bounds.x, board2.bounds.y, board2.bounds.width, board2.bounds.height);
+	}
+
 }

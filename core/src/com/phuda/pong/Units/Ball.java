@@ -15,18 +15,18 @@ public class Ball extends Unit {
 	// Sound
 	Sound sound_bump;
 	
-	public Ball(Field field, int x, int y, int radius, int num) {
+	public Ball(Field field, int screenWidth, int screenHeight, int num) {
 		super();
 		// Multipliers that depends on screens width and height
-		int wm = 2 + Gdx.graphics.getWidth() / 200;
-		int hm = 2 + Gdx.graphics.getHeight() / 300;
+		int wm = 2 + screenWidth / 200;
+		int hm = 2 + screenHeight / 300;
+		this.name = Integer.toString(++num);
+		setBounds(screenWidth, screenHeight);
 		this.field = field;
-		bounds = new Circle(x, y, radius);
 		// Randomizing ball's x and y axle speed with using multipliers
 		xSpeed = (int)(Math.random() * wm * 4 - wm * 2);
 		while (Math.abs(ySpeed) < hm)
 			ySpeed = (int)(Math.random() * hm * 4 - hm * 2);
-		this.name = Integer.toString(++num);
 		sound_bump = Gdx.audio.newSound(Gdx.files.internal("sounds/bump.wav"));
 	}
 	
@@ -82,6 +82,13 @@ public class Ball extends Unit {
 			xSpeed = -xSpeed;
 			playSound();
 		}
+	}
+
+	private void setBounds(int screenWidth, int screenHeight) {
+		bounds = new Circle((float)Math.random() * screenWidth,
+				(float)Math.random() * screenHeight / 2 + screenHeight / 4,
+				screenWidth / 100 + screenHeight / 100);
+		System.out.println("radius: " + bounds.radius);
 	}
 
 	private void releaseSpeed() {

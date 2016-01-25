@@ -27,17 +27,13 @@ public class Board extends Unit {
 	// Sound
 	Sound sound_reflect;
 
-	public Board(int x, int y, String name, Field field, int difficultyLevel) {
+	public Board(int screenWidth, int screenHeight, String name, Field field, int difficultyLevel) {
 		super();
-		this.target_x = x;
-		this.bounds = new Rectangle();
-		this.bounds.x = x;
-		this.bounds.y = y;
-		this.bounds.width = 100;
-		this.bounds.height = 30;
+		this.name = name;
+		// Creating rectangle that describes board as physical item
+		setBounds(screenWidth, screenHeight);
 		// Setting points of board's bounds
 		setBoundsPoints();
-		this.name = name;
 		this.field = field;
 		this.sound_reflect = Gdx.audio.newSound(Gdx.files.internal("sounds/reflect.wav"));
 		// Set difficulty level to 0 to create human player
@@ -133,6 +129,23 @@ public class Board extends Unit {
 				target_x = Gdx.input.getX(i) - (int)(bounds.width / 2);
 			}
 		}
+	}
+
+	private void setBounds(int screenWidth, int screenHeight) {
+		bounds = new Rectangle();
+		bounds.width = screenWidth / 5;
+		bounds.height = screenHeight / 24;
+		System.out.println("bounds.width: " + bounds.width);
+		System.out.println("bounds.height: " + bounds.height);
+		bounds.x = screenWidth / 2 - bounds.width / 2;
+		target_x = (int)bounds.x;
+		// Top board
+		if (name.equals("top"))
+			bounds.y = screenHeight / 12 * 11 - bounds.height;
+		// Bottom board
+		else
+			bounds.y = screenHeight / 12;
+		System.out.println("bounds.y: " + bounds.y);
 	}
 
 	private void setBoundsPoints() {

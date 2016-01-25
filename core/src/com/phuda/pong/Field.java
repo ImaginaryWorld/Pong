@@ -9,26 +9,28 @@ import com.phuda.pong.Units.Bonus;
 
 // Class that controls game field.
 public class Field {
-	
+	int screenWidth, screenHeight;
 	public Board player1Board, player2Board;
 	public Ball[] balls;
 	public Bonus[] bonuses = new Bonus[2];
 	// Map for names of effects on the field
 	public final String effectsMap[] = {"timeSlower", "ballSplitter"};
 	
-	Field(String mode, int ballsCount, int ai)
+	Field(String mode, int ballsCount, int ai, int screenWidth, int screenHeight)
 	{
-        balls = new Ball[ballsCount];
-
+		this.screenWidth = screenWidth;
+		this.screenHeight = screenHeight;
+		// Balls generation
+		balls = new Ball[ballsCount];
+		for (int i = 0; i < balls.length; i++)
+			balls[i] = new Ball(this, screenWidth, screenHeight, i);
 		if (mode.equals("pvc")) {
-			// Player 1 aka top player.
-			player1Board = new Board(Gdx.graphics.getWidth()/2 - 50,
-									 Gdx.graphics.getHeight()/12 * 11 - 30, "top", this, ai);
+			// Player 1 aka top player
+			player1Board = new Board(screenWidth, screenHeight, "top", this, ai);
 		}
 		else { 
-			// Player vs player.
-			player1Board = new Board(Gdx.graphics.getWidth()/2 - 50,
-					 Gdx.graphics.getHeight()/12 * 11 - 30, "top", this, 0);
+			// Player vs player
+			player1Board = new Board(screenWidth, screenHeight, "top", this, 0);
 		}
 		// Player 2 aka bottom player.
 		player2Board = new Board(Gdx.graphics.getWidth()/2 - 50,
@@ -46,7 +48,7 @@ public class Field {
 	}
 	
 	public void updateState(float delta) {
-		// Toggle slow-motion.
+		// Toggle slow-motion
 		if (Gdx.input.isKeyPressed(Input.Keys.S))
 			delta = delta * 0.2f;
 		// Updating state of boards
