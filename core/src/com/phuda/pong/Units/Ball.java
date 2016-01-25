@@ -29,6 +29,18 @@ public class Ball extends Unit {
 			ySpeed = (int)(Math.random() * hm * 4 - hm * 2);
 		sound_bump = Gdx.audio.newSound(Gdx.files.internal("sounds/bump.wav"));
 	}
+
+    public static Ball newBall(Field field, int screenWidth, int screenHeight, float x, float y,
+                double xSpeed, double ySpeed, float radius, int num) {
+        Ball ball = new Ball(field, screenWidth, screenHeight, num);
+        ball.bounds.x = x;
+        ball.bounds.y = y;
+        ball.bounds.radius = radius;
+        ball.xSpeed = xSpeed;
+        ball.ySpeed = ySpeed;
+
+        return ball;
+    }
 	
 	public void updateState(float delta) {
 		touchTime += delta;

@@ -59,19 +59,29 @@ public class Field {
 
 	private void updateBalls(float delta) {
 		for (int i = 0; i < balls.length; i++) {
-			if (balls[i] != null) {
-				if (balls[i].outOfField()) {
-					// Who is winner ?
-					if (balls[i].bounds.y > Gdx.graphics.getHeight() / 2) {
-						player1Board.score += balls[i].bounds.radius;
-					}
-					else
-						player2Board.score += balls[i].bounds.radius;
-					// Replacing this ball with a new one
-					balls[i] = new Ball(this, screenWidth, screenHeight, i);
-					continue;
-				}
-				int y = Gdx.graphics.getHeight() / 2;
+            int y = Gdx.graphics.getHeight() / 2;
+            if (balls[i] != null) {
+                if (balls[i].outOfField()) {
+                    // Who is winner ?
+                    if (balls[i].bounds.y > Gdx.graphics.getHeight() / 2) {
+                        player1Board.score += balls[i].bounds.radius;
+                    }
+					else {
+                        player2Board.score += balls[i].bounds.radius;
+                    }
+                    // Replacing this ball with a new one
+                    balls[i] = new Ball(this, screenWidth, screenHeight, i);
+                    continue;
+                }
+                else if (  player1Board.abilities[1].isActive && balls[i].justTouchedBoard
+                        && balls[i].bounds.y > y
+                        || player2Board.abilities[1].isActive && balls[i].justTouchedBoard
+                        && balls[i].bounds.y < y) {
+                    balls[i] = Ball.newBall(this, screenWidth, screenHeight,
+                            balls[i].bounds.x, balls[i].bounds.y,
+                            balls[i].xSpeed, balls[i].ySpeed, balls[i].bounds.radius*0.8f, i);
+                    System.out.println("There are i really want a three small balls");
+                }
 				// Slowing ball if necessary
                 if       ( (balls[i].bounds.y > y && player1Board.abilities[0].isActive)
                         || (balls[i].bounds.y < y && player2Board.abilities[0].isActive) )
