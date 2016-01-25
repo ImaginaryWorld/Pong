@@ -15,7 +15,8 @@ public class FieldRenderer {
 	
 	SpriteBatch batch;
 	ShapeRenderer shapeRenderer;
-    Texture boardRedTexture, boardBlueTexture, ballTexture, bonusTimeTexture;
+    Texture boardRedTexture, boardBlueTexture, ballTexture;
+    Texture bonusTimeTexture, bonusSplitterTexture;
     Field field;
 
 	float scoreShift, target_scoreShift;
@@ -32,7 +33,9 @@ public class FieldRenderer {
         boardBlueTexture = new Texture(Gdx.files.internal(images_path + "board_blue.png"));
 		ballTexture = new Texture(Gdx.files.internal(images_path + "particle.png"));
 		bonusTimeTexture = new Texture(Gdx.files.internal(images_path + "bonus_time.png"));
-		bonusTimeTexture.setFilter(TextureFilter.Linear, TextureFilter.Linear);
+        bonusTimeTexture.setFilter(TextureFilter.Linear, TextureFilter.Linear);
+        bonusSplitterTexture = new Texture(Gdx.files.internal(images_path + "bonus_splitter.png"));
+        bonusSplitterTexture.setFilter(TextureFilter.Linear, TextureFilter.Linear);
 
 		this.field = field;
 		
@@ -58,11 +61,18 @@ public class FieldRenderer {
         shapeRenderer.setColor(0.5f, 0.2f, 0.2f, 1);
         shapeRenderer.rect(w, h/4, -w/2 + scoreShift, h/2);
         // abilities bars
-        shapeRenderer.setColor(0.2f, 0.5f, 0.7f, 1);
-		// That's just a crutch, but later there can be more than one bonus
+        // time ability
+        shapeRenderer.setColor(0.2f, 0.5f, 1f, 0.2f); // blue
         shapeRenderer.rect(0, h-h/4, w, h/8 * field.player1Board.abilities[0].timer / 10);
         shapeRenderer.rect(0, h/4 , w, -h/8 * field.player2Board.abilities[0].timer / 10);
+        // splitter ability
+        shapeRenderer.setColor(0.2f, 1f, 0.5f, 0.2f); // green
+        shapeRenderer.rect(0, h-h/4, w, h/8 * field.player1Board.abilities[1].timer / 10);
+        shapeRenderer.rect(0, h/4 , w, -h/8 * field.player2Board.abilities[1].timer / 10);
+        // toggle alpha blending. end function uses this to draw transparency
+        Gdx.gl.glEnable(Gdx.gl.GL_BLEND);
         shapeRenderer.end();
+        Gdx.gl.glDisable(Gdx.gl.GL_BLEND);
 
 
 		batch.begin();
@@ -91,6 +101,8 @@ public class FieldRenderer {
                 Texture tex = bonusTimeTexture;
                 if (bonus.name.equals("timeSlower"))
                     tex = bonusTimeTexture;
+                else if (bonus.name.equals("ballSplitter"))
+                    tex = bonusSplitterTexture;
 
 				float r = bonus.bounds.radius;
                 batch.draw(tex, bonus.bounds.x - r, bonus.bounds.y - r,

@@ -22,7 +22,8 @@ public class Board extends Unit {
 	// Score of this board
 	public int score = 0;
 	// Ability variables
-    public PlayerAbility[] abilities = {new PlayerAbility("timeSlower")};
+    public PlayerAbility[] abilities = {new PlayerAbility("timeSlower"),
+                                        new PlayerAbility("ballSplitter")};
 	// Sound
 	Sound sound_reflect;
 

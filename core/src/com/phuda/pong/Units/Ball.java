@@ -11,6 +11,7 @@ public class Ball extends Unit {
 	// Ball's disposition variable
 	public Circle bounds;
     Board lastTouchedBoard;
+    public boolean justTouchedBoard;
 	// Sound
 	Sound sound_bump;
 	
@@ -31,6 +32,7 @@ public class Ball extends Unit {
 	
 	public void updateState(float delta) {
 		touchTime += delta;
+        justTouchedBoard = false;
 		// Updating ball's position
 		updatePosition(delta);
 		// Check collisions with balls
@@ -137,6 +139,7 @@ public class Ball extends Unit {
 
 	public void saveLastBoard(Board board) {
 		lastTouchedBoard = board;
+        justTouchedBoard = true;
 	}
 
 	private void playSound() {
