@@ -32,10 +32,13 @@ public class Slider {
         x = _x;      y = _y;
         min = _min;  max = _max;
         label = _label;
+
+        // Setup default value
         ux = (int)MathUtils.lerp( x - base.getWidth()/2 + offset,
-                x + base.getWidth()/2 - offset, defValue/max);
+                x + base.getWidth()/2 - offset, (float)defValue/max);
         sx = ux;
 
+        // Touch zone
         rect = new Rectangle(x - base.getWidth()/2, y - base.getHeight()/2,
                 base.getWidth(), base.getHeight());
 

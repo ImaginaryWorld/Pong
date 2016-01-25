@@ -30,7 +30,7 @@ public class MenuScreen extends PongScreen
 		start_pvc_button = new Button(x*2, y + y/3,images_path + "pvc.png");
 		other2_button =    new Button(x*3, y,      images_path + "undef.png");
 
-        balls_slider = new Slider(x*2, y - y/2, 1, 6, 2, "Balls count: ");
+        balls_slider = new Slider(x*2, y - y/2, 1, 12, 2, "Balls count: ");
         ai_mode_slider = new Slider(x*2, y - (int)(y/1.2), 1, 3, 2, "AI strength: ");
 		System.out.println("init MenuScreen");
 	}
