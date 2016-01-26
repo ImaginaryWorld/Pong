@@ -5,6 +5,8 @@ import com.phuda.pong.Exc.AIException;
 import com.phuda.pong.Units.Ball;
 import com.phuda.pong.Units.Board;
 
+import java.util.ArrayList;
+
 public class AIBoardController {
 	/*
 	 *  Constants to exclude mistakes related with wrong difficulty meaning
@@ -16,11 +18,11 @@ public class AIBoardController {
 	
 	int difficultyLevel;
 	Board board;
-	Ball[] balls;
+	ArrayList<Ball> balls;
 	public boolean catching;
 	public float prepareTime;
 	
-	public AIBoardController(Board board, Ball[] balls, int difficultyLevel)
+	public AIBoardController(Board board, ArrayList<Ball> balls, int difficultyLevel)
 	{
 		if (difficultyLevel == elvl || difficultyLevel == mlvl || difficultyLevel == hlvl)
 			this.difficultyLevel = difficultyLevel;
@@ -41,27 +43,27 @@ public class AIBoardController {
 	
 	public void prepare(float time)
 	{
-		for (int i = 0; i < balls.length; i++)
+		for (int i = 0; i < balls.size(); i++)
 		{
 			if (board.name.equals("top"))
 			{
-				if (balls[i].ySpeed > (board.bounds.y - balls[i].bounds.y + balls[i].bounds.radius) / 50)
+				if (balls.get(i).ySpeed > (board.bounds.y - balls.get(i).bounds.y + balls.get(i).bounds.radius) / 50)
 				{
-					if (balls[i].bounds.y + balls[i].bounds.radius < board.bounds.y)
+					if (balls.get(i).bounds.y + balls.get(i).bounds.radius < board.bounds.y)
 					{
-						startPreparing(balls[i], balls[i].bounds.y + balls[i].bounds.radius,
+						startPreparing(balls.get(i), balls.get(i).bounds.y + balls.get(i).bounds.radius,
 								board.bounds.y, time);
 						break;
 					}
 				}
 			}
-			else if (balls[i].ySpeed < (board.bounds.y + board.bounds.height - balls[i].bounds.y 
-					+ balls[i].bounds.radius) / 50)
+			else if (balls.get(i).ySpeed < (board.bounds.y + board.bounds.height - balls.get(i).bounds.y
+					+ balls.get(i).bounds.radius) / 50)
 			{
-				if (balls[i].bounds.y - balls[i].bounds.radius > board.bounds.y 
+				if (balls.get(i).bounds.y - balls.get(i).bounds.radius > board.bounds.y
 						+ board.bounds.height)
 				{
-					startPreparing(balls[i], balls[i].bounds.y - balls[i].bounds.radius,
+					startPreparing(balls.get(i), balls.get(i).bounds.y - balls.get(i).bounds.radius,
 							board.bounds.y + board.bounds.height, time);
 					break;
 				}

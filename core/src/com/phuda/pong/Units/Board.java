@@ -8,6 +8,8 @@ import com.phuda.pong.Effects.PlayerAbility;
 import com.phuda.pong.Field;
 import com.phuda.pong.AI.AIBoardController;
 
+import java.util.ArrayList;
+
 public class Board extends Unit {
 	// Slows the board's movement
 	final int SLOWER = 4000 / Gdx.graphics.getWidth(),
@@ -41,7 +43,7 @@ public class Board extends Unit {
 			this.contr = new AIBoardController(this, field.balls, difficultyLevel);
 	}
 
-	public void updateState(float delta, Ball[] balls) {
+	public void updateState(float delta, ArrayList<Ball> balls) {
 		// Checking collisions with the balls (first one - after balls "turn")
 		checkAllBounds(balls);
 		// Changing x coordinate and processing touches
@@ -135,8 +137,6 @@ public class Board extends Unit {
 		bounds = new Rectangle();
 		bounds.width = screenWidth / 5;
 		bounds.height = screenHeight / 24;
-		System.out.println("bounds.width: " + bounds.width);
-		System.out.println("bounds.height: " + bounds.height);
 		bounds.x = screenWidth / 2 - bounds.width / 2;
 		target_x = (int)bounds.x;
 		// Top board
@@ -145,7 +145,6 @@ public class Board extends Unit {
 		// Bottom board
 		else
 			bounds.y = screenHeight / 12;
-		System.out.println("bounds.y: " + bounds.y);
 	}
 
 	private void setBoundsPoints() {
@@ -169,7 +168,7 @@ public class Board extends Unit {
 	}
 
 	// Checking bounds after ball's "turn"
-	private void checkAllBounds(Ball[] balls) {
+	private void checkAllBounds(ArrayList<Ball> balls) {
 		// Number of vector that refers to the point which ball contains
 		int point;
 
@@ -195,7 +194,7 @@ public class Board extends Unit {
 	}
 
 	// Checking bounds after board's "turn"
-	private void checkAllBounds2(Ball[] balls) {
+	private void checkAllBounds2(ArrayList<Ball> balls) {
 		// Vector that refers to the point that ball contains
 		int point;
 

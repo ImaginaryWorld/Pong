@@ -7,11 +7,13 @@ import com.phuda.pong.Units.Ball;
 import com.phuda.pong.Units.Board;
 import com.phuda.pong.Units.Bonus;
 
+import java.util.ArrayList;
+
 // Class that controls game field.
 public class Field {
-	int screenWidth, screenHeight;
+	public int screenWidth, screenHeight, ballsCount;
 	public Board player1Board, player2Board;
-	public Ball[] balls;
+	public ArrayList<Ball> balls;
 	public Bonus[] bonuses;
 	// Map for names of effects on the field
 	public final String effectsMap[] = {"timeSlower", "ballSplitter"};
@@ -20,10 +22,12 @@ public class Field {
 	{
 		this.screenWidth = screenWidth;
 		this.screenHeight = screenHeight;
+		this.ballsCount = ballsCount;
 		// Balls generation
-		balls = new Ball[ballsCount];
-		for (int i = 0; i < balls.length; i++)
-			balls[i] = new Ball(this, screenWidth, screenHeight, i);
+		balls = new ArrayList<Ball>();
+		for (int i = 0; i < ballsCount; i++)
+			balls.add(new Ball(this, screenWidth, screenHeight, i));
+		// Boards generation
 		if (mode.equals("pvc")) {
 			// Player 1 aka top player
 			player1Board = new Board(screenWidth, screenHeight, "top", this, ai);
@@ -58,36 +62,37 @@ public class Field {
 	}
 
 	private void updateBalls(float delta) {
-		for (int i = 0; i < balls.length; i++) {
+		// Creating new balls
+		if (balls.size() < ballsCount)
+			for (int i = 0; i < ballsCount - balls.size(); i++)
+				balls.add(new Ball(this, screenWidth, screenHeight, balls.size() - 1));
+		for (int i = 0; i < balls.size(); i++) {
             int y = Gdx.graphics.getHeight() / 2;
-            if (balls[i] != null) {
-                if (balls[i].outOfField()) {
-                    // Who is winner ?
-                    if (balls[i].bounds.y > Gdx.graphics.getHeight() / 2) {
-                        player1Board.score += balls[i].bounds.radius;
-                    }
-					else {
-                        player2Board.score += balls[i].bounds.radius;
-                    }
-                    // Replacing this ball with a new one
-                    balls[i] = new Ball(this, screenWidth, screenHeight, i);
-                    continue;
-                }
-                else if (  player1Board.abilities[1].isActive && balls[i].justTouchedBoard
-                        && balls[i].bounds.y > y
-                        || player2Board.abilities[1].isActive && balls[i].justTouchedBoard
-                        && balls[i].bounds.y < y) {
-                    balls[i] = Ball.newBall(this, screenWidth, screenHeight,
-                            balls[i].bounds.x, balls[i].bounds.y,
-                            balls[i].xSpeed, balls[i].ySpeed, balls[i].bounds.radius*0.8f, i);
-                    System.out.println("There are i really want a three small balls");
-                }
-				// Slowing ball if necessary
-                if       ( (balls[i].bounds.y > y && player1Board.abilities[0].isActive)
-                        || (balls[i].bounds.y < y && player2Board.abilities[0].isActive) )
-						delta *= 0.4f;
-                balls[i].updateState(delta);
+			if (balls.get(i).outOfField()) {
+				// Who is winner ?
+				if (balls.get(i).bounds.y > Gdx.graphics.getHeight() / 2) {
+					player1Board.score += balls.get(i).bounds.radius;
+				}
+				else {
+					player2Board.score += balls.get(i).bounds.radius;
+				}
+				// Deleting this ball
+				balls.remove(i);
+				continue;
 			}
+			// Slowing ball if necessary
+			if ((balls.get(i).bounds.y > y && player1Board.abilities[0].isActive)
+					|| (balls.get(i).bounds.y < y && player2Board.abilities[0].isActive))
+				delta *= 0.4f;
+			// Split ball on three small if necessary
+			if (player1Board.abilities[1].isActive && balls.get(i).justTouchedBoard
+					&& balls.get(i).bounds.y > y
+					|| player2Board.abilities[1].isActive && balls.get(i).justTouchedBoard
+					&& balls.get(i).bounds.y < y) {
+				balls.get(i).split(balls);
+				System.out.println("There are i really want a three small balls");
+				}
+			balls.get(i).updateState(delta);
 		}
 	}
 
@@ -107,11 +112,10 @@ public class Field {
     private Bonus newBonus(int sw, int sh) {
         String bonusType;
         if (MathUtils.random() >= 0.5)
-            bonusType = "timeSlower";
+            bonusType = effectsMap[0];
         else
-            bonusType = "ballSplitter";
-        Bonus bonus = new Bonus(this, (int) (Math.random() * sw),
-                    (int) (Math.random() * sh / 2 + sh / 2), bonusType);
+            bonusType = effectsMap[1];
+        Bonus bonus = new Bonus(this, sw, sh, bonusType);
         return bonus;
     }
 }
