@@ -27,7 +27,7 @@ public class Slider {
         offset = unit.getWidth()/2;
 
         x = _x;      y = _y;
-        min = _min;  max = _max;
+        min = _min;  max = _max + 1;
         label = _label;
 
         // Setup default value
@@ -58,8 +58,8 @@ public class Slider {
         }
         sx += (ux - sx) / 5;
 
-        float slide = (float) (ux - x + base.getWidth()/2 - offset) / (base.getWidth() - offset*2);
-        value = (int)MathUtils.lerp(min, max , slide);
+        float slide = (float) (ux - x + base.getWidth()/2 - offset - 1) / (base.getWidth() - offset*2);
+        value = (int)MathUtils.lerp(min, max, slide);
     }
 
     public void draw(SpriteBatch batch){
