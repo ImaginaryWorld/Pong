@@ -99,20 +99,19 @@ public class Field {
 	private void updateBonuses(float delta) {
 		for (int i = 0; i < bonuses.length; i++) {
 			if (bonuses[i] == null || bonuses[i].bounds.radius < 1)
-				bonuses[i] = newBonus();
+				bonuses[i] = newBonus(this.screenWidth, this.screenHeight);
 			bonuses[i].updateState(delta);
 		}
 	}
 
-    private Bonus newBonus() {
+    private Bonus newBonus(int sw, int sh) {
         String bonusType;
         if (MathUtils.random() >= 0.5)
             bonusType = "timeSlower";
         else
             bonusType = "ballSplitter";
-        Bonus bonus = new Bonus(this, (int) (Math.random() * Gdx.graphics.getWidth()),
-                    (int) (Math.random() * Gdx.graphics.getHeight() / 2 +
-                            Gdx.graphics.getHeight() / 4), bonusType);
+        Bonus bonus = new Bonus(this, (int) (Math.random() * sw),
+                    (int) (Math.random() * sh / 2 + sh / 2), bonusType);
         return bonus;
     }
 }
