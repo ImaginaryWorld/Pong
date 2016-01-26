@@ -3,6 +3,7 @@ package com.phuda.pong;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input;
 import com.badlogic.gdx.math.MathUtils;
+import com.phuda.pong.Effects.Effect;
 import com.phuda.pong.Units.Ball;
 import com.phuda.pong.Units.Board;
 import com.phuda.pong.Units.Bonus;
@@ -15,8 +16,6 @@ public class Field {
 	public Board player1Board, player2Board;
 	public ArrayList<Ball> balls;
 	public Bonus[] bonuses;
-	// Map for names of effects on the field
-	public final String effectsMap[] = {"timeSlower", "ballSplitter"};
 	
 	Field(String mode, int ballsCount, int ai, int screenWidth, int screenHeight)
 	{
@@ -80,10 +79,6 @@ public class Field {
 				balls.remove(i);
 				continue;
 			}
-			// Slowing ball if necessary
-			if ((balls.get(i).bounds.y > y && player1Board.abilities[0].isActive)
-					|| (balls.get(i).bounds.y < y && player2Board.abilities[0].isActive))
-				delta *= 0.4f;
 			// Split ball on three small if necessary
 			if (player1Board.abilities[1].isActive && balls.get(i).justTouchedBoard
 					&& balls.get(i).bounds.y > y
@@ -99,6 +94,7 @@ public class Field {
 	private void updateFeatures(float delta) {
 		// Bonuses update
 		updateBonuses(delta);
+		balanceAbilities();
 	}
 
 	private void updateBonuses(float delta) {
@@ -109,12 +105,27 @@ public class Field {
 		}
 	}
 
+	// Method that balance abilities - now only one player can have certain bonus
+	private void balanceAbilities() {
+		for (int i = 0; i < player1Board.abilities.length; i++)
+			if (player1Board.abilities[i].isActive && player2Board.abilities[i].isActive) {
+				if (player1Board.abilities[i].timer > player2Board.abilities[i].timer) {
+					player1Board.abilities[i].timer -= player2Board.abilities[i].timer;
+					player2Board.disengageAbility(player2Board.abilities[i].name);
+				}
+				else {
+					player2Board.abilities[i].timer -= player1Board.abilities[i].timer;
+					player1Board.disengageAbility(player1Board.abilities[i].name);
+				}
+			}
+	}
+
     private Bonus newBonus(int sw, int sh) {
         String bonusType;
         if (MathUtils.random() >= 0.5)
-            bonusType = effectsMap[0];
+            bonusType = "timeSlower";
         else
-            bonusType = effectsMap[1];
+            bonusType = "ballSplitter";
         Bonus bonus = new Bonus(this, sw, sh, bonusType);
         return bonus;
     }

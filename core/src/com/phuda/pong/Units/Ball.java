@@ -4,6 +4,7 @@ import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.audio.Sound;
 import com.badlogic.gdx.math.Circle;
 import com.badlogic.gdx.math.MathUtils;
+import com.phuda.pong.Effects.Effect;
 import com.phuda.pong.Exc.TouchException;
 import com.phuda.pong.Field;
 
@@ -14,6 +15,9 @@ public class Ball extends Unit {
 	public Circle bounds;
     Board lastTouchedBoard;
     public boolean justTouchedBoard;
+	// Effects
+	final int Ethereal = 0, Slowed = 1;
+	public Effect[] states = {new Effect("Ethereal"), new Effect("Slowed")};
 	// Sound
 	Sound sound_bump;
 	
@@ -26,9 +30,9 @@ public class Ball extends Unit {
 		setBounds(screenWidth, screenHeight);
 		this.field = field;
 		// Randomizing ball's x and y axle speed with using multipliers
-		xSpeed = (int)(Math.random() * wm * 4 - wm * 2);
-		while (Math.abs(ySpeed) < hm)
-			ySpeed = (int)(Math.random() * hm * 4 - hm * 2);
+		xSpeed = (int)(Math.random() * 16 - 8);
+		while (Math.abs(ySpeed) < 4)
+			ySpeed = (int)(Math.random() * 16 - 8);
 		sound_bump = Gdx.audio.newSound(Gdx.files.internal("sounds/bump.wav"));
 	}
 
@@ -50,8 +54,11 @@ public class Ball extends Unit {
         justTouchedBoard = false;
 		// Updating ball's position
 		updatePosition(delta);
+		// Updating effects
+		updateStates(delta);
 		// Check collisions with balls
-		checkCollidesWithBalls(field.balls);
+		if (!states[Ethereal].isActive)
+			checkCollidesWithBalls(field.balls);
 		// Check collisions with bonuses
 		checkCollidesWithBonuses(field.bonuses);
 		// Checking if ball hit the wall
@@ -61,18 +68,37 @@ public class Ball extends Unit {
 	}
 
 	private void updatePosition(float delta) {
-		bounds.x += xSpeed * delta * 70;
-		bounds.y += ySpeed * delta * 70;
+		if (states[Slowed].isActive) {
+			bounds.x += xSpeed * delta * 70 * 0.4;
+			bounds.y += ySpeed * delta * 70 * 0.4;
+		}
+		else {
+			bounds.x += xSpeed * delta * 70;
+			bounds.y += ySpeed * delta * 70;
+		}
 		vector.add(bounds.x, bounds.y);
+	}
+
+	private void updateStates(float delta) {
+		if (!states[Slowed].isActive)
+			checkSlowing();
+		for (Effect state: states) {
+			if (state.isActive)
+				state.timer -= delta;
+			if (state.timer < 0)
+				disengageState(state.name);
+		}
 	}
 
 	// Methods checking collisions
 	private void checkCollidesWithBalls(ArrayList<Ball> balls) {
 		for (Ball ball : balls)
-			if (this != ball)
+			if (this != ball && !ball.states[Ethereal].isActive)
 				if (bounds.overlaps(ball.bounds)) {
 					// Balls exchange their speeds and sets last touched unit
 					ballsExchange(ball);
+					// Try to prevent sticking with that
+					engageState(states[Ethereal].name, 0.2f);
 					// Sound
 					playSound();
 				}
@@ -96,8 +122,19 @@ public class Ball extends Unit {
 		if ( (bounds.x - bounds.radius < 0 && xSpeed < 0) ||
 				(bounds.x + bounds.radius > Gdx.graphics.getWidth() && xSpeed > 0) ) {
 			xSpeed = -xSpeed;
+			// A little change in ySpeed for the ones that sticks on crossing field by x axle
+			if (Math.abs(ySpeed) < 4)
+				ySpeed += ySpeed / Math.abs(ySpeed);
 			playSound();
 		}
+	}
+
+	// Slowing ball if necessary
+	private void checkSlowing() {
+		Board player1 = field.player1Board, player2 = field.player2Board;
+		if ((bounds.y > field.screenHeight - field.screenHeight / 3 && player1.abilities[player1.TimeSlower].isActive && ySpeed > 0)
+				|| (bounds.y < field.screenHeight / 3 && field.player2Board.abilities[player2.TimeSlower].isActive && ySpeed < 0))
+			engageState(this.states[Slowed].name, 10);
 	}
 
 	public void boardCollision(Board board, float yBound) {
@@ -106,6 +143,9 @@ public class Ball extends Unit {
 		ySpeed = - ySpeed;
 		// Give some speed by friction
 		xSpeed += board.xSpeed / 5;
+		// Deactivating slowing
+		if (states[Slowed].isActive)
+			disengageState(states[Slowed].name);
 	}
 
 	public void sideBoardCollision(Board board, float xBound) {
@@ -115,6 +155,9 @@ public class Ball extends Unit {
 		// If ball's speed are too low it receives a board's speed
 		if (Math.abs(xSpeed) < Math.abs(board.xSpeed))
 			xSpeed = board.xSpeed;
+		// Deactivating slowing
+		if (states[Slowed].isActive)
+			disengageState(states[Slowed].name);
 	}
 
 	public void angleBoardCollision(Board board, boolean ySpeedChange) {
@@ -128,6 +171,9 @@ public class Ball extends Unit {
 		// Changing ySpeed
 		if (ySpeedChange)
 			ySpeed = -ySpeed;
+		// Deactivating slowing
+		if (states[Slowed].isActive)
+			disengageState(states[Slowed].name);
 	}
 
 	// Disposition methods
@@ -141,42 +187,10 @@ public class Ball extends Unit {
 		return (bounds.y < 0) || (bounds.y > Gdx.graphics.getHeight());
 	}
 
-	public void removeBallOverlap(Ball ball) {
-		while (this.bounds.overlaps(ball.bounds)) {
-			// Changing x
-			if (this.xSpeed > ball.xSpeed)
-				this.bounds.x += this.xSpeed;
-			else
-				ball.bounds.x += ball.xSpeed;
-			// Changing y
-			if (this.ySpeed > ball.ySpeed)
-				this.bounds.y += this.ySpeed;
-			else
-				ball.bounds.y += ball.ySpeed;
-			System.out.println("this.bounds.x:" + this.bounds.x);
-			System.out.println("ball.bounds.x:" + ball.bounds.x);
-			System.out.println("this.bounds.y:" + this.bounds.y);
-			System.out.println("ball.bounds.y:" + ball.bounds.y);
-		}
-	}
-
-	private void distance(Ball ball) {
-		// Setting x
-		if (this.xSpeed > 0)
-			this.bounds.x = ball.bounds.x + bounds.radius + ball.bounds.radius;
-		else
-			this.bounds.x = ball.bounds.x - bounds.radius - ball.bounds.radius;
-		// Setting y
-		if (this.ySpeed > 0)
-			this.bounds.y = ball.bounds.y + bounds.radius + ball.bounds.radius;
-		else
-			this.bounds.y = ball.bounds.y - bounds.radius - ball.bounds.radius;
-	}
-
 	// Speed handling methods
 	private void releaseSpeed() {
-		if (xSpeed > Gdx.graphics.getWidth() / 40) {
-			xSpeed -= 1;
+		if (xSpeed > field.screenWidth / 40) {
+			xSpeed--;
 		}
 	}
 
@@ -202,31 +216,59 @@ public class Ball extends Unit {
 	// Methods that handles cases of using bonuses
 	public void split(ArrayList <Ball> balls) {
 		if (bounds.radius == field.screenWidth / 100 + field.screenHeight / 100) {
-			bounds.radius = bounds.radius / 2;
-			System.out.println("bounds.x: " + bounds.x);
-			System.out.println("bounds.y: " + bounds.y);
+			// Radius
+			bounds.radius = bounds.radius / 1.5f;
+			// Ethereal for a few seconds, so the ball can fly apart
+			this.engageState(this.states[Ethereal].name, 0.5f);
 			System.out.println("xSpeed: " + xSpeed);
 			System.out.println("ySpeed: " + ySpeed);
 			// 2nd ball
 			balls.add(new Ball(field, field.screenWidth, field.screenHeight, balls.size()));
+			// Same radius and bounds
 			balls.get(balls.size() - 1).bounds.radius = bounds.radius;
+			balls.get(balls.size() - 1).bounds.x = bounds.x;
+			balls.get(balls.size() - 1).bounds.y = bounds.y;
+			// Speed formula
 			balls.get(balls.size() - 1).xSpeed = xSpeed * MathUtils.cosDeg(45) - ySpeed * MathUtils.sinDeg(45);
 			balls.get(balls.size() - 1).ySpeed = xSpeed * MathUtils.sinDeg(45) + ySpeed * MathUtils.cosDeg(45);
-			balls.get(balls.size() - 1).distance(this);
-			System.out.println("2bounds.x: " + balls.get(balls.size() - 1).bounds.x);
-			System.out.println("2bounds.y: " + balls.get(balls.size() - 1).bounds.y);
+			// Ethereal for a few seconds, so the ball can fly apart
+			balls.get(balls.size() - 1).engageState(this.states[Ethereal].name, 0.5f);
 			System.out.println("2.xSpeed: " + balls.get(balls.size() - 1).xSpeed);
 			System.out.println("2.ySpeed: " + balls.get(balls.size() - 1).ySpeed);
 			// 3rd ball
 			balls.add(new Ball(field, field.screenWidth, field.screenHeight, balls.size()));
+			// Same radius and bounds
 			balls.get(balls.size() - 1).bounds.radius = bounds.radius;
+			balls.get(balls.size() - 1).bounds.x = bounds.x;
+			balls.get(balls.size() - 1).bounds.y = bounds.y;
+			// Speed formula
 			balls.get(balls.size() - 1).xSpeed = xSpeed * MathUtils.cosDeg(-45) - ySpeed * MathUtils.sinDeg(-45);
 			balls.get(balls.size() - 1).ySpeed = xSpeed * MathUtils.sinDeg(-45) + ySpeed * MathUtils.cosDeg(-45);
-			balls.get(balls.size() - 1).distance(this);
-			System.out.println("3bounds.x: " + balls.get(balls.size() - 1).bounds.x);
-			System.out.println("3bounds.y: " + balls.get(balls.size() - 1).bounds.y);
+			// Etheral for a few seconds, so the ball can fly apart
+			balls.get(balls.size() - 1).engageState(this.states[Ethereal].name, 0.5f);
 			System.out.println("3.xSpeed: " + balls.get(balls.size() - 1).xSpeed);
 			System.out.println("3.ySpeed: " + balls.get(balls.size() - 1).ySpeed);
+		}
+	}
+
+	// Methods that handles effects
+	private void engageState(String effectName, float time) {
+		for (Effect state : states) {
+			if (state.name.equals(effectName)) {
+				state.timer = time;
+				state.isActive = true;
+				System.out.println("Ball #" + this.name + " is set to " + effectName);
+			}
+		}
+	}
+
+	private void disengageState(String effectName) {
+		for (Effect state : states) {
+			if (state.name.equals(effectName)) {
+				state.timer = 0;
+				state.isActive = false;
+				System.out.println("Ball #" + this.name + " set off " + effectName);
+			}
 		}
 	}
 

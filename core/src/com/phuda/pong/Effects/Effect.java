@@ -1,10 +1,10 @@
 package com.phuda.pong.Effects;
 
-public class PlayerAbility {
+public class Effect {
     public String name;
     public boolean isActive;
     public float timer;
-    public PlayerAbility(String name) {
+    public Effect(String name) {
         this.name = name;
         isActive = false;
         timer = 0;

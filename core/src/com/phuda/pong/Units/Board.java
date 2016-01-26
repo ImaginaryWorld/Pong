@@ -4,7 +4,7 @@ import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.audio.Sound;
 import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.math.Vector2;
-import com.phuda.pong.Effects.PlayerAbility;
+import com.phuda.pong.Effects.Effect;
 import com.phuda.pong.Field;
 import com.phuda.pong.AI.AIBoardController;
 
@@ -24,8 +24,9 @@ public class Board extends Unit {
 	// Score of this board
 	public int score = 0;
 	// Ability variables
-    public PlayerAbility[] abilities = {new PlayerAbility("timeSlower"),
-                                        new PlayerAbility("ballSplitter")};
+	final int TimeSlower = 0, BallSplitter = 1;
+    public Effect[] abilities = {new Effect("timeSlower"),
+                                        new Effect("ballSplitter")};
 	// Sound
 	Sound sound_reflect;
 
@@ -97,9 +98,9 @@ public class Board extends Unit {
 
 	private void updateVectors() {
 		for (int i = 0; i < topBounds.length; i++)
-			topBounds[i].x = bounds.x + 10 * (i + 1);
+			topBounds[i].x = bounds.x + bounds.width / (topBounds.length + 1) * (i + 1);
 		for (int i = 0; i < bottomBounds.length; i++)
-			bottomBounds[i].x = bounds.x + 10 * (i + 1);
+			bottomBounds[i].x = bounds.x + bounds.width / (bottomBounds.length + 1) * (i + 1);
 		for (Vector2 bound : leftBounds)
 			bound.x = bounds.x;
 		for (Vector2 bound : rightBounds)
@@ -111,7 +112,7 @@ public class Board extends Unit {
 	}
 
 	private void updateAbility(float delta) {
-		for (PlayerAbility ability: abilities) {
+		for (Effect ability: abilities) {
 			if (ability.isActive)
 				ability.timer -= delta;
 			if (ability.timer < 0)
@@ -148,18 +149,18 @@ public class Board extends Unit {
 	}
 
 	private void setBoundsPoints() {
-		topBounds = new Vector2[9];
+		topBounds = new Vector2[18];
 		for (int i = 0; i < topBounds.length; i++)
-			topBounds[i] = new Vector2(bounds.x + bounds.width / 10 * (i + 1), bounds.y + bounds.height);
-		bottomBounds = new Vector2[9];
+			topBounds[i] = new Vector2(bounds.x + bounds.width / 19 * (i + 1), bounds.y + bounds.height);
+		bottomBounds = new Vector2[18];
 		for (int i = 0; i < bottomBounds.length; i++)
-			bottomBounds[i] = new Vector2(bounds.x + bounds.width / 10 * (i + 1), bounds. y);
-		leftBounds = new Vector2[2];
+			bottomBounds[i] = new Vector2(bounds.x + bounds.width / 19 * (i + 1), bounds. y);
+		leftBounds = new Vector2[4];
 		for (int i = 0; i < leftBounds.length; i++)
-			leftBounds[i] = new Vector2(bounds.x, bounds.y + bounds.height / 3 * (i + 1));
-		rightBounds = new Vector2[2];
+			leftBounds[i] = new Vector2(bounds.x, bounds.y + bounds.height / 5 * (i + 1));
+		rightBounds = new Vector2[4];
 		for (int i = 0; i < rightBounds.length; i++)
-			rightBounds[i] = new Vector2(bounds.x + bounds.width, bounds.y + bounds.height / 3 * (i + 1));
+			rightBounds[i] = new Vector2(bounds.x + bounds.width, bounds.y + bounds.height / 5 * (i + 1));
 		angles = new Vector2[4];
 		angles[0] = new Vector2(bounds.x, bounds.y);
 		angles[1] = new Vector2(bounds.x, bounds.y + bounds.height);
@@ -329,13 +330,22 @@ public class Board extends Unit {
 	}
 
 	public void engageAbility(String abilityName) {
-		for (PlayerAbility ability : abilities) {
+		for (Effect ability : abilities) {
 			if (ability.name.equals(abilityName)) {
 				ability.isActive = true;
 				ability.timer = 10.0f;
 				System.out.print(this.name);
 				System.out.print(" got a bonus: ");
 				System.out.println(ability.name);
+			}
+		}
+	}
+
+	public void disengageAbility(String abilityName) {
+		for (Effect ability : abilities) {
+			if (ability.name.equals(abilityName)) {
+				ability.isActive = false;
+				ability.timer = 0;
 			}
 		}
 	}
