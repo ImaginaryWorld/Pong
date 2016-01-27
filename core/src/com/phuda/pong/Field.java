@@ -38,9 +38,7 @@ public class Field {
 		// Player 2 aka bottom player
 		player2Board = new Board(screenWidth, screenHeight, "bottom", this, 0);
 		// Bonuses generation
-		bonuses = new Bonus[2];
-		for (int i = 0; i < bonuses.length; i++)
-			bonuses[i] = new Bonus(this, screenWidth, screenHeight, "timeSlower");
+		bonuses = new Bonus[3];
 	}
 	
 	public void updateState(float delta) {
@@ -79,12 +77,6 @@ public class Field {
 				balls.remove(i);
 				continue;
 			}
-			// Split ball on three small if necessary
-			if (player1Board.abilities[1].isActive && balls.get(i).justTouchedBoard
-					&& balls.get(i).bounds.y > y
-					|| player2Board.abilities[1].isActive && balls.get(i).justTouchedBoard
-					&& balls.get(i).bounds.y < y)
-				balls.get(i).split(balls);
 			balls.get(i).updateState(delta);
 		}
 	}
@@ -92,39 +84,36 @@ public class Field {
 	private void updateFeatures(float delta) {
 		// Bonuses update
 		updateBonuses(delta);
-		balanceAbilities();
 	}
 
 	private void updateBonuses(float delta) {
 		for (int i = 0; i < bonuses.length; i++) {
-			if (bonuses[i] == null || bonuses[i].bounds.radius < 1)
-				bonuses[i] = newBonus(this.screenWidth, this.screenHeight);
-			bonuses[i].updateState(delta);
+			if (bonuses[i] != null) {
+				bonuses[i].updateState(delta);
+				// Deleting bonuses which time has elapsed
+				if (bonuses[i].time < 0)
+					bonuses[i] = null;
+			}
+		}
+		for (int i = 0; i < bonuses.length; i++) {
+			// Creating new ones with 0.3% probability
+			if (bonuses [i] == null && MathUtils.random(1000) > 997) {
+				bonuses[i] = new Bonus(this, this.screenWidth, this.screenHeight, 16);
+				checkBonusOverlaps(bonuses[i]);
+			}
 		}
 	}
 
-	// Method that balance abilities - now only one player can have certain bonus
-	private void balanceAbilities() {
-		for (int i = 0; i < player1Board.abilities.length; i++)
-			if (player1Board.abilities[i].isActive && player2Board.abilities[i].isActive) {
-				if (player1Board.abilities[i].timer > player2Board.abilities[i].timer) {
-					player1Board.abilities[i].timer -= player2Board.abilities[i].timer;
-					player2Board.abilities[i].disengage();
-				}
-				else {
-					player2Board.abilities[i].timer -= player1Board.abilities[i].timer;
-					player1Board.abilities[i].disengage();
-				}
-			}
+	private void checkBonusOverlaps(Bonus bonus) {
+		for (int j = 0; j < bonuses.length; j++) {
+			if (bonuses[j] != null)
+				if (bonuses[j] != bonus)
+					// Calculating if bonus will overlaps with some other in full size
+					if (bonus.vector.dst(bonuses[j].vector) <
+							Math.sqrt(bonus.fullRadius * bonus.fullRadius * 2)) {
+						System.out.println("New bonus will overlaps other one");
+						bonus = null;
+					}
+		}
 	}
-
-    private Bonus newBonus(int sw, int sh) {
-        String bonusType;
-        if (MathUtils.random() >= 0.5)
-            bonusType = "timeSlower";
-        else
-            bonusType = "ballSplitter";
-        Bonus bonus = new Bonus(this, sw, sh, bonusType);
-        return bonus;
-    }
 }
