@@ -56,7 +56,6 @@ public class Board extends Unit {
 	}
 
 	private void processAction(float delta) {
-		touchTime += delta;
 		// Human
 		if (contr == null) {
 			checkTouch();
@@ -174,20 +173,20 @@ public class Board extends Unit {
 		int point;
 
 		for (Ball ball : balls) {
-			if (ball.lastTouched != this) {
+			if (!ball.states[ball.Ethereal].isActive) {
 				// Collision with board's top bound points
 				if (checkBallCollision(topBounds, ball) != 0)
 					ball.boardCollision(this, bounds.y + bounds.height + ball.bounds.radius);
-				// Collision with board's bottom bound points
+					// Collision with board's bottom bound points
 				else if (checkBallCollision(bottomBounds, ball) != 0)
 					ball.boardCollision(this, bounds.y - ball.bounds.radius);
-				// Collision with board's left bound points
+					// Collision with board's left bound points
 				else if (checkBallCollision(leftBounds, ball) != 0)
 					ball.sideBoardCollision(this, bounds.x - ball.bounds.radius);
-				// Collision with board's right bound points
+					// Collision with board's right bound points
 				else if (checkBallCollision(rightBounds, ball) != 0)
 					ball.sideBoardCollision(this, bounds.x + bounds.width + ball.bounds.radius);
-				// Collision with angle points
+					// Collision with angle points
 				else if ((point = checkBallCollision(angles, ball)) != 0)
 					handleAngleCase(point, ball);
 			}
@@ -200,7 +199,7 @@ public class Board extends Unit {
 		int point;
 
 		for (Ball ball : balls) {
-			if (ball.lastTouched != this) {
+			if (!ball.states[ball.Ethereal].isActive) {
 				// Collision with board's top bound points
 				if (checkBallCollision(topBounds, ball) != 0) {
 					if (enterSideFromTop(ball))
@@ -318,36 +317,11 @@ public class Board extends Unit {
 				// Sound of collision
 				long s = sound_reflect.play(0.6f);
 				sound_reflect.setPitch(s, (float) ((ball.ySpeed + ball.ySpeed) * 0.1f + 0.5f));
-				// Changing of touchTime
-				touchTime = 0;
-				ball.touchTime = 0;
-				ball.lastTouched = this;
-				this.lastTouched = ball;
+				// Setting this board to as last one that ball touches
 				ball.saveLastBoard(this);
 				return j + 1;
 			}
 		return 0;
-	}
-
-	public void engageAbility(String abilityName) {
-		for (Effect ability : abilities) {
-			if (ability.name.equals(abilityName)) {
-				ability.isActive = true;
-				ability.timer = 10.0f;
-				System.out.print(this.name);
-				System.out.print(" got a bonus: ");
-				System.out.println(ability.name);
-			}
-		}
-	}
-
-	public void disengageAbility(String abilityName) {
-		for (Effect ability : abilities) {
-			if (ability.name.equals(abilityName)) {
-				ability.isActive = false;
-				ability.timer = 0;
-			}
-		}
 	}
 
 	void outOfBoundStop() {

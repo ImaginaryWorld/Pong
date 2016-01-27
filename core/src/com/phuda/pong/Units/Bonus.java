@@ -32,4 +32,14 @@ public class Bonus extends Unit {
                 (float)Math.random() * screenHeight / 2 + screenHeight / 4,
                 0);
     }
+
+    // Method that allows to get int detector of bonus
+    public int getIndex() {
+        if (name.equals("timeSlower"))
+            return 0;
+        else if (name.equals("ballSplitter"))
+            return 1;
+        // For exception cases
+        return -1;
+    }
 }

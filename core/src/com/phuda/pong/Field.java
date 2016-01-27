@@ -83,10 +83,8 @@ public class Field {
 			if (player1Board.abilities[1].isActive && balls.get(i).justTouchedBoard
 					&& balls.get(i).bounds.y > y
 					|| player2Board.abilities[1].isActive && balls.get(i).justTouchedBoard
-					&& balls.get(i).bounds.y < y) {
+					&& balls.get(i).bounds.y < y)
 				balls.get(i).split(balls);
-				System.out.println("There are i really want a three small balls");
-				}
 			balls.get(i).updateState(delta);
 		}
 	}
@@ -111,11 +109,11 @@ public class Field {
 			if (player1Board.abilities[i].isActive && player2Board.abilities[i].isActive) {
 				if (player1Board.abilities[i].timer > player2Board.abilities[i].timer) {
 					player1Board.abilities[i].timer -= player2Board.abilities[i].timer;
-					player2Board.disengageAbility(player2Board.abilities[i].name);
+					player2Board.abilities[i].disengage();
 				}
 				else {
 					player2Board.abilities[i].timer -= player1Board.abilities[i].timer;
-					player1Board.disengageAbility(player1Board.abilities[i].name);
+					player1Board.abilities[i].disengage();
 				}
 			}
 	}

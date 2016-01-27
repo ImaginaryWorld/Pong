@@ -16,8 +16,8 @@ public class Ball extends Unit {
     Board lastTouchedBoard;
     public boolean justTouchedBoard;
 	// Effects
-	final int Ethereal = 0, Slowed = 1;
-	public Effect[] states = {new Effect("Ethereal"), new Effect("Slowed")};
+	final int Ethereal = 0, Slowed = 1, Split = 2;
+	public Effect[] states = {new Effect("Ethereal"), new Effect("Slowed"), new Effect("Split")};
 	// Sound
 	Sound sound_bump;
 	
@@ -36,21 +36,8 @@ public class Ball extends Unit {
 		sound_bump = Gdx.audio.newSound(Gdx.files.internal("sounds/bump.wav"));
 	}
 
-    public static Ball newBall(Field field, int screenWidth, int screenHeight, float x, float y,
-                double xSpeed, double ySpeed, float radius, int num) {
-        Ball ball = new Ball(field, screenWidth, screenHeight, num);
-        ball.bounds.x = x;
-        ball.bounds.y = y;
-        ball.bounds.radius = radius;
-        ball.xSpeed = xSpeed;
-        ball.ySpeed = ySpeed;
-
-        return ball;
-    }
-
 	// Updating methods
 	public void updateState(float delta) {
-		touchTime += delta;
         justTouchedBoard = false;
 		// Updating ball's position
 		updatePosition(delta);
@@ -80,14 +67,19 @@ public class Ball extends Unit {
 	}
 
 	private void updateStates(float delta) {
-		if (!states[Slowed].isActive)
-			checkSlowing();
+		// States timing
 		for (Effect state: states) {
-			if (state.isActive)
-				state.timer -= delta;
-			if (state.timer < 0)
-				disengageState(state.name);
+			if (!state.eternal) {
+				if (state.isActive)
+					state.timer -= delta;
+				if (state.timer < 0)
+					state.disengage();
+			}
 		}
+		// Handling slowing
+		checkSlowing();
+		// Handling splitting
+		checkSplitting();
 	}
 
 	// Methods checking collisions
@@ -98,7 +90,7 @@ public class Ball extends Unit {
 					// Balls exchange their speeds and sets last touched unit
 					ballsExchange(ball);
 					// Try to prevent sticking with that
-					engageState(states[Ethereal].name, 0.2f);
+					states[Ethereal].engage(0.2f);
 					// Sound
 					playSound();
 				}
@@ -112,7 +104,7 @@ public class Ball extends Unit {
 				if (bounds.overlaps(bonuses[i].bounds))
 				{
 					// Somebody got a bonus!
-					lastTouchedBoard.engageAbility(bonuses[i].name);
+					lastTouchedBoard.abilities[bonuses[i].getIndex()].engage(5);
 					// Deleting bonus
 					bonuses[i] = null;
 				}
@@ -131,10 +123,17 @@ public class Ball extends Unit {
 
 	// Slowing ball if necessary
 	private void checkSlowing() {
-		Board player1 = field.player1Board, player2 = field.player2Board;
-		if ((bounds.y > field.screenHeight - field.screenHeight / 3 && player1.abilities[player1.TimeSlower].isActive && ySpeed > 0)
-				|| (bounds.y < field.screenHeight / 3 && field.player2Board.abilities[player2.TimeSlower].isActive && ySpeed < 0))
-			engageState(this.states[Slowed].name, 10);
+		if (!states[Slowed].isActive) {
+			Board player1 = field.player1Board, player2 = field.player2Board;
+			if ((bounds.y > field.screenHeight - field.screenHeight / 3 && player1.abilities[player1.TimeSlower].isActive && ySpeed > 0)
+					|| (bounds.y < field.screenHeight / 3 && field.player2Board.abilities[player2.TimeSlower].isActive && ySpeed < 0))
+				states[Slowed].engage(10);
+		}
+	}
+
+	private void checkSplitting() {
+		if (states[Split].isActive && !states[Split].eternal)
+			split(field.balls);
 	}
 
 	public void boardCollision(Board board, float yBound) {
@@ -143,9 +142,7 @@ public class Ball extends Unit {
 		ySpeed = - ySpeed;
 		// Give some speed by friction
 		xSpeed += board.xSpeed / 5;
-		// Deactivating slowing
-		if (states[Slowed].isActive)
-			disengageState(states[Slowed].name);
+		changeStatesHitByBoard(board);
 	}
 
 	public void sideBoardCollision(Board board, float xBound) {
@@ -155,9 +152,7 @@ public class Ball extends Unit {
 		// If ball's speed are too low it receives a board's speed
 		if (Math.abs(xSpeed) < Math.abs(board.xSpeed))
 			xSpeed = board.xSpeed;
-		// Deactivating slowing
-		if (states[Slowed].isActive)
-			disengageState(states[Slowed].name);
+		changeStatesHitByBoard(board);
 	}
 
 	public void angleBoardCollision(Board board, boolean ySpeedChange) {
@@ -171,9 +166,7 @@ public class Ball extends Unit {
 		// Changing ySpeed
 		if (ySpeedChange)
 			ySpeed = -ySpeed;
-		// Deactivating slowing
-		if (states[Slowed].isActive)
-			disengageState(states[Slowed].name);
+		changeStatesHitByBoard(board);
 	}
 
 	// Disposition methods
@@ -202,15 +195,11 @@ public class Ball extends Unit {
 		ball.ySpeed = ySpeed;
 		this.xSpeed = xTemp;
 		this.ySpeed = yTemp;
-		// Setting fields that refers to last touched unit
-		ball.lastTouched = this;
-		this.lastTouched = ball;
 	}
 
 	// Methods that handles special fields
 	public void saveLastBoard(Board board) {
 		lastTouchedBoard = board;
-        justTouchedBoard = true;
 	}
 
 	// Methods that handles cases of using bonuses
@@ -218,10 +207,10 @@ public class Ball extends Unit {
 		if (bounds.radius == field.screenWidth / 100 + field.screenHeight / 100) {
 			// Radius
 			bounds.radius = bounds.radius / 1.5f;
-			// Ethereal for a few seconds, so the ball can fly apart
-			this.engageState(this.states[Ethereal].name, 0.5f);
-			System.out.println("xSpeed: " + xSpeed);
-			System.out.println("ySpeed: " + ySpeed);
+			// Ethereal for a few seconds, so the balls can fly apart
+			states[Ethereal].engage(0.5f);
+			// Set split to eternal
+			states[Split].engage(0);
 			// 2nd ball
 			balls.add(new Ball(field, field.screenWidth, field.screenHeight, balls.size()));
 			// Same radius and bounds
@@ -229,12 +218,12 @@ public class Ball extends Unit {
 			balls.get(balls.size() - 1).bounds.x = bounds.x;
 			balls.get(balls.size() - 1).bounds.y = bounds.y;
 			// Speed formula
-			balls.get(balls.size() - 1).xSpeed = xSpeed * MathUtils.cosDeg(45) - ySpeed * MathUtils.sinDeg(45);
-			balls.get(balls.size() - 1).ySpeed = xSpeed * MathUtils.sinDeg(45) + ySpeed * MathUtils.cosDeg(45);
-			// Ethereal for a few seconds, so the ball can fly apart
-			balls.get(balls.size() - 1).engageState(this.states[Ethereal].name, 0.5f);
-			System.out.println("2.xSpeed: " + balls.get(balls.size() - 1).xSpeed);
-			System.out.println("2.ySpeed: " + balls.get(balls.size() - 1).ySpeed);
+			balls.get(balls.size() - 1).xSpeed = xSpeed * MathUtils.cosDeg(30) - ySpeed * MathUtils.sinDeg(30);
+			balls.get(balls.size() - 1).ySpeed = xSpeed * MathUtils.sinDeg(30) + ySpeed * MathUtils.cosDeg(30);
+			// Ethereal for a few seconds, so the balls can fly apart
+			balls.get(balls.size() - 1).states[Ethereal].engage(0.5f);
+			// Set split to eternal
+			balls.get(balls.size() - 1).states[Split].engage(0);
 			// 3rd ball
 			balls.add(new Ball(field, field.screenWidth, field.screenHeight, balls.size()));
 			// Same radius and bounds
@@ -242,19 +231,22 @@ public class Ball extends Unit {
 			balls.get(balls.size() - 1).bounds.x = bounds.x;
 			balls.get(balls.size() - 1).bounds.y = bounds.y;
 			// Speed formula
-			balls.get(balls.size() - 1).xSpeed = xSpeed * MathUtils.cosDeg(-45) - ySpeed * MathUtils.sinDeg(-45);
-			balls.get(balls.size() - 1).ySpeed = xSpeed * MathUtils.sinDeg(-45) + ySpeed * MathUtils.cosDeg(-45);
-			// Etheral for a few seconds, so the ball can fly apart
-			balls.get(balls.size() - 1).engageState(this.states[Ethereal].name, 0.5f);
-			System.out.println("3.xSpeed: " + balls.get(balls.size() - 1).xSpeed);
-			System.out.println("3.ySpeed: " + balls.get(balls.size() - 1).ySpeed);
+			balls.get(balls.size() - 1).xSpeed = xSpeed * MathUtils.cosDeg(-30) - ySpeed * MathUtils.sinDeg(-30);
+			balls.get(balls.size() - 1).ySpeed = xSpeed * MathUtils.sinDeg(-30) + ySpeed * MathUtils.cosDeg(-30);
+			// Ethereal for a few seconds, so the balls can fly apart
+			balls.get(balls.size() - 1).states[Ethereal].engage(0.5f);
+			// Set split to eternal
+			balls.get(balls.size() - 1).states[Split].engage(0);
 		}
 	}
 
-	// Methods that handles effects
+	// Methods that handles states
 	private void engageState(String effectName, float time) {
 		for (Effect state : states) {
 			if (state.name.equals(effectName)) {
+				// Set time to 0 to engage endless state
+				if (time == 0)
+					state.eternal = true;
 				state.timer = time;
 				state.isActive = true;
 				System.out.println("Ball #" + this.name + " is set to " + effectName);
@@ -262,14 +254,15 @@ public class Ball extends Unit {
 		}
 	}
 
-	private void disengageState(String effectName) {
-		for (Effect state : states) {
-			if (state.name.equals(effectName)) {
-				state.timer = 0;
-				state.isActive = false;
-				System.out.println("Ball #" + this.name + " set off " + effectName);
-			}
-		}
+	private void changeStatesHitByBoard(Board board) {
+		// Engage ethereal
+		states[Ethereal].engage(0.2f);
+		// Splitting ball if splitter bonus is active
+		if (board.abilities[board.BallSplitter].isActive && !states[Split].isActive)
+			states[Split].engage(1);
+		// Deactivating slowing
+		if (states[Slowed].isActive)
+			states[Slowed].disengage();
 	}
 
 	// Methods that handles sounds
