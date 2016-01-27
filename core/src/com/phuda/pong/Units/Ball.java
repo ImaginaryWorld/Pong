@@ -4,9 +4,11 @@ import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.audio.Sound;
 import com.badlogic.gdx.math.Circle;
 import com.badlogic.gdx.math.MathUtils;
+import com.badlogic.gdx.math.Vector2;
 import com.phuda.pong.Effects.Effect;
 import com.phuda.pong.Exc.TouchException;
 import com.phuda.pong.Field;
+import com.sun.javafx.geom.Vec2f;
 
 import java.util.ArrayList;
 
@@ -15,6 +17,8 @@ public class Ball extends Unit {
 	public Circle bounds;
     Board lastTouchedBoard;
     public boolean justTouchedBoard;
+    public ArrayList<Vec2f> positionsHistory;
+    final int HISTORY_LENGTH = 12;
 	// Effects
 	final int Ethereal = 0, Slowed = 1, Split = 2;
 	public Effect[] states = {new Effect("Ethereal"), new Effect("Slowed"), new Effect("Split")};
@@ -29,6 +33,7 @@ public class Ball extends Unit {
 		this.name = Integer.toString(++num);
 		setBounds(screenWidth, screenHeight);
 		this.field = field;
+        this.positionsHistory = new ArrayList<Vec2f>();
 		// Randomizing ball's x and y axle speed with using multipliers
 		xSpeed = (int)(Math.random() * 16 - 8);
 		while (Math.abs(ySpeed) < 4)
@@ -52,6 +57,12 @@ public class Ball extends Unit {
 		checkCollidesWithWalls();
 		// Speed decreasing
 		releaseSpeed();
+        // Save position
+        Vec2f vec = new Vec2f(bounds.x, bounds.y);
+        positionsHistory.add(vec);
+        if (positionsHistory.size() > HISTORY_LENGTH) {
+            positionsHistory.remove(0);
+        }
 	}
 
 	private void updatePosition(float delta) {

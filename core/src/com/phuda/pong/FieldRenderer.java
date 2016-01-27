@@ -8,9 +8,11 @@ import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer.ShapeType;
+import com.badlogic.gdx.math.MathUtils;
 import com.phuda.pong.Units.Ball;
 import com.phuda.pong.Units.Board;
 import com.phuda.pong.Units.Bonus;
+import com.sun.javafx.geom.Vec2f;
 
 public class FieldRenderer {
 	final int w = Gdx.graphics.getWidth(), h = Gdx.graphics.getHeight();
@@ -57,10 +59,10 @@ public class FieldRenderer {
 		
 		shapeRenderer.begin(ShapeType.Filled);
         // blue player 1
-        shapeRenderer.setColor(0.2f, 0.2f, 0.5f, 1);
+        shapeRenderer.setColor(0.2f, 0.2f, 1.0f, 0.5f);
         shapeRenderer.rect(0, h/4 , w/2 + scoreShift, h/2);
         // red player 2
-        shapeRenderer.setColor(0.5f, 0.2f, 0.2f, 1);
+        shapeRenderer.setColor(1.0f, 0.2f, 0.2f, 0.5f);
         shapeRenderer.rect(w, h/4, -w/2 + scoreShift, h/2);
         // abilities bars
         // time ability
@@ -89,8 +91,19 @@ public class FieldRenderer {
 		for (Ball ball : field.balls){
 			if (ball != null){
 				float r = ball.bounds.radius;
-				batch.draw(ballTexture, ball.bounds.x - r, ball.bounds.y - r, r*2, r*2);
-			}
+                // Trail rendering
+                float alpha = 0.2f;
+                for (Vec2f vec : ball.positionsHistory) {
+                    batch.setColor(1f, 1f, 1f, alpha);
+                    float size = alpha * 2;
+                    batch.draw(ballTexture, vec.x - r * size, vec.y - r * size,
+                            r * 2 * size, r * 2 * size);
+                    alpha += 0.02f;
+                }
+                // Reset alpha
+                batch.setColor(1f, 1f, 1f, 1f);
+                batch.draw(ballTexture, ball.bounds.x - r, ball.bounds.y - r, r * 2, r * 2);
+            }
 		}
 
 		// bonuses
