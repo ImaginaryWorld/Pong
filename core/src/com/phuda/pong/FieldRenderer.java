@@ -9,6 +9,7 @@ import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer.ShapeType;
 import com.badlogic.gdx.math.MathUtils;
+import com.badlogic.gdx.math.Vector2;
 import com.phuda.pong.Units.Ball;
 import com.phuda.pong.Units.Board;
 import com.phuda.pong.Units.Bonus;
@@ -93,7 +94,7 @@ public class FieldRenderer {
 				float r = ball.bounds.radius;
                 // Trail rendering
                 float alpha = 0.2f;
-                for (Vec2f vec : ball.positionsHistory) {
+                for (Vector2 vec : ball.positionsHistory) {
                     batch.setColor(1f, 1f, 1f, alpha);
                     float size = alpha * 2;
                     batch.draw(ballTexture, vec.x - r * size, vec.y - r * size,
