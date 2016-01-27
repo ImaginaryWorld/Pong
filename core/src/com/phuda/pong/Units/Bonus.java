@@ -6,18 +6,17 @@ import com.phuda.pong.Field;
 
 public class Bonus extends Unit {
     final int timeSlower = 0, ballSplitter = 1;
-    public final int fullRadius = 24;
+    public int fullRadius;
     public String types[] = {"timeSlower", "ballSplitter"};
     public Circle bounds;
     public float time;
     float initialRotation = MathUtils.random(120.0f);
     public float rotation;
-    float target_radius = (float) (25.0f + Math.random() * 20);
-
 
     public Bonus(Field field, int screenWidth, int screenHeight, String _type)
     {
         super();
+        fullRadius = screenWidth / 50 + screenHeight / 50;
         setBounds(screenWidth, screenHeight);
         this.field = field;
         name = _type;
@@ -26,10 +25,11 @@ public class Bonus extends Unit {
     public Bonus(Field field, int screenWidth, int screenHeight, float time)
     {
         super();
+        fullRadius = screenWidth / 50 + screenHeight / 50;
         setBounds(screenWidth, screenHeight);
         this.field = field;
         this.time = time;
-        name = types[(int)(MathUtils.random(types.length - 1))];
+        name = types[MathUtils.random(types.length - 1)];
     }
 
     public void updateState(float delta) {
@@ -58,10 +58,7 @@ public class Bonus extends Unit {
     private void handleRadius(float delta) {
         if (time > 2 && bounds.radius < fullRadius)
             bounds.radius += 0.5;
-        else if (time < 2) {
+        else if (time < 2)
             bounds.radius -= bounds.radius * delta;
-            System.out.println("time: " + time);
-            System.out.println("radius: " + bounds.radius);
-        }
     }
 }

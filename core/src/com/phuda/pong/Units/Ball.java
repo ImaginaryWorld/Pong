@@ -17,8 +17,9 @@ public class Ball extends Unit {
 	public Circle bounds;
     Board lastTouchedBoard;
     public boolean justTouchedBoard;
+	// Ball's trails
+	final int HISTORY_LENGTH = 12;
     public ArrayList<Vector2> positionsHistory;
-    final int HISTORY_LENGTH = 12;
 	// Effects
 	final int Ethereal = 0, Slowed = 1, Split = 2;
 	public Effect[] states = {new Effect("Ethereal"), new Effect("Slowed"), new Effect("Split")};
@@ -215,13 +216,9 @@ public class Ball extends Unit {
 
 	// Methods that handles cases of using bonuses
 	public void split(ArrayList <Ball> balls) {
-		if (bounds.radius == field.screenWidth / 100 + field.screenHeight / 100) {
 			// Radius
 			bounds.radius = bounds.radius / 1.5f;
-			// Ethereal for a few seconds, so the balls can fly apart
-			states[Ethereal].engage(0.5f);
-			// Set split to eternal
-			states[Split].engage(0);
+			handleAfterSplit();
 			// 2nd ball
 			balls.add(new Ball(field, field.screenWidth, field.screenHeight, balls.size()));
 			// Same radius and bounds
@@ -231,10 +228,10 @@ public class Ball extends Unit {
 			// Speed formula
 			balls.get(balls.size() - 1).xSpeed = xSpeed * MathUtils.cosDeg(30) - ySpeed * MathUtils.sinDeg(30);
 			balls.get(balls.size() - 1).ySpeed = xSpeed * MathUtils.sinDeg(30) + ySpeed * MathUtils.cosDeg(30);
-			// Ethereal for a few seconds, so the balls can fly apart
-			balls.get(balls.size() - 1).states[Ethereal].engage(0.5f);
-			// Set split to eternal
-			balls.get(balls.size() - 1).states[Split].engage(0);
+			// Turn on some split consequences
+			balls.get(balls.size() - 1).handleAfterSplit();
+			balls.get(balls.size() - 1).lastTouchedBoard = this.lastTouchedBoard;
+
 			// 3rd ball
 			balls.add(new Ball(field, field.screenWidth, field.screenHeight, balls.size()));
 			// Same radius and bounds
@@ -244,25 +241,9 @@ public class Ball extends Unit {
 			// Speed formula
 			balls.get(balls.size() - 1).xSpeed = xSpeed * MathUtils.cosDeg(-30) - ySpeed * MathUtils.sinDeg(-30);
 			balls.get(balls.size() - 1).ySpeed = xSpeed * MathUtils.sinDeg(-30) + ySpeed * MathUtils.cosDeg(-30);
-			// Ethereal for a few seconds, so the balls can fly apart
-			balls.get(balls.size() - 1).states[Ethereal].engage(0.5f);
-			// Set split to eternal
-			balls.get(balls.size() - 1).states[Split].engage(0);
-		}
-	}
-
-	// Methods that handles states
-	private void engageState(String effectName, float time) {
-		for (Effect state : states) {
-			if (state.name.equals(effectName)) {
-				// Set time to 0 to engage endless state
-				if (time == 0)
-					state.eternal = true;
-				state.timer = time;
-				state.isActive = true;
-				System.out.println("Ball #" + this.name + " is set to " + effectName);
-			}
-		}
+			// Turn on some split consequences
+			balls.get(balls.size() - 1).handleAfterSplit();
+			balls.get(balls.size() - 1).lastTouchedBoard = this.lastTouchedBoard;
 	}
 
 	private void changeStatesHitByBoard(Board board) {
@@ -274,6 +255,13 @@ public class Ball extends Unit {
 		// Deactivating slowing
 		if (states[Slowed].isActive)
 			states[Slowed].disengage();
+	}
+
+	private void handleAfterSplit() {
+		// Ethereal for a few seconds, so the balls can fly apart
+		states[Ethereal].engage(0.5f);
+		// Set split to eternal
+		states[Split].engage(0);
 	}
 
 	// Methods that handles sounds

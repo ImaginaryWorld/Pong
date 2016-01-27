@@ -110,9 +110,10 @@ public class Field {
 				if (bonuses[j] != bonus)
 					// Calculating if bonus will overlaps with some other in full size
 					if (bonus.vector.dst(bonuses[j].vector) <
-							Math.sqrt(bonus.fullRadius * bonus.fullRadius * 2)) {
-						System.out.println("New bonus will overlaps other one");
-						bonus = null;
+							bonus.fullRadius * 4) {
+						System.out.println("New bonus too close to another one");
+						bonuses[j] = null;
+						return;
 					}
 		}
 	}
