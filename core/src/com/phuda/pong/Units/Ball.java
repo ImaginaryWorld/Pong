@@ -16,7 +16,6 @@ public class Ball extends Unit {
 	// Ball's disposition variable
 	public Circle bounds;
     public Board lastTouchedBoard;
-    public boolean justTouchedBoard;
 	// Ball's trails
     float historyTimer;
 	final int HISTORY_LENGTH = 12;
@@ -68,7 +67,6 @@ public class Ball extends Unit {
                 positionsHistory.remove(0);
             }
         }
-        justTouchedBoard = false;
     }
 
 	private void updatePosition(float delta) {
@@ -101,7 +99,6 @@ public class Ball extends Unit {
 		checkSlowing();
 		// Handling splitting
 		checkSplitting();
-        checkController();
 	}
 
 	// Methods checking collisions
@@ -110,7 +107,7 @@ public class Ball extends Unit {
 			if (this != ball && !ball.states[Ethereal].isActive)
 				if (bounds.overlaps(ball.bounds)) {
 					// Balls exchange their speeds and sets last touched unit
-					ballsExchange(ball);
+					ballsSpeedExchange(ball);
 					// Try to prevent sticking with that
 					states[Ethereal].engage(0.2f);
 					// Sound
@@ -145,22 +142,17 @@ public class Ball extends Unit {
 
 	// Slowing ball if necessary
 	private void checkSlowing() {
-		if (!states[Slowed].isActive) {
+		if (Math.abs(field.screenHeight / 2 - bounds.y) > field.screenHeight * 5 / 12) {
+			if (states[Slowed].isActive)
+				states[Slowed].disengage();
+		}
+		else if (!states[Slowed].isActive) {
 			Board player1 = field.player1Board, player2 = field.player2Board;
 			if ((bounds.y > field.screenHeight - field.screenHeight / 3 && player1.abilities[player1.TimeSlower].isActive && speed.y > 0)
 					|| (bounds.y < field.screenHeight / 3 && field.player2Board.abilities[player2.TimeSlower].isActive && speed.y < 0))
 				states[Slowed].engage(10);
 		}
 	}
-
-    private void checkController() {
-        if (!states[Controlled].isActive && lastTouchedBoard != null){
-            if (lastTouchedBoard.abilities[lastTouchedBoard.Controller].isActive){
-                states[Controlled].engage(10);
-                System.out.println("controller on");
-            }
-        }
-    }
 
 	private void checkSplitting() {
 		if (states[Split].isActive && !states[Split].eternal)
@@ -213,17 +205,13 @@ public class Ball extends Unit {
 
 	// Speed handling methods
 	private void releaseSpeed(float delta) {
-		if (Math.abs(speed.x) > field.screenWidth / 60) {
+		if (Math.abs(speed.x) > field.screenWidth / 60)
 			speed.x -= delta * speed.x * 6;
-			System.out.println("speed.x: " + speed.x);
-		}
-		if (Math.abs(speed.y) > field.screenHeight / 90) {
+		if (Math.abs(speed.y) > field.screenHeight / 90)
 			speed.y -= delta * speed.y * 6;
-			System.out.println("speed.y: " + speed.y);
-		}
 	}
 
-	private void ballsExchange(Ball ball) {
+	private void ballsSpeedExchange(Ball ball) {
 		float xTemp = ball.speed.x;
 		float yTemp = ball.speed.y;
 		// If balls weights are same
@@ -285,11 +273,16 @@ public class Ball extends Unit {
 	}
 
 	private void changeStatesHitByBoard(Board board) {
-		// Engage ethereal
+		// Engaging ethereal
 		states[Ethereal].engage(0.2f);
 		// Splitting ball if splitter bonus is active
 		if (board.abilities[board.BallSplitter].isActive && !states[Split].isActive)
 			states[Split].engage(1);
+		// Engaging controller
+		if (board.abilities[board.Controller].isActive && !states[Controlled].isActive){
+				states[Controlled].engage(10);
+				System.out.println("controller on");
+		}
 		// Deactivating slowing
 		if (states[Slowed].isActive)
 			states[Slowed].disengage();

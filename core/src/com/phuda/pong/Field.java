@@ -60,9 +60,7 @@ public class Field {
 
 	private void updateBalls(float delta) {
 		// Creating new balls
-		if (balls.size() < ballsCount)
-			for (int i = 0; i < ballsCount - balls.size(); i++)
-				balls.add(new Ball(this, screenWidth, screenHeight, balls.size() - 1));
+		createNewBalls();
 		for (int i = 0; i < balls.size(); i++) {
             //int y = Gdx.graphics.getHeight() / 2;
 			if (balls.get(i).outOfField()) {
@@ -102,6 +100,12 @@ public class Field {
 				checkBonusOverlaps(bonuses[i], i);
 			}
 		}
+	}
+
+	private void createNewBalls() {
+		// Creating new ball with probability that depends on number available max balls and actual balls on field
+		if (1000 - ballsCount + balls.size() < MathUtils.random(1000) || balls.size() == 0)
+			balls.add(new Ball(this, screenWidth, screenHeight, balls.size() - 1));
 	}
 
 	private void checkBonusOverlaps(Bonus bonus, int elementNumber) {
