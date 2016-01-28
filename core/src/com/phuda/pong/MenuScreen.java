@@ -40,11 +40,11 @@ public class MenuScreen extends PongScreen
 	{
 
 		if (start_pvp_button.isPressed()){
-			game.setScreen(new GameScreen(game, "pvp", balls_slider.value, 0));
+			game.setScreen(new GameScreen(game, balls_slider.value, 0));
 		}
 		
 		if (start_pvc_button.isPressed()){
-			game.setScreen(new GameScreen(game, "pvc", balls_slider.value, ai_mode_slider.value));
+			game.setScreen(new GameScreen(game, balls_slider.value, ai_mode_slider.value));
 		}
 		
 		if (other2_button.isPressed()){  System.out.println("other2_button pressed");  }

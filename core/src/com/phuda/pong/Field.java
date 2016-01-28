@@ -17,17 +17,15 @@ public class Field {
 	public ArrayList<Ball> balls;
 	public Bonus[] bonuses;
 	
-	Field(String mode, int ballsCount, int ai, int screenWidth, int screenHeight)
+	Field(int ballsCount, int ai, int screenWidth, int screenHeight)
 	{
 		this.screenWidth = screenWidth;
 		this.screenHeight = screenHeight;
 		this.ballsCount = ballsCount;
 		// Balls generation
 		balls = new ArrayList<Ball>();
-		for (int i = 0; i < ballsCount; i++)
-			balls.add(new Ball(this, screenWidth, screenHeight, i));
 		// Boards generation
-		if (mode.equals("pvc")) {
+		if (ai != 0) {
 			// Player 1 aka top player
 			player1Board = new Board(screenWidth, screenHeight, "top", this, ai);
 		}

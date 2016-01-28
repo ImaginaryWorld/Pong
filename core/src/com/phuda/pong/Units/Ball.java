@@ -30,15 +30,15 @@ public class Ball extends Unit {
 	public Ball(Field field, int screenWidth, int screenHeight, int num) {
 		super();
 		// Multipliers that depends on screens width and height
-		int wm = 2 + screenWidth / 200;
-		int hm = 2 + screenHeight / 300;
+		int wm = 2 + screenWidth / 250;
+		int hm = 2 + screenHeight / 350;
 		this.name = Integer.toString(++num);
 		setBounds(screenWidth, screenHeight);
 		this.field = field;
         this.positionsHistory = new ArrayList<Vector2>();
 		// Randomizing ball's x and y axle speed with using multipliers
-		speed.x = MathUtils.random(-8, 8);
-		speed.y = MathUtils.random(5, 8) * MathUtils.randomSign();
+		speed.x = MathUtils.random(-wm * 2, wm * 2);
+		speed.y = MathUtils.random(hm * 1.25f, hm * 2) * MathUtils.randomSign();
 		sound_bump = Gdx.audio.newSound(Gdx.files.internal("sounds/bump.wav"));
 	}
 
@@ -70,18 +70,26 @@ public class Ball extends Unit {
     }
 
 	private void updatePosition(float delta) {
+		float speedMultiplier = 1 * delta * 70;
+		float yShift;
 		if (states[Slowed].isActive) {
-			bounds.x += speed.x * delta * 70 * 0.4;
-			bounds.y += speed.y * delta * 70 * 0.4;
+			speedMultiplier *= 0.4f;
 		}
-		else {
-			bounds.x += speed.x * delta * 70;
-			bounds.y += speed.y * delta * 70;
+		yShift = speed.y * speedMultiplier;
+		// If ball is controlled by someone
+		if (states[Controlled].isActive && lastTouchedBoard.abilities[lastTouchedBoard.Controller].isActive) {
+			float boardSpeed = lastTouchedBoard.speed.x;
+			// If board is moving (also I don't want to make division by zero)
+			if (boardSpeed != 0) {
+				bounds.x += boardSpeed * speedMultiplier;
+				yShift = speed.y / field.screenWidth * 250 * speedMultiplier;
+			}
+			System.out.println(Math.abs(speed.x) * boardSpeed / (field.screenWidth / 100) * speedMultiplier);
+			System.out.println(boardSpeed);
 		}
-        if (states[Controlled].isActive && lastTouchedBoard.abilities[lastTouchedBoard.Controller].isActive) {
-            bounds.x += lastTouchedBoard.speed.x;
-            System.out.println(lastTouchedBoard.speed.x);
-        }
+		else
+			bounds.x += speed.x * speedMultiplier;
+		bounds.y += yShift;
 		vector.add(bounds.x, bounds.y);
 	}
 
@@ -135,7 +143,7 @@ public class Ball extends Unit {
 			speed.x = -speed.x;
 			// A little change in speed.y for the ones that sticks on crossing field by x axle
 			if (Math.abs(speed.y) < 4)
-				speed.y += speed.y / Math.abs(speed.y);
+				speed.y += speed.y / Math.abs(speed.y) / 2;
 			playSound();
 		}
 	}
@@ -162,7 +170,7 @@ public class Ball extends Unit {
 	public void boardCollision(Board board, float yBound) {
 		// Don't overlap board - new center of ball in radius distance from board's side
 		bounds.y = yBound;
-		speed.y = - speed.y;
+		speed.y = -speed.y;
 		// Give some speed by friction
 		speed.x += board.speed.x / 5;
 		changeStatesHitByBoard(board);
@@ -224,7 +232,6 @@ public class Ball extends Unit {
 		}
 		// If balls weights are different
 		else {
-			System.out.println("Balls weights are different");
 			if (this.states[Split].isActive) {
 				// Speed exchanging
 				ball.speed.x = speed.x / 3;

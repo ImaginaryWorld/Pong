@@ -60,6 +60,8 @@ public class Board extends Unit {
 		if (contr == null) {
 			checkTouch();
 			speed.x = (target_x - bounds.x) / SLOWER;
+			if (Math.abs(speed.x) < 1)
+				speed.x = 0;
 		}
 		// AI
 		else {
