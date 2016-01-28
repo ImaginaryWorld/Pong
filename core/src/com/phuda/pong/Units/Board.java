@@ -12,7 +12,7 @@ import java.util.ArrayList;
 
 public class Board extends Unit {
 	// Slows the board's movement
-	final int SLOWER = 4000 / Gdx.graphics.getWidth(),
+	final int SLOWER = 2000 / Gdx.graphics.getWidth(),
 	// Zone on y axis in which player can affect board
 	TOUCHZONE = Gdx.graphics.getHeight() / 5;
 	// Board's disposition variables
@@ -24,7 +24,7 @@ public class Board extends Unit {
 	// Score of this board
 	public int score = 0;
 	// Ability variables
-	final int TimeSlower = 0, BallSplitter = 1;
+	final int TimeSlower = 0, BallSplitter = 1, Controller = 2;
     public Effect[] abilities = {new Effect("timeSlower"), new Effect("ballSplitter"),
                                  new Effect("controller")};
 	// Sound

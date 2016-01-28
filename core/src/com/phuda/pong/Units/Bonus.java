@@ -39,11 +39,11 @@ public class Bonus extends Unit {
     // Method that allows to get int detector of bonus
     public int getIndex() {
         if (name.equals(types[timeSlower]))
-            return 0;
+            return timeSlower;
         else if (name.equals(types[ballSplitter]))
-            return 1;
+            return ballSplitter;
         else if (name.equals(types[controller]))
-            return 2;
+            return controller;
         // For exception cases
         return -1;
     }

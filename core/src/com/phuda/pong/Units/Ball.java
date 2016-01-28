@@ -24,7 +24,7 @@ public class Ball extends Unit {
 	// Effects
 	final int Ethereal = 0, Slowed = 1, Split = 2, Controlled = 3;
 	public Effect[] states = {new Effect("Ethereal"), new Effect("Slowed"), new Effect("Split"),
-                              new Effect("Controller")};
+                              new Effect("Controlled")};
 	// Sound
 	Sound sound_bump;
 	
@@ -80,7 +80,7 @@ public class Ball extends Unit {
 			bounds.x += speed.x * delta * 70;
 			bounds.y += speed.y * delta * 70;
 		}
-        if (states[Controlled].isActive && lastTouchedBoard.abilities[2].isActive) {
+        if (states[Controlled].isActive && lastTouchedBoard.abilities[lastTouchedBoard.Controller].isActive) {
             bounds.x += lastTouchedBoard.speed.x;
             System.out.println(lastTouchedBoard.speed.x);
         }
@@ -155,7 +155,7 @@ public class Ball extends Unit {
 
     private void checkController() {
         if (!states[Controlled].isActive && lastTouchedBoard != null){
-            if (lastTouchedBoard.abilities[2].isActive){
+            if (lastTouchedBoard.abilities[lastTouchedBoard.Controller].isActive){
                 states[Controlled].engage(10);
                 System.out.println("controller on");
             }
