@@ -18,6 +18,7 @@ public class Ball extends Unit {
     Board lastTouchedBoard;
     public boolean justTouchedBoard;
 	// Ball's trails
+    float historyTimer;
 	final int HISTORY_LENGTH = 12;
     public ArrayList<Vector2> positionsHistory;
 	// Effects
@@ -59,10 +60,14 @@ public class Ball extends Unit {
 		// Speed decreasing
 		releaseSpeed();
         // Save position
-        Vector2 vec = new Vector2(bounds.x, bounds.y);
-        positionsHistory.add(vec);
-        if (positionsHistory.size() > HISTORY_LENGTH) {
-            positionsHistory.remove(0);
+        historyTimer += delta;
+        if (historyTimer >= 0.008f) {
+            historyTimer = 0.0f;
+            Vector2 vec = new Vector2(bounds.x, bounds.y);
+            positionsHistory.add(vec);
+            while (positionsHistory.size() > HISTORY_LENGTH) {
+                positionsHistory.remove(0);
+            }
         }
 	}
 
