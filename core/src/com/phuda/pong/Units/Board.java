@@ -25,8 +25,8 @@ public class Board extends Unit {
 	public int score = 0;
 	// Ability variables
 	final int TimeSlower = 0, BallSplitter = 1;
-    public Effect[] abilities = {new Effect("timeSlower"),
-                                        new Effect("ballSplitter")};
+    public Effect[] abilities = {new Effect("timeSlower"), new Effect("ballSplitter"),
+                                 new Effect("controller")};
 	// Sound
 	Sound sound_reflect;
 

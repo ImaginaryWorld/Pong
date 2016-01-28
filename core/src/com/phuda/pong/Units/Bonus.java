@@ -5,22 +5,13 @@ import com.badlogic.gdx.math.MathUtils;
 import com.phuda.pong.Field;
 
 public class Bonus extends Unit {
-    final int timeSlower = 0, ballSplitter = 1;
+    final int timeSlower = 0, ballSplitter = 1, controller = 2;
     public int fullRadius;
-    public String types[] = {"timeSlower", "ballSplitter"};
+    public String types[] = {"timeSlower", "ballSplitter", "controller"};
     public Circle bounds;
     public float time;
     float initialRotation = MathUtils.random(120.0f);
     public float rotation;
-
-    public Bonus(Field field, int screenWidth, int screenHeight, String _type)
-    {
-        super();
-        fullRadius = screenWidth / 50 + screenHeight / 50;
-        setBounds(screenWidth, screenHeight);
-        this.field = field;
-        name = _type;
-    }
 
     public Bonus(Field field, int screenWidth, int screenHeight, float time)
     {
@@ -51,6 +42,8 @@ public class Bonus extends Unit {
             return 0;
         else if (name.equals(types[ballSplitter]))
             return 1;
+        else if (name.equals(types[controller]))
+            return 2;
         // For exception cases
         return -1;
     }

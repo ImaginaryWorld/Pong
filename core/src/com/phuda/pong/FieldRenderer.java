@@ -20,7 +20,7 @@ public class FieldRenderer {
 	SpriteBatch batch;
 	ShapeRenderer shapeRenderer;
     Texture boardRedTexture, boardBlueTexture, ballTexture;
-    Texture bonusTimeTexture, bonusSplitterTexture;
+    Texture bonusTimeTexture, bonusSplitterTexture, bonusControllerTexture;
     Field field;
 
 	float scoreShift, target_scoreShift;
@@ -41,6 +41,8 @@ public class FieldRenderer {
         bonusTimeTexture.setFilter(TextureFilter.Linear, TextureFilter.Linear);
         bonusSplitterTexture = new Texture(Gdx.files.internal(images_path + "bonus_splitter.png"));
         bonusSplitterTexture.setFilter(TextureFilter.Linear, TextureFilter.Linear);
+        bonusControllerTexture = new Texture(Gdx.files.internal(images_path + "bonus_controller.png"));
+        bonusControllerTexture.setFilter(TextureFilter.Linear, TextureFilter.Linear);
 
 		this.field = field;
 		
@@ -74,6 +76,18 @@ public class FieldRenderer {
         shapeRenderer.setColor(0.2f, 1f, 0.5f, 0.2f); // green
         shapeRenderer.rect(0, h-h/4, w, h/8 * field.player1Board.abilities[1].timer / 10);
         shapeRenderer.rect(0, h/4 , w, -h/8 * field.player2Board.abilities[1].timer / 10);
+        // controller ability
+        shapeRenderer.setColor(1f, 0.5f, 0.2f, 0.2f); // orange
+        shapeRenderer.rect(0, h-h/4, w, h/8 * field.player1Board.abilities[2].timer / 10);
+        shapeRenderer.rect(0, h/4 , w, -h/8 * field.player2Board.abilities[2].timer / 10);
+        shapeRenderer.setColor(1f, 0.5f, 0.2f, 0.5f); // orange
+        for (Ball ball : field.balls){
+            if (ball.states[3].isActive && ball.lastTouchedBoard.abilities[2].isActive){
+                shapeRenderer.rectLine(ball.bounds.x, ball.bounds.y,
+                        ball.lastTouchedBoard.bounds.x + ball.lastTouchedBoard.bounds.getWidth()/2,
+                        ball.lastTouchedBoard.bounds.y, ball.bounds.radius*2);
+            }
+        }
         // toggle alpha blending. end function uses this to draw transparency
         Gdx.gl.glEnable(Gdx.gl.GL_BLEND);
         shapeRenderer.end();
@@ -110,11 +124,14 @@ public class FieldRenderer {
 		// bonuses
 		for (Bonus bonus : field.bonuses){
 			if (bonus != null){
-                Texture tex = bonusTimeTexture;
+                Texture tex;
                 if (bonus.name.equals("timeSlower"))
                     tex = bonusTimeTexture;
                 else if (bonus.name.equals("ballSplitter"))
                     tex = bonusSplitterTexture;
+                else if (bonus.name.equals("controller"))
+                    tex = bonusControllerTexture;
+                else continue; // exception case
 
 				float r = bonus.bounds.radius;
                 batch.draw(tex, bonus.bounds.x - r, bonus.bounds.y - r,

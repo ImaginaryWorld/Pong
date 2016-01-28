@@ -64,7 +64,7 @@ public class Field {
 			for (int i = 0; i < ballsCount - balls.size(); i++)
 				balls.add(new Ball(this, screenWidth, screenHeight, balls.size() - 1));
 		for (int i = 0; i < balls.size(); i++) {
-            int y = Gdx.graphics.getHeight() / 2;
+            //int y = Gdx.graphics.getHeight() / 2;
 			if (balls.get(i).outOfField()) {
 				// Who is winner ?
 				if (balls.get(i).bounds.y > Gdx.graphics.getHeight() / 2) {

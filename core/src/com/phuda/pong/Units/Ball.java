@@ -15,15 +15,16 @@ import java.util.ArrayList;
 public class Ball extends Unit {
 	// Ball's disposition variable
 	public Circle bounds;
-    Board lastTouchedBoard;
+    public Board lastTouchedBoard;
     public boolean justTouchedBoard;
 	// Ball's trails
     float historyTimer;
 	final int HISTORY_LENGTH = 12;
     public ArrayList<Vector2> positionsHistory;
 	// Effects
-	final int Ethereal = 0, Slowed = 1, Split = 2;
-	public Effect[] states = {new Effect("Ethereal"), new Effect("Slowed"), new Effect("Split")};
+	final int Ethereal = 0, Slowed = 1, Split = 2, Controlled = 3;
+	public Effect[] states = {new Effect("Ethereal"), new Effect("Slowed"), new Effect("Split"),
+                              new Effect("Controller")};
 	// Sound
 	Sound sound_bump;
 	
@@ -45,20 +46,20 @@ public class Ball extends Unit {
 
 	// Updating methods
 	public void updateState(float delta) {
-        justTouchedBoard = false;
 		// Updating ball's position
-		updatePosition(delta);
-		// Updating effects
-		updateStates(delta);
-		// Check collisions with balls
-		if (!states[Ethereal].isActive)
-			checkCollidesWithBalls(field.balls);
-		// Check collisions with bonuses
-		checkCollidesWithBonuses(field.bonuses);
-		// Checking if ball hit the wall
-		checkCollidesWithWalls();
-		// Speed decreasing
-		releaseSpeed();
+        updatePosition(delta);
+        // Updating effects
+        updateStates(delta);
+        // Check collisions with balls
+        if (!states[Ethereal].isActive) {
+            checkCollidesWithBalls(field.balls);
+        }
+        // Check collisions with bonuses
+        checkCollidesWithBonuses(field.bonuses);
+        // Checking if ball hit the wall
+        checkCollidesWithWalls();
+        // Speed decreasing
+        releaseSpeed();
         // Save position
         historyTimer += delta;
         if (historyTimer >= 0.008f) {
@@ -69,7 +70,8 @@ public class Ball extends Unit {
                 positionsHistory.remove(0);
             }
         }
-	}
+        justTouchedBoard = false;
+    }
 
 	private void updatePosition(float delta) {
 		if (states[Slowed].isActive) {
@@ -80,6 +82,10 @@ public class Ball extends Unit {
 			bounds.x += xSpeed * delta * 70;
 			bounds.y += ySpeed * delta * 70;
 		}
+        if (states[Controlled].isActive && lastTouchedBoard.abilities[2].isActive) {
+            bounds.x += lastTouchedBoard.xSpeed;
+            System.out.println(lastTouchedBoard.xSpeed);
+        }
 		vector.add(bounds.x, bounds.y);
 	}
 
@@ -97,6 +103,7 @@ public class Ball extends Unit {
 		checkSlowing();
 		// Handling splitting
 		checkSplitting();
+        checkController();
 	}
 
 	// Methods checking collisions
@@ -147,6 +154,15 @@ public class Ball extends Unit {
 				states[Slowed].engage(10);
 		}
 	}
+
+    private void checkController() {
+        if (!states[Controlled].isActive && lastTouchedBoard != null){
+            if (lastTouchedBoard.abilities[2].isActive){
+                states[Controlled].engage(10);
+                System.out.println("controller on");
+            }
+        }
+    }
 
 	private void checkSplitting() {
 		if (states[Split].isActive && !states[Split].eternal)
