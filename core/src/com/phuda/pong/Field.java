@@ -99,20 +99,19 @@ public class Field {
 			// Creating new ones with 0.3% probability
 			if (bonuses [i] == null && MathUtils.random(1000) > 997) {
 				bonuses[i] = new Bonus(this, this.screenWidth, this.screenHeight, 16);
-				checkBonusOverlaps(bonuses[i]);
+				checkBonusOverlaps(bonuses[i], i);
 			}
 		}
 	}
 
-	private void checkBonusOverlaps(Bonus bonus) {
+	private void checkBonusOverlaps(Bonus bonus, int elementNumber) {
 		for (int j = 0; j < bonuses.length; j++) {
-			if (bonuses[j] != null)
-				if (bonuses[j] != bonus)
-					// Calculating if bonus will overlaps with some other in full size
-					if (bonus.vector.dst(bonuses[j].vector) <
-							bonus.fullRadius * 4) {
+			if (bonuses[j] != null && bonuses[j] != bonus)
+					// Calculating if bonus will be too close to other one
+					if (bonus.vector.dst(bonuses[j].vector) < bonus.fullRadius * 4) {
 						System.out.println("New bonus too close to another one");
-						bonuses[j] = null;
+						// Deleting new bonus
+						bonuses[elementNumber] = null;
 						return;
 					}
 		}

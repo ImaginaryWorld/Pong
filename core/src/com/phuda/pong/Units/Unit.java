@@ -5,11 +5,12 @@ import com.phuda.pong.Field;
 
 public class Unit {
 	public Vector2 vector;
+	public Vector2 speed;
 	public String name;
-	public double xSpeed, ySpeed;
 	public Field field;
 
 	Unit() {
 		vector = new Vector2();
+		speed = new Vector2();
 	}
 }

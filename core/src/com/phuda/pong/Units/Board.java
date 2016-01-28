@@ -59,7 +59,7 @@ public class Board extends Unit {
 		// Human
 		if (contr == null) {
 			checkTouch();
-			xSpeed = (target_x - bounds.x) / SLOWER;
+			speed.x = (target_x - bounds.x) / SLOWER;
 		}
 		// AI
 		else {
@@ -73,22 +73,22 @@ public class Board extends Unit {
 				contr.prepareTime -= delta;
 				if (contr.prepareTime < 0)
 				{
-					xSpeed = 0;
+					speed.x = 0;
 					contr.prepareTime = 0;
 					contr.catching = false;
 				}
 			}
 			// Calculate speed of AI board if it have some time to throw back the ball
-			if (contr.prepareTime != 0 && delta != 0 && xSpeed == 0)
-				xSpeed = (target_x - (bounds.x + bounds.width / 2))
+			if (contr.prepareTime != 0 && delta != 0 && speed.x == 0)
+				speed.x = (target_x - (bounds.x + bounds.width / 2))
 						/ (contr.prepareTime / delta);
 		}
 
 
 		// If board goes beyond the left or right bound - no movement to this bound side
-		if (!((bounds.x <= 0 && xSpeed <= 0) || (bounds.x >=
-				Gdx.graphics.getWidth() - bounds.width && xSpeed >= 0))) {
-			bounds.x += xSpeed;
+		if (!((bounds.x <= 0 && speed.x <= 0) || (bounds.x >=
+				Gdx.graphics.getWidth() - bounds.width && speed.x >= 0))) {
+			bounds.x += speed.x;
 			updateVectors();
 		}
 		// Stops the board if it goes out of bound (after x changing but before rendering!)
@@ -248,9 +248,9 @@ public class Board extends Unit {
 
 	// Defines two cases of side hit - for right and left bound
 	void spotXBound(Ball ball) {
-		if (xSpeed > 0)
+		if (speed.x > 0)
 			ball.sideBoardCollision(this, bounds.x + bounds.width + ball.bounds.radius);
-		else if (xSpeed < 0)
+		else if (speed.x < 0)
 			ball.sideBoardCollision(this, bounds.x - ball.bounds.radius);
 	}
 
@@ -267,14 +267,14 @@ public class Board extends Unit {
 	// Angle cases are very special, so there's an extra method for them
 	void handleAngleCase(int point, Ball ball) {
 		// Would-be left bound's angles cases - when ball really came in point through board's top or bottom
-		if ((point == 1 || point == 2) && ball.xSpeed < 0) {
+		if ((point == 1 || point == 2) && ball.speed.x < 0) {
 			if (point == 1)
 				ball.boardCollision(this, bounds.y - ball.bounds.radius);
 			else
 				ball.boardCollision(this, bounds.y + bounds.height + ball.bounds.radius);
 		}
 		// Would-be right bound's angles cases - when ball really came in point through board's top or bottom
-		else if ((point == 3 || point == 4) && ball.xSpeed > 0) {
+		else if ((point == 3 || point == 4) && ball.speed.x > 0) {
 			if (point == 3)
 				ball.boardCollision(this, bounds.y - ball.bounds.radius);
 			else
@@ -288,7 +288,7 @@ public class Board extends Unit {
 	// Angle cases are very special, so there's an extra method for them
 	void handleAngleCase2(boolean topHit, Ball ball) {
 		// If ball goes up
-		if (ball.ySpeed > 0) {
+		if (ball.speed.y > 0) {
 			// Faces top side
 			if (topHit)
 				ball.angleBoardCollision(this, false);
@@ -316,7 +316,7 @@ public class Board extends Unit {
 			if (ball.bounds.contains(bounds[j])) {
 				// Sound of collision
 				long s = sound_reflect.play(0.6f);
-				sound_reflect.setPitch(s, (float) ((ball.ySpeed + ball.ySpeed) * 0.1f + 0.5f));
+				sound_reflect.setPitch(s, (ball.speed.y + ball.speed.y) * 0.1f + 0.5f);
 				// Setting this board to as last one that ball touches
 				ball.saveLastBoard(this);
 				return j + 1;
@@ -325,9 +325,9 @@ public class Board extends Unit {
 	}
 
 	void outOfBoundStop() {
-		if ((bounds.x <= 0 && xSpeed < 0) || (bounds.x >=
-				Gdx.graphics.getWidth() - bounds.width && xSpeed > 0)) {
-			xSpeed = 0;
+		if ((bounds.x <= 0 && speed.x < 0) || (bounds.x >=
+				Gdx.graphics.getWidth() - bounds.width && speed.x > 0)) {
+			speed.x = 0;
 			// Beyond left
 			if (bounds.x < 0)
 				bounds.x = 0;

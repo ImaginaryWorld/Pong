@@ -47,7 +47,7 @@ public class AIBoardController {
 		{
 			if (board.name.equals("top"))
 			{
-				if (balls.get(i).ySpeed > (board.bounds.y - balls.get(i).bounds.y + balls.get(i).bounds.radius) / 50)
+				if (balls.get(i).speed.y > (board.bounds.y - balls.get(i).bounds.y + balls.get(i).bounds.radius) / 50)
 				{
 					if (balls.get(i).bounds.y + balls.get(i).bounds.radius < board.bounds.y)
 					{
@@ -57,7 +57,7 @@ public class AIBoardController {
 					}
 				}
 			}
-			else if (balls.get(i).ySpeed < (board.bounds.y + board.bounds.height - balls.get(i).bounds.y
+			else if (balls.get(i).speed.y < (board.bounds.y + board.bounds.height - balls.get(i).bounds.y
 					+ balls.get(i).bounds.radius) / 50)
 			{
 				if (balls.get(i).bounds.y - balls.get(i).bounds.radius > board.bounds.y
@@ -74,7 +74,7 @@ public class AIBoardController {
 	void startPreparing(Ball ball, float yBallBound, float yBoardBound, float time)
 	{
 		// More than 5 renders before ball will be passed
-		if ((yBoardBound - yBallBound) / (float)ball.ySpeed > 5) {
+		if ((yBoardBound - yBallBound) / ball.speed.y > 5) {
 			/* 
 			 * AI start moving only if random number is more than 3, 6 or 9
 			 * for each difficulty level. Mark that catching must become true anyway,
@@ -96,13 +96,13 @@ public class AIBoardController {
 				board.target_x =(int)(board.bounds.width / 2 + Math.random() 
 					* (Gdx.graphics.getWidth() - board.bounds.width));
 			catching = true;
-			prepareTime = (board.bounds.y - ball.bounds.y) / (float)ball.ySpeed * time;
+			prepareTime = (board.bounds.y - ball.bounds.y) / ball.speed.y * time;
 		}
 	}
 	
 	private int calculateXTouchPoint(int yDist, Ball ball)
 	{
-		int x = (int)(ball.bounds.x + ball.xSpeed * (yDist / ball.ySpeed));
+		int x = (int)(ball.bounds.x + ball.speed.x * (yDist / ball.speed.y));
 		if (x > Gdx.graphics.getWidth())
 			x = Gdx.graphics.getWidth() * 2 - x;
 		else if (x < 0)

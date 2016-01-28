@@ -38,28 +38,26 @@ public class Ball extends Unit {
 		this.field = field;
         this.positionsHistory = new ArrayList<Vector2>();
 		// Randomizing ball's x and y axle speed with using multipliers
-		xSpeed = (int)(Math.random() * 16 - 8);
-		while (Math.abs(ySpeed) < 4)
-			ySpeed = (int)(Math.random() * 16 - 8);
+		speed.x = MathUtils.random(-8, 8);
+		speed.y = MathUtils.random(5, 8) * MathUtils.randomSign();
 		sound_bump = Gdx.audio.newSound(Gdx.files.internal("sounds/bump.wav"));
 	}
 
 	// Updating methods
 	public void updateState(float delta) {
 		// Updating ball's position
-        updatePosition(delta);
-        // Updating effects
-        updateStates(delta);
-        // Check collisions with balls
-        if (!states[Ethereal].isActive) {
-            checkCollidesWithBalls(field.balls);
-        }
-        // Check collisions with bonuses
-        checkCollidesWithBonuses(field.bonuses);
-        // Checking if ball hit the wall
-        checkCollidesWithWalls();
-        // Speed decreasing
-        releaseSpeed();
+		updatePosition(delta);
+		// Updating effects
+		updateStates(delta);
+		// Check collisions with balls
+		if (!states[Ethereal].isActive)
+			checkCollidesWithBalls(field.balls);
+		// Check collisions with bonuses
+		checkCollidesWithBonuses(field.bonuses);
+		// Checking if ball hit the wall
+		checkCollidesWithWalls();
+		// Speed decreasing
+		releaseSpeed(delta);
         // Save position
         historyTimer += delta;
         if (historyTimer >= 0.008f) {
@@ -75,16 +73,16 @@ public class Ball extends Unit {
 
 	private void updatePosition(float delta) {
 		if (states[Slowed].isActive) {
-			bounds.x += xSpeed * delta * 70 * 0.4;
-			bounds.y += ySpeed * delta * 70 * 0.4;
+			bounds.x += speed.x * delta * 70 * 0.4;
+			bounds.y += speed.y * delta * 70 * 0.4;
 		}
 		else {
-			bounds.x += xSpeed * delta * 70;
-			bounds.y += ySpeed * delta * 70;
+			bounds.x += speed.x * delta * 70;
+			bounds.y += speed.y * delta * 70;
 		}
         if (states[Controlled].isActive && lastTouchedBoard.abilities[2].isActive) {
-            bounds.x += lastTouchedBoard.xSpeed;
-            System.out.println(lastTouchedBoard.xSpeed);
+            bounds.x += lastTouchedBoard.speed.x;
+            System.out.println(lastTouchedBoard.speed.x);
         }
 		vector.add(bounds.x, bounds.y);
 	}
@@ -135,12 +133,12 @@ public class Ball extends Unit {
 	}
 
 	private void checkCollidesWithWalls() {
-		if ( (bounds.x - bounds.radius < 0 && xSpeed < 0) ||
-				(bounds.x + bounds.radius > Gdx.graphics.getWidth() && xSpeed > 0) ) {
-			xSpeed = -xSpeed;
-			// A little change in ySpeed for the ones that sticks on crossing field by x axle
-			if (Math.abs(ySpeed) < 4)
-				ySpeed += ySpeed / Math.abs(ySpeed);
+		if ( (bounds.x - bounds.radius < 0 && speed.x < 0) ||
+				(bounds.x + bounds.radius > Gdx.graphics.getWidth() && speed.x > 0) ) {
+			speed.x = -speed.x;
+			// A little change in speed.y for the ones that sticks on crossing field by x axle
+			if (Math.abs(speed.y) < 4)
+				speed.y += speed.y / Math.abs(speed.y);
 			playSound();
 		}
 	}
@@ -149,8 +147,8 @@ public class Ball extends Unit {
 	private void checkSlowing() {
 		if (!states[Slowed].isActive) {
 			Board player1 = field.player1Board, player2 = field.player2Board;
-			if ((bounds.y > field.screenHeight - field.screenHeight / 3 && player1.abilities[player1.TimeSlower].isActive && ySpeed > 0)
-					|| (bounds.y < field.screenHeight / 3 && field.player2Board.abilities[player2.TimeSlower].isActive && ySpeed < 0))
+			if ((bounds.y > field.screenHeight - field.screenHeight / 3 && player1.abilities[player1.TimeSlower].isActive && speed.y > 0)
+					|| (bounds.y < field.screenHeight / 3 && field.player2Board.abilities[player2.TimeSlower].isActive && speed.y < 0))
 				states[Slowed].engage(10);
 		}
 	}
@@ -172,40 +170,40 @@ public class Ball extends Unit {
 	public void boardCollision(Board board, float yBound) {
 		// Don't overlap board - new center of ball in radius distance from board's side
 		bounds.y = yBound;
-		ySpeed = - ySpeed;
+		speed.y = - speed.y;
 		// Give some speed by friction
-		xSpeed += board.xSpeed / 5;
+		speed.x += board.speed.x / 5;
 		changeStatesHitByBoard(board);
 	}
 
 	public void sideBoardCollision(Board board, float xBound) {
-		xSpeed *= -1;
+		speed.x *= -1;
 		// Don't overlap board - new center of ball in radius distance from board's side
 		bounds.x = xBound;
 		// If ball's speed are too low it receives a board's speed
-		if (Math.abs(xSpeed) < Math.abs(board.xSpeed))
-			xSpeed = board.xSpeed;
+		if (Math.abs(speed.x) < Math.abs(board.speed.x))
+			speed.x = board.speed.x;
 		changeStatesHitByBoard(board);
 	}
 
 	public void angleBoardCollision(Board board, boolean ySpeedChange) {
-		// Changing xSpeed
-		if (board.xSpeed == 0)
-			xSpeed = -xSpeed;
-		else if ((board.xSpeed > 0 && xSpeed > 0) || (board.xSpeed < 0 && xSpeed < 0))
-			xSpeed += board.xSpeed;
+		// Changing speed.x
+		if (board.speed.x == 0)
+			speed.x = -speed.x;
+		else if ((board.speed.x > 0 && speed.x > 0) || (board.speed.x < 0 && speed.x < 0))
+			speed.x += board.speed.x;
 		else
-			xSpeed = -xSpeed + board.xSpeed;
-		// Changing ySpeed
+			speed.x = -speed.x + board.speed.x;
+		// Changing speed.y
 		if (ySpeedChange)
-			ySpeed = -ySpeed;
+			speed.y = -speed.y;
 		changeStatesHitByBoard(board);
 	}
 
 	// Disposition methods
 	private void setBounds(int screenWidth, int screenHeight) {
-		bounds = new Circle((float)Math.random() * screenWidth,
-				(float)Math.random() * screenHeight / 2 + screenHeight / 4,
+		bounds = new Circle((float)MathUtils.random(screenWidth),
+				(float)MathUtils.random(screenHeight * 2 / 5, screenHeight - screenHeight * 2 / 5),
 				screenWidth / 100 + screenHeight / 100);
 	}
 
@@ -214,20 +212,46 @@ public class Ball extends Unit {
 	}
 
 	// Speed handling methods
-	private void releaseSpeed() {
-		if (xSpeed > field.screenWidth / 40) {
-			xSpeed--;
+	private void releaseSpeed(float delta) {
+		if (Math.abs(speed.x) > field.screenWidth / 60) {
+			speed.x -= delta * speed.x * 6;
+			System.out.println("speed.x: " + speed.x);
+		}
+		if (Math.abs(speed.y) > field.screenHeight / 90) {
+			speed.y -= delta * speed.y * 6;
+			System.out.println("speed.y: " + speed.y);
 		}
 	}
 
 	private void ballsExchange(Ball ball) {
-		double xTemp = ball.xSpeed;
-		double yTemp = ball.ySpeed;
-		// Speed exchanging
-		ball.xSpeed = xSpeed;
-		ball.ySpeed = ySpeed;
-		this.xSpeed = xTemp;
-		this.ySpeed = yTemp;
+		float xTemp = ball.speed.x;
+		float yTemp = ball.speed.y;
+		// If balls weights are same
+		if (this.states[Split].isActive == ball.states[Split].isActive) {
+			// Speed exchanging
+			ball.speed.x = speed.x;
+			ball.speed.y = speed.y;
+			this.speed.x = xTemp;
+			this.speed.y = yTemp;
+		}
+		// If balls weights are different
+		else {
+			System.out.println("Balls weights are different");
+			if (this.states[Split].isActive) {
+				// Speed exchanging
+				ball.speed.x = speed.x / 3;
+				ball.speed.y = speed.y / 3;
+				this.speed.x = xTemp * 3;
+				this.speed.y = yTemp * 3;
+			}
+			else {
+				// Speed exchanging
+				ball.speed.x = speed.x * 3;
+				ball.speed.y = speed.y * 3;
+				this.speed.x = xTemp / 3;
+				this.speed.y = yTemp / 3;
+			}
+		}
 	}
 
 	// Methods that handles special fields
@@ -237,34 +261,27 @@ public class Ball extends Unit {
 
 	// Methods that handles cases of using bonuses
 	public void split(ArrayList <Ball> balls) {
-			// Radius
-			bounds.radius = bounds.radius / 1.5f;
-			handleAfterSplit();
-			// 2nd ball
-			balls.add(new Ball(field, field.screenWidth, field.screenHeight, balls.size()));
-			// Same radius and bounds
-			balls.get(balls.size() - 1).bounds.radius = bounds.radius;
-			balls.get(balls.size() - 1).bounds.x = bounds.x;
-			balls.get(balls.size() - 1).bounds.y = bounds.y;
-			// Speed formula
-			balls.get(balls.size() - 1).xSpeed = xSpeed * MathUtils.cosDeg(30) - ySpeed * MathUtils.sinDeg(30);
-			balls.get(balls.size() - 1).ySpeed = xSpeed * MathUtils.sinDeg(30) + ySpeed * MathUtils.cosDeg(30);
-			// Turn on some split consequences
-			balls.get(balls.size() - 1).handleAfterSplit();
-			balls.get(balls.size() - 1).lastTouchedBoard = this.lastTouchedBoard;
-
-			// 3rd ball
-			balls.add(new Ball(field, field.screenWidth, field.screenHeight, balls.size()));
-			// Same radius and bounds
-			balls.get(balls.size() - 1).bounds.radius = bounds.radius;
-			balls.get(balls.size() - 1).bounds.x = bounds.x;
-			balls.get(balls.size() - 1).bounds.y = bounds.y;
-			// Speed formula
-			balls.get(balls.size() - 1).xSpeed = xSpeed * MathUtils.cosDeg(-30) - ySpeed * MathUtils.sinDeg(-30);
-			balls.get(balls.size() - 1).ySpeed = xSpeed * MathUtils.sinDeg(-30) + ySpeed * MathUtils.cosDeg(-30);
-			// Turn on some split consequences
-			balls.get(balls.size() - 1).handleAfterSplit();
-			balls.get(balls.size() - 1).lastTouchedBoard = this.lastTouchedBoard;
+		handleAfterSplit();
+		// 2nd ball
+		balls.add(new Ball(field, field.screenWidth, field.screenHeight, balls.size()));
+		// Same bounds
+		balls.get(balls.size() - 1).bounds.x = bounds.x;
+		balls.get(balls.size() - 1).bounds.y = bounds.y;
+		// Speed changing
+		balls.get(balls.size() - 1).changeSpeedAfterSplit(speed.x, speed.y, 30);
+		// Turn on some split consequences
+		balls.get(balls.size() - 1).handleAfterSplit();
+		balls.get(balls.size() - 1).lastTouchedBoard = this.lastTouchedBoard;
+		// 3rd ball
+		balls.add(new Ball(field, field.screenWidth, field.screenHeight, balls.size()));
+		// Same bounds
+		balls.get(balls.size() - 1).bounds.x = bounds.x;
+		balls.get(balls.size() - 1).bounds.y = bounds.y;
+		// Speed changing
+		balls.get(balls.size() - 1).changeSpeedAfterSplit(speed.x, speed.y, -30);
+		// Turn on some split consequences
+		balls.get(balls.size() - 1).handleAfterSplit();
+		balls.get(balls.size() - 1).lastTouchedBoard = this.lastTouchedBoard;
 	}
 
 	private void changeStatesHitByBoard(Board board) {
@@ -278,7 +295,30 @@ public class Ball extends Unit {
 			states[Slowed].disengage();
 	}
 
+	// Split methods
+	private void changeSpeedAfterSplit(float orientingXSpeed, float orientingYSpeed, int degrees) {
+		// Speed formula
+		speed.x = orientingXSpeed * MathUtils.cosDeg(degrees) - orientingYSpeed * MathUtils.sinDeg(degrees);
+		speed.y = orientingXSpeed * MathUtils.sinDeg(degrees) + orientingYSpeed * MathUtils.cosDeg(degrees);
+		// If new ball's and orienting ball's speeds are with different signs
+		if (speed.y * orientingYSpeed < 0) {
+			float tempXSpeed = speed.x;
+			// New direction of x speed tuning depends on old one direction
+			if (speed.x * speed.y < 0)
+				speed.x = -speed.y;
+			else
+				speed.x = speed.y;
+			// New direction of y speed tuning depends on x speed and orienting y speed
+			if (tempXSpeed * orientingYSpeed < 0)
+				speed.y = -tempXSpeed;
+			else
+				speed.y = tempXSpeed;
+		}
+	}
+
 	private void handleAfterSplit() {
+		// Radius
+		bounds.radius = bounds.radius / 1.5f;
 		// Ethereal for a few seconds, so the balls can fly apart
 		states[Ethereal].engage(0.5f);
 		// Set split to eternal
@@ -288,7 +328,7 @@ public class Ball extends Unit {
 	// Methods that handles sounds
 	private void playSound() {
 		long s = sound_bump.play(0.5f);
-		sound_bump.setPitch(s, (float) ((ySpeed + xSpeed) * 0.1f + 0.5f));
+		sound_bump.setPitch(s,  (speed.y + speed.x) * 0.1f + 0.5f);
 	}
 
 	// Methods that handles exceptions
