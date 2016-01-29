@@ -62,6 +62,7 @@ public class FieldRenderer {
         // Draw back-ground
         backGroundRotation += time * 2;
         batch.begin();
+        batch.setColor(MathUtils.sin(backGroundRotation)/2 + 0.5f, 1f, 1f, 0.7f);
         batch.draw(backGround, w/2 - backGround.getWidth()/2, h/2 - backGround.getHeight()/2,
                 backGround.getWidth()/2, backGround.getHeight()/2,
                 backGround.getWidth(), backGround.getHeight(),

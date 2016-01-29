@@ -5,6 +5,7 @@ import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
+import com.badlogic.gdx.math.MathUtils;
 import com.phuda.pong.UI.Button;
 import com.phuda.pong.UI.Slider;
 
@@ -63,11 +64,13 @@ public class MenuScreen extends PongScreen
         Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
 
 		batch.begin();
+        batch.setColor(MathUtils.sin(backGroundRotation/2)/2 + 0.5f, 1f, 1f, 1f);
         batch.draw(backGround, w/2 - backGround.getWidth()/2, h/2 - backGround.getHeight()/2,
                 backGround.getWidth()/2, backGround.getHeight()/2,
                 backGround.getWidth(), backGround.getHeight(),
                 1, 1, backGroundRotation, 0, 0, backGround.getWidth(), backGround.getHeight(),
                 false, false);
+        batch.setColor(1f, 1f, 1f, 1f);
 		start_pvp_button.draw(batch);
 		start_pvc_button.draw(batch);
 		other2_button.draw(batch);
