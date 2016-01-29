@@ -54,7 +54,8 @@ public class Ball extends Unit {
 		// Check collisions with bonuses
 		checkCollidesWithBonuses(field.bonuses);
 		// Checking if ball hit the wall
-		checkCollidesWithWalls();
+		if (!states[Controlled].isActive)
+			checkCollidesWithWalls();
 		// Speed decreasing
 		releaseSpeed(delta);
         // Save position
@@ -81,11 +82,10 @@ public class Ball extends Unit {
 			float boardSpeed = lastTouchedBoard.speed.x;
 			// If board is moving (also I don't want to make division by zero)
 			if (boardSpeed != 0) {
-				bounds.x += boardSpeed * speedMultiplier;
-				yShift = speed.y / field.screenWidth * 250 * speedMultiplier;
+				bounds.x += boardSpeed * 1.4 * speedMultiplier;
+				xBoundsLimit();
+				yShift = speed.y * 0.4f * speedMultiplier;
 			}
-			System.out.println(Math.abs(speed.x) * boardSpeed / (field.screenWidth / 100) * speedMultiplier);
-			System.out.println(boardSpeed);
 		}
 		else
 			bounds.x += speed.x * speedMultiplier;
@@ -211,6 +211,13 @@ public class Ball extends Unit {
 		return (bounds.y < 0) || (bounds.y > Gdx.graphics.getHeight());
 	}
 
+	private void xBoundsLimit() {
+		if (bounds.x - bounds.radius < 0)
+			bounds.x = 0 + bounds.radius;
+		else if (bounds.x + bounds.radius > field.screenWidth)
+			bounds.x = field.screenWidth - bounds.radius;
+	}
+
 	// Speed handling methods
 	private void releaseSpeed(float delta) {
 		if (Math.abs(speed.x) > field.screenWidth / 60)
@@ -287,7 +294,7 @@ public class Ball extends Unit {
 			states[Split].engage(1);
 		// Engaging controller
 		if (board.abilities[board.Controller].isActive && !states[Controlled].isActive){
-				states[Controlled].engage(10);
+				states[Controlled].engage(board.abilities[board.Controller].timer);
 				System.out.println("controller on");
 		}
 		// Deactivating slowing
