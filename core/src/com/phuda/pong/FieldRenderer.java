@@ -21,6 +21,8 @@ public class FieldRenderer {
 	ShapeRenderer shapeRenderer;
     Texture boardRedTexture, boardBlueTexture, ballTexture;
     Texture bonusTimeTexture, bonusSplitterTexture, bonusControllerTexture;
+    Texture backGround;
+    float backGroundRotation;
     Field field;
 
 	float scoreShift, target_scoreShift;
@@ -33,6 +35,9 @@ public class FieldRenderer {
 		shapeRenderer = new ShapeRenderer();
 
         String images_path = "images_hi/";
+        backGround = new Texture(Gdx.files.internal(images_path + "background.png"));
+        backGround.setFilter(TextureFilter.Linear, TextureFilter.Linear);
+
 		boardRedTexture = new Texture(Gdx.files.internal(images_path + "board_red.png"));
         boardBlueTexture = new Texture(Gdx.files.internal(images_path + "board_blue.png"));
 		ballTexture = new Texture(Gdx.files.internal(images_path + "particle.png"));
@@ -52,15 +57,27 @@ public class FieldRenderer {
 	
 	public void render(float time)
 	{
-		// Clear screen
-		Gdx.gl.glClearColor(.25f, .25f, .3f, 1f);
+        // Clear screen
+        Gdx.gl.glClearColor(.15f, .05f, .05f, 1f);
+        // Draw back-ground
+        backGroundRotation += time * 2;
+        batch.begin();
+        batch.draw(backGround, w/2 - backGround.getWidth()/2, h/2 - backGround.getHeight()/2,
+                backGround.getWidth()/2, backGround.getHeight()/2,
+                backGround.getWidth(), backGround.getHeight(),
+                1, 1, backGroundRotation, 0, 0, backGround.getWidth(), backGround.getHeight(),
+                false, false);
+        batch.end();
 
-		// Score bar
-		int w = Gdx.graphics.getWidth(), h = Gdx.graphics.getHeight();
-		target_scoreShift = -field.player2Board.score + field.player1Board.score;
-		scoreShift += (target_scoreShift - scoreShift) * 0.06;
-		
-		shapeRenderer.begin(ShapeType.Filled);
+        // Score bar
+        target_scoreShift = -field.player2Board.score + field.player1Board.score;
+        scoreShift += (target_scoreShift - scoreShift) * 0.06;
+        float diff = target_scoreShift - scoreShift;
+
+        shapeRenderer.begin(ShapeType.Filled);
+        // score difference
+        shapeRenderer.setColor(1.0f, 1.0f, 0.5f, 0.8f);
+        shapeRenderer.rect((-w/2 + scoreShift) + w, h/4, diff, h/2);
         // blue player 1
         shapeRenderer.setColor(0.2f, 0.2f, 1.0f, 0.5f);
         shapeRenderer.rect(0, h/4 , w/2 + scoreShift, h/2);
@@ -69,15 +86,15 @@ public class FieldRenderer {
         shapeRenderer.rect(w, h/4, -w/2 + scoreShift, h/2);
         // abilities bars
         // time ability
-        shapeRenderer.setColor(0.2f, 0.5f, 1f, 0.2f); // blue
+        shapeRenderer.setColor(0.2f, 0.5f, 1f, 0.4f); // blue
         shapeRenderer.rect(0, h-h/4, w, h/8 * field.player1Board.abilities[0].timer / 10);
         shapeRenderer.rect(0, h/4 , w, -h/8 * field.player2Board.abilities[0].timer / 10);
         // splitter ability
-        shapeRenderer.setColor(0.2f, 1f, 0.5f, 0.2f); // green
+        shapeRenderer.setColor(0.2f, 1f, 0.5f, 0.4f); // green
         shapeRenderer.rect(0, h-h/4, w, h/8 * field.player1Board.abilities[1].timer / 10);
         shapeRenderer.rect(0, h/4 , w, -h/8 * field.player2Board.abilities[1].timer / 10);
         // controller ability
-        shapeRenderer.setColor(1f, 0.5f, 0.2f, 0.2f); // orange
+        shapeRenderer.setColor(1f, 0.5f, 0.2f, 0.4f); // orange
         shapeRenderer.rect(0, h-h/4, w, h/8 * field.player1Board.abilities[2].timer / 10);
         shapeRenderer.rect(0, h/4 , w, -h/8 * field.player2Board.abilities[2].timer / 10);
         shapeRenderer.setColor(1f, 0.5f, 0.2f, 0.5f); // orange
@@ -85,7 +102,7 @@ public class FieldRenderer {
             if (ball.states[3].isActive && ball.lastTouchedBoard.abilities[2].isActive){
                 shapeRenderer.rectLine(ball.bounds.x, ball.bounds.y,
                         ball.lastTouchedBoard.bounds.x + ball.lastTouchedBoard.bounds.getWidth()/2,
-                        ball.lastTouchedBoard.bounds.y, ball.bounds.radius*2);
+                        ball.lastTouchedBoard.bounds.y, ball.bounds.radius);
             }
         }
         // toggle alpha blending. end function uses this to draw transparency
@@ -93,13 +110,13 @@ public class FieldRenderer {
         shapeRenderer.end();
         Gdx.gl.glDisable(Gdx.gl.GL_BLEND);
 
+        batch.begin();
 
-		batch.begin();
-		
-		score_font.draw(batch, Integer.toString(field.player1Board.score), 40, h/2);
-		score_font.draw(batch, Integer.toString(field.player2Board.score), w - 40, h/2);
-		// Boards
-		drawBoards(field.player1Board, field.player2Board);
+
+        score_font.draw(batch, Integer.toString(field.player1Board.score), 40, h/2);
+        score_font.draw(batch, Integer.toString(field.player2Board.score), w - 40, h/2);
+        // Boards
+        drawBoards(field.player1Board, field.player2Board);
 
 
 		// balls
