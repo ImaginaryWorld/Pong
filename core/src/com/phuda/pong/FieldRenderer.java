@@ -68,6 +68,7 @@ public class FieldRenderer {
                 backGround.getWidth(), backGround.getHeight(),
                 1, 1, backGroundRotation, 0, 0, backGround.getWidth(), backGround.getHeight(),
                 false, false);
+        batch.setColor(1f, 1f, 1f, 1f); // reset colors for next graphics
         batch.end();
 
         // Score bar
@@ -117,7 +118,11 @@ public class FieldRenderer {
         score_font.draw(batch, Integer.toString(field.player1Board.score), 40, h/2);
         score_font.draw(batch, Integer.toString(field.player2Board.score), w - 40, h/2);
         // Boards
-        drawBoards(field.player1Board, field.player2Board);
+        Board p1 = field.player1Board, p2 = field.player2Board;
+        batch.draw(boardRedTexture, p1.bounds.x, p1.bounds.y,
+                p1.bounds.width, p1.bounds.height);
+        batch.draw(boardBlueTexture, p2.bounds.x, p2.bounds.y,
+                p2.bounds.width, p2.bounds.height);
 
 
 		// balls
@@ -159,12 +164,4 @@ public class FieldRenderer {
 		}
 		batch.end();
 	}
-
-	private void drawBoards(Board board1, Board board2) {
-		// player 1
-		batch.draw(boardRedTexture, board1.bounds.x, board1.bounds.y, board1.bounds.width, board1.bounds.height);
-		// player 2
-		batch.draw(boardBlueTexture, board2.bounds.x, board2.bounds.y, board2.bounds.width, board2.bounds.height);
-	}
-
 }

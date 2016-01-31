@@ -71,26 +71,19 @@ public class Ball extends Unit {
     }
 
 	private void updatePosition(float delta) {
-		float speedMultiplier = 1 * delta * 70;
-		float yShift;
+		delta *= 70;
 		if (states[Slowed].isActive) {
-			speedMultiplier *= 0.4f;
+			delta *= 0.4f;
 		}
-		yShift = speed.y * speedMultiplier;
-		// If ball is controlled by someone
-		if (states[Controlled].isActive && lastTouchedBoard.abilities[lastTouchedBoard.Controller].isActive) {
-			float boardSpeed = lastTouchedBoard.speed.x;
-			// If board is moving (also I don't want to make division by zero)
-			if (boardSpeed != 0) {
-				bounds.x += boardSpeed * 1.4 * speedMultiplier;
-				xBoundsLimit();
-				yShift = speed.y * 0.4f * speedMultiplier;
-			}
-		}
-		else
-			bounds.x += speed.x * speedMultiplier;
-		bounds.y += yShift;
-		vector.add(bounds.x, bounds.y);
+        // If ball is controlled by someone
+        if (states[Controlled].isActive && lastTouchedBoard.abilities[lastTouchedBoard.Controller].isActive) {
+            float boardSpeed = lastTouchedBoard.speed.x;
+            speed.x += boardSpeed * 0.1f;
+            xBoundsLimit();
+        }
+        bounds.x += speed.x * delta;
+        bounds.y += speed.y * delta;
+        vector.add(bounds.x, bounds.y);
 	}
 
 	private void updateStates(float delta) {
@@ -212,10 +205,14 @@ public class Ball extends Unit {
 	}
 
 	private void xBoundsLimit() {
-		if (bounds.x - bounds.radius < 0)
-			bounds.x = 0 + bounds.radius;
-		else if (bounds.x + bounds.radius > field.screenWidth)
-			bounds.x = field.screenWidth - bounds.radius;
+		if (bounds.x - bounds.radius < 0) {
+            bounds.x = 0 + bounds.radius;
+            speed.x *= -1;
+        }
+		else if (bounds.x + bounds.radius > field.screenWidth) {
+            bounds.x = field.screenWidth - bounds.radius;
+            speed.x *= -1;
+        }
 	}
 
 	// Speed handling methods
