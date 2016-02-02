@@ -32,7 +32,7 @@ public class Slider {
 
         // Setup default value
         ux = (int)MathUtils.lerp( x - base.getWidth()/2 + offset,
-                x + base.getWidth()/2 - offset, (float)defValue/max);
+                x + base.getWidth()/2 - offset, (float)defValue/max );
         sx = ux;
 
         // Touch zone
@@ -58,13 +58,14 @@ public class Slider {
         }
         sx += (ux - sx) / 5;
 
-        float slide = (float) (ux - x + base.getWidth()/2 - offset - 1) / (base.getWidth() - offset*2);
+        float slide = (float) (ux - x + base.getWidth()/2 - offset) / (base.getWidth() - offset*2 + 1);
         value = (int)MathUtils.lerp(min, max, slide);
     }
 
     public void draw(SpriteBatch batch){
         batch.draw(base, x - base.getWidth()/2, y - base.getHeight()/2);
         batch.draw(unit, sx - unit.getWidth()/2, y - unit.getHeight()/2);
-        font.draw(batch, label + Integer.toString(value), x, y + (int)(base.getHeight()*0.7));
+        font.draw(batch, label + Integer.toString(value), x - base.getWidth()/3,
+                y + (int)(base.getHeight()*0.7));
     }
 }
