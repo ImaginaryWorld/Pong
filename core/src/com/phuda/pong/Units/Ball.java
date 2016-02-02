@@ -54,7 +54,7 @@ public class Ball extends Unit {
 		// Check collisions with bonuses
 		checkCollidesWithBonuses(field.bonuses);
 		// Checking if ball hit the wall
-		if (!states[Controlled].isActive)
+		if (!(states[Controlled].isActive && lastTouchedBoard.abilities[lastTouchedBoard.Controller].isActive))
 			checkCollidesWithWalls();
 		// Speed decreasing
 		releaseSpeed(delta);
@@ -80,6 +80,7 @@ public class Ball extends Unit {
             float boardSpeed = lastTouchedBoard.speed.x;
             speed.x += boardSpeed * 0.1f;
             xBoundsLimit();
+			System.out.println(name + " controlled time: " + states[Controlled].timer);
         }
         bounds.x += speed.x * delta;
         bounds.y += speed.y * delta;

@@ -44,37 +44,23 @@ public class Field {
 		if (Gdx.input.isKeyPressed(Input.Keys.S))
 			delta = delta * 0.2f;
 		// Updating state of boards
-		updateBoards(delta);
+		processBoards(delta);
 		// Updating state of balls
-		updateBalls(delta);
+		processBalls(delta);
 		// Updating bonuses
 		updateFeatures(delta);
 	}
 
-	private void updateBoards(float delta) {
+	private void processBoards(float delta) {
 		player1Board.updateState(delta, balls);
 		player2Board.updateState(delta, balls);
 	}
 
-	private void updateBalls(float delta) {
+	private void processBalls(float delta) {
 		// Creating new balls
 		createNewBalls();
-		for (int i = 0; i < balls.size(); i++) {
-            //int y = Gdx.graphics.getHeight() / 2;
-			if (balls.get(i).outOfField()) {
-				// Who is winner ?
-				if (balls.get(i).bounds.y > Gdx.graphics.getHeight() / 2) {
-					player1Board.score += balls.get(i).bounds.radius;
-				}
-				else {
-					player2Board.score += balls.get(i).bounds.radius;
-				}
-				// Deleting this ball
-				balls.remove(i);
-				continue;
-			}
-			balls.get(i).updateState(delta);
-		}
+		updateBalls(delta);
+		removeBalls();
 	}
 
 	private void updateFeatures(float delta) {
@@ -104,6 +90,27 @@ public class Field {
 		// Creating new ball with probability that depends on number available max balls and actual balls on field
 		if (1000 - ballsCount + balls.size() < MathUtils.random(1000) || balls.size() == 0)
 			balls.add(new Ball(this, screenWidth, screenHeight, balls.size() - 1));
+	}
+
+	private void updateBalls(float delta) {
+		for (int i = 0; i < balls.size(); i++)
+			balls.get(i).updateState(delta);
+	}
+
+	private void removeBalls() {
+		for (int i = 0; i < balls.size(); i++) {
+			//int y = Gdx.graphics.getHeight() / 2;
+			if (balls.get(i).outOfField()) {
+				// Who is winner ?
+				if (balls.get(i).bounds.y > Gdx.graphics.getHeight() / 2) {
+					player1Board.score += balls.get(i).bounds.radius;
+				} else {
+					player2Board.score += balls.get(i).bounds.radius;
+				}
+				// Deleting this ball
+				balls.remove(i);
+			}
+		}
 	}
 
 	private void checkBonusOverlaps(Bonus bonus, int elementNumber) {
