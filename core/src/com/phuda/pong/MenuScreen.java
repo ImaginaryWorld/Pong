@@ -5,6 +5,7 @@ import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
+import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.badlogic.gdx.math.MathUtils;
 import com.phuda.pong.UI.Button;
 import com.phuda.pong.UI.Slider;
@@ -17,6 +18,9 @@ public class MenuScreen extends PongScreen
 	SpriteBatch batch;
 	Button start_pvp_button, start_pvc_button, other2_button;
     Slider balls_slider, ai_mode_slider;
+    float nextScreenDark = 0f;
+    GameScreen nextScreen = null;
+    ShapeRenderer shapeRenderer = new ShapeRenderer();
     Texture backGround;
     float backGroundRotation;
 
@@ -47,15 +51,21 @@ public class MenuScreen extends PongScreen
 	{
         backGroundRotation += delta * 2;
 
-		if (start_pvp_button.isPressed()){
-			game.setScreen(new GameScreen(game, balls_slider.value, 0));
-		}
-		
-		if (start_pvc_button.isPressed()){
-			game.setScreen(new GameScreen(game, balls_slider.value, ai_mode_slider.value));
-		}
-		
-		if (other2_button.isPressed()){  System.out.println("other2_button pressed");  }
+        if (nextScreen == null) {
+            if (start_pvp_button.isPressed()) {
+                //game.setScreen(new GameScreen(game, balls_slider.value, 0));
+                nextScreen = new GameScreen(game, balls_slider.value, 0);
+            }
+
+            if (start_pvc_button.isPressed()) {
+                //game.setScreen(new GameScreen(game, balls_slider.value, ai_mode_slider.value));
+                nextScreen = new GameScreen(game, balls_slider.value, ai_mode_slider.value);
+            }
+
+            if (other2_button.isPressed()) {
+                System.out.println("other2_button pressed");
+            }
+        }
 
         balls_slider.isPressed();
         ai_mode_slider.isPressed();
@@ -78,6 +88,19 @@ public class MenuScreen extends PongScreen
         balls_slider.draw(batch);
         ai_mode_slider.draw(batch);
 		batch.end();
+
+        if (nextScreen != null) {
+            if (nextScreenDark > 1){
+                game.setScreen(nextScreen);
+            }
+            nextScreenDark += delta * 2;
+            shapeRenderer.begin(ShapeRenderer.ShapeType.Filled);
+            shapeRenderer.setColor(0f, 0f, 0f, nextScreenDark);
+            shapeRenderer.rect(0, 0, w, h);
+            Gdx.gl.glEnable(Gdx.gl.GL_BLEND);
+            shapeRenderer.end();
+            Gdx.gl.glDisable(Gdx.gl.GL_BLEND);
+        }
 	}
 	
 }

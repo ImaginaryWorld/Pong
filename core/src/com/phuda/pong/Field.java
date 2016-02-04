@@ -16,6 +16,7 @@ public class Field {
 	public Board player1Board, player2Board;
 	public ArrayList<Ball> balls;
 	public Bonus[] bonuses;
+    float startTimer = 0f;
 	
 	Field(int ballsCount, int ai, int screenWidth, int screenHeight)
 	{
@@ -40,6 +41,11 @@ public class Field {
 	}
 	
 	public void updateState(float delta) {
+        if (startTimer < 3) {
+            startTimer += delta;
+            // no movement until timer
+            delta = 0;
+        }
 		// Toggle slow-motion
 		if (Gdx.input.isKeyPressed(Input.Keys.S))
 			delta = delta * 0.2f;

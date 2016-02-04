@@ -23,6 +23,8 @@ public class FieldRenderer {
     Texture bonusTimeTexture, bonusSplitterTexture, bonusControllerTexture;
     Texture backGround;
     float backGroundRotation;
+    float previousScreenDark = 1f;
+    float startTimer = 0f;
     Field field;
 
 	float scoreShift, target_scoreShift;
@@ -55,10 +57,10 @@ public class FieldRenderer {
 		score_font.setColor(Color.WHITE);
 	}
 	
-	public void render(float time)
+	public void render(float delta)
 	{
         // Draw back-ground
-        backGroundRotation += time * 2;
+        backGroundRotation += delta * 2;
         batch.begin();
         batch.setColor(MathUtils.sin(backGroundRotation)/2 + 0.5f, 1f, 1f, 0.7f);
         batch.draw(backGround, w/2 - backGround.getWidth(), h/2 - backGround.getHeight(),
@@ -82,6 +84,9 @@ public class FieldRenderer {
         Gdx.gl.glClearColor(0.2f - diff,
                 (MathUtils.sin(backGroundRotation/4)) * 0.25f,
                 0.2f + diff, 1f);
+
+        if (previousScreenDark > 0)
+            previousScreenDark -= delta;
 
         shapeRenderer.begin(ShapeType.Filled);
         // score difference
@@ -184,5 +189,18 @@ public class FieldRenderer {
 			}
 		}
 		batch.end();
+
+        if (previousScreenDark != 0) {
+            if (previousScreenDark < 0){
+                previousScreenDark = 0;
+            }
+            previousScreenDark -= delta / 2;
+            shapeRenderer.begin(ShapeRenderer.ShapeType.Filled);
+            shapeRenderer.setColor(0f, 0f, 0f, previousScreenDark);
+            shapeRenderer.rect(0, 0, w, h);
+            Gdx.gl.glEnable(Gdx.gl.GL_BLEND);
+            shapeRenderer.end();
+            Gdx.gl.glDisable(Gdx.gl.GL_BLEND);
+        }
 	}
 }
