@@ -17,9 +17,10 @@ public class Slider {
     private Rectangle rect;
     private Texture base, unit;
     private BitmapFont font;
-    // Getting ratio of screen in desktop base (500 x 700)
     private int left, right;
-    private float hAspect = Gdx.graphics.getHeight() / 700.f;
+    // Getting ratio of screen in desktop base (500 x 700)
+    private float hAspect = (Gdx.graphics.getWidth() + Gdx.graphics.getHeight())
+            / (float)(500 + 700);
 
     public Slider(int _x, int _y, int _min, int _max, int defValue, String _label){
 

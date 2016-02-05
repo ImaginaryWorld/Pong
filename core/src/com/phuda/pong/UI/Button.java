@@ -17,7 +17,9 @@ public class Button {
 	private Rectangle rect;
 	private Texture texture;
 	private boolean press, over;
-    private float hAspect = Gdx.graphics.getHeight() / 700.f;
+    // Getting ratio of screen in desktop base (500 x 700)
+    private float hAspect = (Gdx.graphics.getWidth() + Gdx.graphics.getHeight())
+            / (float)(500 + 700);
 
 	public Button(int _x, int _y, String img_source) {
 		texture = new Texture(Gdx.files.internal(img_source));
