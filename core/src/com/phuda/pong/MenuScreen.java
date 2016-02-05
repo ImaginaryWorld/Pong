@@ -27,8 +27,8 @@ public class MenuScreen extends PongScreen
 	MenuScreen(Game game)
 	{
 		super(game);
-        int y = (int) (Gdx.graphics.getHeight() / 1.7);
         int x = Gdx.graphics.getWidth() / 4;
+        int y = (int) (Gdx.graphics.getHeight() / 1.7);
 
         String images_path = "images_hi/";
 		start_pvp_button = new Button(x,   y,      images_path + "pvp.png");
