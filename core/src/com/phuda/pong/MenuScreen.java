@@ -42,13 +42,11 @@ public class MenuScreen extends PongScreen
 		System.out.println("init MenuScreen");
 	}
 	
-	public void show()
-	{
+	public void show() {
 		batch = new SpriteBatch();
 	}
 
-	public void render(float delta)
-	{
+	public void render(float delta) {
         backGroundRotation += delta * 2;
 
         if (nextScreen == null) {

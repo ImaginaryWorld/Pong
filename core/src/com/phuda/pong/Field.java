@@ -4,6 +4,7 @@ import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input;
 import com.badlogic.gdx.math.MathUtils;
 import com.phuda.pong.Effects.Effect;
+import com.phuda.pong.UI.Button;
 import com.phuda.pong.Units.Ball;
 import com.phuda.pong.Units.Board;
 import com.phuda.pong.Units.Bonus;
@@ -16,7 +17,9 @@ public class Field {
 	public Board player1Board, player2Board;
 	public ArrayList<Ball> balls;
 	public Bonus[] bonuses;
+	public Button pauseButton;
     float startTimer = 0f;
+	boolean paused;
 	
 	Field(int ballsCount, int ai, int screenWidth, int screenHeight)
 	{
@@ -38,23 +41,35 @@ public class Field {
 		player2Board = new Board(screenWidth, screenHeight, "bottom", this, 0);
 		// Bonuses generation
 		bonuses = new Bonus[3];
+		// Buttons generation
+		pauseButton = new Button(screenWidth / 2, screenHeight / 2);
 	}
 	
 	public void updateState(float delta) {
-        if (startTimer < 3) {
-            startTimer += delta;
-            // no movement until timer
-            delta = 0;
-        }
-		// Toggle slow-motion
-		if (Gdx.input.isKeyPressed(Input.Keys.S))
-			delta = delta * 0.2f;
-		// Updating state of boards
-		processBoards(delta);
-		// Updating state of balls
-		processBalls(delta);
-		// Updating bonuses
-		updateFeatures(delta);
+		// Buttons
+		processButtons();
+		if (!paused) {
+			if (startTimer < 3) {
+				startTimer += delta;
+				// no movement until timer
+				delta = 0;
+			}
+			// Toggle slow-motion
+			if (Gdx.input.isKeyPressed(Input.Keys.S))
+				delta = delta * 0.2f;
+			// Updating state of boards
+			processBoards(delta);
+			// Updating state of balls
+			processBalls(delta);
+			// Updating bonuses
+			updateFeatures(delta);
+		}
+	}
+
+	private void processButtons() {
+		if (pauseButton.isPressed()) {
+			paused = !paused;
+		}
 	}
 
 	private void processBoards(float delta) {

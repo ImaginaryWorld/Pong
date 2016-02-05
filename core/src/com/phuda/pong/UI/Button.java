@@ -14,7 +14,7 @@ public class Button {
 	private int height, width;
 	private float scale = 0f;
 	private float target_scale = 1f;
-	private Rectangle rect;
+	public Rectangle bounds;
 	private Texture texture;
 	private boolean press, over;
     // Getting ratio of screen in desktop base (500 x 700)
@@ -24,20 +24,26 @@ public class Button {
 	public Button(int _x, int _y, String img_source) {
 		texture = new Texture(Gdx.files.internal(img_source));
 		texture.setFilter(TextureFilter.Linear, TextureFilter.Linear); // smooth resizing
-		height = (int)(texture.getHeight() * hAspect);
 		width = (int)(texture.getWidth() * hAspect);
+		height = (int)(texture.getHeight() * hAspect);
 		init_x = _x - width/2;
 		init_y = _y - height/2;
 		x = Gdx.graphics.getWidth()/2 - width/2;
 		y = Gdx.graphics.getHeight()/2 - height/2;
-		rect = new Rectangle(init_x, init_y, width, height);
+		bounds = new Rectangle(init_x, init_y, width, height);
+	}
+
+	public Button(int _x, int _y) {
+		width = (int)(48 * hAspect);
+		height = (int)(48 * hAspect);
+		bounds = new Rectangle(_x - width / 2, _y - height / 2, width, height);
 	}
 	
 	public void setPos(int _x, int _y) {
 		init_x = _x;
 		init_y = _y;
-		rect.x = init_x;
-		rect.y = init_y;
+		bounds.x = init_x;
+		bounds.y = init_y;
 	}
 	
 	public void draw(SpriteBatch batch){
@@ -51,8 +57,8 @@ public class Button {
 		if (Gdx.input.isTouched()) {
 			int x = Gdx.input.getX();
 			int y = (Gdx.input.getY() - Gdx.graphics.getHeight()) * -1;
-			over = (rect.contains(x, y));
-			if (rect.contains(x, y)){ press = true; }
+			over = (bounds.contains(x, y));
+			if (bounds.contains(x, y)){ press = true; }
 			if (press) {
 				target_scale = .7f;
 				target_x = init_x + (Gdx.input.getDeltaX() * 6);

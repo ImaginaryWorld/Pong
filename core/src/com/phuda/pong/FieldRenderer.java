@@ -10,6 +10,7 @@ import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer.ShapeType;
 import com.badlogic.gdx.math.MathUtils;
 import com.badlogic.gdx.math.Vector2;
+import com.phuda.pong.UI.Button;
 import com.phuda.pong.Units.Ball;
 import com.phuda.pong.Units.Board;
 import com.phuda.pong.Units.Bonus;
@@ -19,7 +20,7 @@ public class FieldRenderer {
 	final int w = Gdx.graphics.getWidth(), h = Gdx.graphics.getHeight();
 	SpriteBatch batch;
 	ShapeRenderer shapeRenderer;
-    Texture boardRedTexture, boardBlueTexture, ballTexture;
+    Texture pauseTexture, playTexture, boardRedTexture, boardBlueTexture, ballTexture;
     Texture bonusTimeTexture, bonusSplitterTexture, bonusControllerTexture;
     Texture backGround;
     float backGroundRotation;
@@ -40,7 +41,9 @@ public class FieldRenderer {
         backGround = new Texture(Gdx.files.internal(images_path + "background.png"));
         backGround.setFilter(TextureFilter.Linear, TextureFilter.Linear);
 
-		boardRedTexture = new Texture(Gdx.files.internal(images_path + "board_red.png"));
+        pauseTexture = new Texture(Gdx.files.internal(images_path + "pause.png"));
+        playTexture = new Texture(Gdx.files.internal(images_path + "play.png"));
+        boardRedTexture = new Texture(Gdx.files.internal(images_path + "board_red.png"));
         boardBlueTexture = new Texture(Gdx.files.internal(images_path + "board_blue.png"));
 		ballTexture = new Texture(Gdx.files.internal(images_path + "particle.png"));
         ballTexture.setFilter(TextureFilter.Linear, TextureFilter.Linear);
@@ -127,6 +130,16 @@ public class FieldRenderer {
 
 
         batch.begin();
+        // Pause/resume button
+        Texture buttonTexture;
+        //Game isn't paused
+        if (!field.paused)
+            buttonTexture = pauseTexture;
+        //Game is paused
+        else
+            buttonTexture = playTexture;
+        batch.draw(buttonTexture, field.pauseButton.bounds.x, field.pauseButton.bounds.y, field.pauseButton.bounds.width,
+                field.pauseButton.bounds.height);
 
         score_font.draw(batch, Integer.toString(field.player1Board.score), 40, h/2);
         score_font.draw(batch, Integer.toString(field.player2Board.score), w - 40, h/2);
