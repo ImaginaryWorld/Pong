@@ -22,7 +22,7 @@ public class GameScreen extends PongScreen
 	
 	public void show()
 	{
-		field = new Field(ballsCount, ai, screenWidth, screenHeight);
+		field = new Field(this, ballsCount, ai, screenWidth, screenHeight);
 		renderer = new FieldRenderer(field);
 	}
 

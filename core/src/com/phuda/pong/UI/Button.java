@@ -33,10 +33,12 @@ public class Button {
 		bounds = new Rectangle(init_x, init_y, width, height);
 	}
 
-	public Button(int _x, int _y) {
-		width = (int)(48 * hAspect);
-		height = (int)(48 * hAspect);
+	public Button(int _x, int _y, int width, int height) {
+		this.width = (int)(width * hAspect);
+		this.height = (int)(height * hAspect);
 		bounds = new Rectangle(_x - width / 2, _y - height / 2, width, height);
+		System.out.println("bounds.x: " + bounds.x);
+		System.out.println("bounds.y: " + bounds.y);
 	}
 	
 	public void setPos(int _x, int _y) {

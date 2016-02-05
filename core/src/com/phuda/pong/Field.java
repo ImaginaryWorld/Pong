@@ -14,17 +14,19 @@ import java.util.ArrayList;
 
 // Class that controls game field.
 public class Field {
+	GameScreen screen;
 	public int screenWidth, screenHeight, ballsCount;
 	public Board player1Board, player2Board;
 	public ArrayList<Ball> balls;
 	public Bonus[] bonuses;
-	public Button pauseButton;
+	public Button pauseButton, menuButton;
     float startTimer = 0f;
 	boolean paused;
     Music music;
-	
-	Field(int ballsCount, int ai, int screenWidth, int screenHeight)
+
+	Field(GameScreen screen, int ballsCount, int ai, int screenWidth, int screenHeight)
 	{
+		this.screen = screen;
 		this.screenWidth = screenWidth;
 		this.screenHeight = screenHeight;
 		this.ballsCount = ballsCount;
@@ -44,8 +46,8 @@ public class Field {
 		// Bonuses generation
 		bonuses = new Bonus[3];
 		// Buttons generation
-		pauseButton = new Button(screenWidth / 2, screenHeight / 2);
-
+		pauseButton = new Button(screenWidth - screenWidth / 6, screenHeight - screenHeight / 4, 32, 32);
+		menuButton = new Button(screenWidth - screenWidth / 6, screenHeight / 4, 64, 64);
         music = Gdx.audio.newMusic(Gdx.files.internal("sounds/pong-song.ogg"));
         music.setLooping(true);
 	}
@@ -77,6 +79,9 @@ public class Field {
 	private void processButtons() {
 		if (pauseButton.isPressed()) {
 			paused = !paused;
+		}
+		if (menuButton.isPressed()) {
+			screen.game.setScreen(new MenuScreen(screen.game));
 		}
 	}
 

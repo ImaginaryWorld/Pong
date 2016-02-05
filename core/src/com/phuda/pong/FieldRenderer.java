@@ -20,9 +20,8 @@ public class FieldRenderer {
 	final int w = Gdx.graphics.getWidth(), h = Gdx.graphics.getHeight();
 	SpriteBatch batch;
 	ShapeRenderer shapeRenderer;
-    Texture pauseTexture, playTexture, boardRedTexture, boardBlueTexture, ballTexture;
-    Texture bonusTimeTexture, bonusSplitterTexture, bonusControllerTexture;
-    Texture backGround;
+    Texture pauseButtonTexture, playButtonTexture, menuButtonTexture, boardRedTexture, boardBlueTexture, ballTexture,
+    bonusTimeTexture, bonusSplitterTexture, bonusControllerTexture, backGround;
     float backGroundRotation;
     float previousScreenDark = 1f;
     float startTimer = 0f;
@@ -41,8 +40,12 @@ public class FieldRenderer {
         backGround = new Texture(Gdx.files.internal(images_path + "background.png"));
         backGround.setFilter(TextureFilter.Linear, TextureFilter.Linear);
 
-        pauseTexture = new Texture(Gdx.files.internal(images_path + "pause.png"));
-        playTexture = new Texture(Gdx.files.internal(images_path + "play.png"));
+        pauseButtonTexture = new Texture(Gdx.files.internal(images_path + "pause.png"));
+        pauseButtonTexture.setFilter(TextureFilter.Linear, TextureFilter.Linear);
+        playButtonTexture = new Texture(Gdx.files.internal(images_path + "play.png"));
+        playButtonTexture.setFilter(TextureFilter.Linear, TextureFilter.Linear);
+        menuButtonTexture = new Texture(Gdx.files.internal(images_path + "menu.png"));
+        menuButtonTexture.setFilter(TextureFilter.Linear, TextureFilter.Linear);
         boardRedTexture = new Texture(Gdx.files.internal(images_path + "board_red.png"));
         boardBlueTexture = new Texture(Gdx.files.internal(images_path + "board_blue.png"));
 		ballTexture = new Texture(Gdx.files.internal(images_path + "particle.png"));
@@ -131,16 +134,18 @@ public class FieldRenderer {
 
         batch.begin();
         // Pause/resume button
-        Texture buttonTexture;
-        //Game isn't paused
         if (!field.paused)
-            buttonTexture = pauseTexture;
-        //Game is paused
+            batch.draw(pauseButtonTexture, field.pauseButton.bounds.x, field.pauseButton.bounds.y,
+                    field.pauseButton.bounds.width, field.pauseButton.bounds.height);
+        // A little lazy - I'll use some menu button's sizes in this one
         else
-            buttonTexture = playTexture;
-        batch.draw(buttonTexture, field.pauseButton.bounds.x, field.pauseButton.bounds.y, field.pauseButton.bounds.width,
-                field.pauseButton.bounds.height);
-
+            batch.draw(playButtonTexture, field.menuButton.bounds.x,
+                    field.pauseButton.bounds.y - field.pauseButton.bounds.height / 2,
+                    field.menuButton.bounds.width, field.menuButton.bounds.height);
+        // Menu button
+        batch.draw(menuButtonTexture, field.menuButton.bounds.x, field.menuButton.bounds.y,
+                field.menuButton.bounds.width, field.menuButton.bounds.height);
+        //Scores
         score_font.draw(batch, Integer.toString(field.player1Board.score), 40, h/2);
         score_font.draw(batch, Integer.toString(field.player2Board.score), w - 40, h/2);
         // Boards
