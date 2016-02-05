@@ -2,6 +2,7 @@ package com.phuda.pong;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input;
+import com.badlogic.gdx.audio.Music;
 import com.badlogic.gdx.math.MathUtils;
 import com.phuda.pong.Effects.Effect;
 import com.phuda.pong.UI.Button;
@@ -20,6 +21,7 @@ public class Field {
 	public Button pauseButton;
     float startTimer = 0f;
 	boolean paused;
+    Music music;
 	
 	Field(int ballsCount, int ai, int screenWidth, int screenHeight)
 	{
@@ -43,6 +45,9 @@ public class Field {
 		bonuses = new Bonus[3];
 		// Buttons generation
 		pauseButton = new Button(screenWidth / 2, screenHeight / 2);
+
+        music = Gdx.audio.newMusic(Gdx.files.internal("sounds/pong-song.ogg"));
+        music.setLooping(true);
 	}
 	
 	public void updateState(float delta) {
@@ -54,6 +59,8 @@ public class Field {
 				// no movement until timer
 				delta = 0;
 			}
+            else if (!music.isPlaying())
+                music.play();
 			// Toggle slow-motion
 			if (Gdx.input.isKeyPressed(Input.Keys.S))
 				delta = delta * 0.2f;
@@ -63,7 +70,8 @@ public class Field {
 			processBalls(delta);
 			// Updating bonuses
 			updateFeatures(delta);
-		}
+		} else if (music.isPlaying())
+            music.pause();
 	}
 
 	private void processButtons() {
