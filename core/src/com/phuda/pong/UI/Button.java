@@ -17,13 +17,13 @@ public class Button {
 	private Rectangle rect;
 	private Texture texture;
 	private boolean press, over;
+    private float hAspect = Gdx.graphics.getHeight() / 700.f;
 
 	public Button(int _x, int _y, String img_source) {
-
 		texture = new Texture(Gdx.files.internal(img_source));
 		texture.setFilter(TextureFilter.Linear, TextureFilter.Linear); // smooth resizing
-		height = texture.getHeight();
-		width = texture.getWidth();
+		height = (int)(texture.getHeight() * hAspect);
+		width = (int)(texture.getWidth() * hAspect);
 		init_x = _x - width/2;
 		init_y = _y - height/2;
 		x = Gdx.graphics.getWidth()/2 - width/2;
