@@ -39,13 +39,13 @@ public class FieldRenderer {
         String images_path = "images_hi/";
         backGround = new Texture(Gdx.files.internal(images_path + "background.png"));
         backGround.setFilter(TextureFilter.Linear, TextureFilter.Linear);
-
+        /*
         pauseButtonTexture = new Texture(Gdx.files.internal(images_path + "pause.png"));
         pauseButtonTexture.setFilter(TextureFilter.Linear, TextureFilter.Linear);
         playButtonTexture = new Texture(Gdx.files.internal(images_path + "play.png"));
         playButtonTexture.setFilter(TextureFilter.Linear, TextureFilter.Linear);
         menuButtonTexture = new Texture(Gdx.files.internal(images_path + "menu.png"));
-        menuButtonTexture.setFilter(TextureFilter.Linear, TextureFilter.Linear);
+        menuButtonTexture.setFilter(TextureFilter.Linear, TextureFilter.Linear); */
         boardRedTexture = new Texture(Gdx.files.internal(images_path + "board_red.png"));
         boardBlueTexture = new Texture(Gdx.files.internal(images_path + "board_blue.png"));
 		ballTexture = new Texture(Gdx.files.internal(images_path + "particle.png"));
@@ -135,16 +135,12 @@ public class FieldRenderer {
         batch.begin();
         // Pause/resume button
         if (!field.paused)
-            batch.draw(pauseButtonTexture, field.pauseButton.bounds.x, field.pauseButton.bounds.y,
-                    field.pauseButton.bounds.width, field.pauseButton.bounds.height);
-        // A little lazy - I'll use some menu button's sizes in this one
-        else
-            batch.draw(playButtonTexture, field.menuButton.bounds.x,
-                    field.pauseButton.bounds.y - field.pauseButton.bounds.height / 2,
-                    field.menuButton.bounds.width, field.menuButton.bounds.height);
-        // Menu button
-        batch.draw(menuButtonTexture, field.menuButton.bounds.x, field.menuButton.bounds.y,
-                field.menuButton.bounds.width, field.menuButton.bounds.height);
+            field.pauseButton.draw(batch);
+        else {
+            field.resumeButton.draw(batch);
+	        // Menu button
+	        field.menuButton.draw(batch);
+        }
         //Scores
         score_font.draw(batch, Integer.toString(field.player1Board.score), 40, h/2);
         score_font.draw(batch, Integer.toString(field.player2Board.score), w - 40, h/2);

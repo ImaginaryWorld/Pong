@@ -19,7 +19,7 @@ public class Field {
 	public Board player1Board, player2Board;
 	public ArrayList<Ball> balls;
 	public Bonus[] bonuses;
-	public Button pauseButton, menuButton;
+	public Button pauseButton, resumeButton, menuButton;
     float startTimer = 0f;
 	boolean paused;
     Music music;
@@ -46,8 +46,9 @@ public class Field {
 		// Bonuses generation
 		bonuses = new Bonus[3];
 		// Buttons generation
-		pauseButton = new Button(screenWidth - screenWidth / 6, screenHeight - screenHeight / 4, 32, 32);
-		menuButton = new Button(screenWidth - screenWidth / 6, screenHeight / 4, 64, 64);
+		pauseButton = new Button(screenWidth / 6 * 5, screenHeight / 2, "images_hi/pause.png");
+		resumeButton = new Button(screenWidth / 2, screenHeight - screenHeight / 3, "images_hi/play.png");
+		menuButton = new Button(screenWidth / 2, screenHeight / 3, "images_hi/menu.png");
         music = Gdx.audio.newMusic(Gdx.files.internal("sounds/pong-song.ogg"));
         music.setLooping(true);
 	}
@@ -77,11 +78,16 @@ public class Field {
 	}
 
 	private void processButtons() {
-		if (pauseButton.isPressed()) {
-			paused = !paused;
-		}
-		if (menuButton.isPressed()) {
-			screen.game.setScreen(new MenuScreen(screen.game));
+		if (!paused) {
+			if (pauseButton.isPressed())
+				paused = true;
+		} else {
+			if (resumeButton.isPressed())
+				paused = false;
+			if (menuButton.isPressed()) {
+				music.stop();
+				screen.game.setScreen(new MenuScreen(screen.game));
+			}
 		}
 	}
 
