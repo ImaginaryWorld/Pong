@@ -23,8 +23,6 @@ public class Field {
 	public Button pauseButton, resumeButton, menuButton;
 	float startTimer = 0f;
 	boolean paused;
-	Sound music;
-	boolean playingMusic;
 
 	Field(GameScreen screen, int ballsCount, int ai, int screenWidth, int screenHeight) {
 		this.screen = screen;
@@ -50,14 +48,11 @@ public class Field {
 		pauseButton = new Button(screenWidth / 6 * 5, screenHeight / 2, "images_hi/pause.png");
 		resumeButton = new Button(screenWidth / 2, screenHeight - screenHeight / 3, "images_hi/play.png");
 		menuButton = new Button(screenWidth / 2, screenHeight / 3, "images_hi/menu.png");
-		// Music generation
-		music = Gdx.audio.newSound(Gdx.files.internal("sounds/pong-song.ogg"));
 	}
 
 	public void updateState(float delta) {
 		// Buttons
 		processButtons();
-		processMusic();
 		if (!paused) {
 			if (startTimer < 3) {
 				startTimer += delta;
@@ -88,21 +83,6 @@ public class Field {
 			if (menuButton.isPressed()) {
 				screen.game.setScreen(new MenuScreen(screen.game));
 			}
-		}
-	}
-
-	// Music
-	private void processMusic() {
-		if (paused || startTimer < 3) {
-			music.pause();
-			playingMusic = false;
-		}
-		else if (menuButton.isPressed()) {
-		}
-		// Start background music
-		else if (!playingMusic) {
-			music.loop();
-			playingMusic = true;
 		}
 	}
 

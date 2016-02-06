@@ -10,7 +10,7 @@ public class GameScreen extends PongScreen
 	FieldRenderer renderer;
     int ballsCount, ai, screenWidth, screenHeight;
 
-	GameScreen(Game game, int _ballsCount, int _ai)
+	GameScreen(PongGame game, int _ballsCount, int _ai)
 	{
 		super(game);
 		screenWidth = Gdx.graphics.getWidth();
@@ -30,6 +30,10 @@ public class GameScreen extends PongScreen
 	{
 		Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
 		field.updateState(delta);
+		if (game.music.isPlaying() && field.paused)
+			game.music.pause();
+		else if (!field.paused && field.startTimer > 3)
+			game.music.play();
 		renderer.render(delta);
 	}
 	

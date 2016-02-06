@@ -6,9 +6,9 @@ import com.badlogic.gdx.Screen;
 // Class that creates screen with game
 public class PongScreen implements Screen {
 
-	Game game;
+	PongGame game;
 
-	PongScreen(Game game)
+	PongScreen(PongGame game)
 	{
 		System.out.println("init PongScreen");
 		this.game = game;
