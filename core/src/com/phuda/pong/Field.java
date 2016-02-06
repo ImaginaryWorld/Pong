@@ -73,7 +73,7 @@ public class Field {
 			processBalls(delta);
 			// Updating bonuses
 			updateFeatures(delta);
-		} else if (music.isPlaying())
+		} else if (music != null && music.isPlaying())
             music.pause();
 	}
 
@@ -86,6 +86,8 @@ public class Field {
 				paused = false;
 			if (menuButton.isPressed()) {
 				music.stop();
+				music.dispose();
+				music = null; // trying to avoid audio error
 				screen.game.setScreen(new MenuScreen(screen.game));
 			}
 		}
