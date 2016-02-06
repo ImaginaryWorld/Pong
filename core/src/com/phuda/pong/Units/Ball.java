@@ -15,18 +15,18 @@ import java.util.ArrayList;
 public class Ball extends Unit {
 	// Ball's disposition variable
 	public Circle bounds;
-    public Board lastTouchedBoard;
+	public Board lastTouchedBoard;
 	// Ball's trails
-    float historyTimer;
+	float historyTimer;
 	final int HISTORY_LENGTH = 12;
-    public ArrayList<Vector2> positionsHistory;
+	public ArrayList<Vector2> positionsHistory;
 	// Effects
 	final int Ethereal = 0, Slowed = 1, Split = 2, Controlled = 3;
 	public Effect[] states = {new Effect("Ethereal"), new Effect("Slowed"), new Effect("Split"),
-                              new Effect("Controlled")};
+			new Effect("Controlled")};
 	// Sound
 	Sound sound_bump;
-	
+
 	public Ball(Field field, int screenWidth, int screenHeight, int num) {
 		super();
 		// Multipliers that depends on screens width and height
@@ -35,11 +35,11 @@ public class Ball extends Unit {
 		this.name = Integer.toString(++num);
 		setBounds(screenWidth, screenHeight);
 		this.field = field;
-        this.positionsHistory = new ArrayList<Vector2>();
+		this.positionsHistory = new ArrayList<Vector2>();
 		// Randomizing ball's x and y axle speed with using multipliers
 		speed.x = MathUtils.random(-wm * 2, wm * 2);
 		speed.y = MathUtils.random(hm * 1.25f, hm * 2) * MathUtils.randomSign();
-		sound_bump = Gdx.audio.newSound(Gdx.files.internal("sounds/bump.wav"));
+		sound_bump = Gdx.audio.newSound(Gdx.files.internal("sounds/bump1.wav"));
 	}
 
 	// Updating methods
@@ -54,37 +54,34 @@ public class Ball extends Unit {
 		// Check collisions with bonuses
 		checkCollidesWithBonuses(field.bonuses);
 		// Checking if ball hit the wall
-		if (!(states[Controlled].isActive && lastTouchedBoard.abilities[lastTouchedBoard.Controller].isActive))
-			checkCollidesWithWalls();
+		checkCollidesWithWalls();
 		// Speed decreasing
 		releaseSpeed(delta);
-        // Save position
-        historyTimer += delta;
-        if (historyTimer >= 0.008f) {
-            historyTimer = 0.0f;
-            Vector2 vec = new Vector2(bounds.x, bounds.y);
-            positionsHistory.add(vec);
-            while (positionsHistory.size() > HISTORY_LENGTH) {
-                positionsHistory.remove(0);
-            }
-        }
-    }
+		// Save position
+		historyTimer += delta;
+		if (historyTimer >= 0.008f) {
+			historyTimer = 0.0f;
+			Vector2 vec = new Vector2(bounds.x, bounds.y);
+			positionsHistory.add(vec);
+			while (positionsHistory.size() > HISTORY_LENGTH) {
+				positionsHistory.remove(0);
+			}
+		}
+	}
 
 	private void updatePosition(float delta) {
 		delta *= 70;
 		if (states[Slowed].isActive) {
 			delta *= 0.4f;
 		}
-        // If ball is controlled by someone
-        if (states[Controlled].isActive && lastTouchedBoard.abilities[lastTouchedBoard.Controller].isActive) {
-            float boardSpeed = lastTouchedBoard.speed.x;
-            speed.x += boardSpeed * 0.1f;
-            xBoundsLimit();
-			System.out.println(name + " controlled time: " + states[Controlled].timer);
-        }
-        bounds.x += speed.x * delta;
-        bounds.y += speed.y * delta;
-        vector.add(bounds.x, bounds.y);
+		// If ball is controlled by someone
+		if (states[Controlled].isActive && lastTouchedBoard.abilities[lastTouchedBoard.Controller].isActive) {
+			float boardSpeed = lastTouchedBoard.speed.x;
+			speed.x += boardSpeed * 0.1f;
+		}
+		bounds.x += speed.x * delta;
+		bounds.y += speed.y * delta;
+		vector.add(bounds.x, bounds.y);
 	}
 
 	private void updateStates(float delta) {
@@ -207,13 +204,13 @@ public class Ball extends Unit {
 
 	private void xBoundsLimit() {
 		if (bounds.x - bounds.radius < 0) {
-            bounds.x = 0 + bounds.radius;
-            speed.x *= -1;
-        }
+			bounds.x = 0 + bounds.radius;
+			speed.x *= -1;
+		}
 		else if (bounds.x + bounds.radius > field.screenWidth) {
-            bounds.x = field.screenWidth - bounds.radius;
-            speed.x *= -1;
-        }
+			bounds.x = field.screenWidth - bounds.radius;
+			speed.x *= -1;
+		}
 	}
 
 	// Speed handling methods
@@ -292,8 +289,8 @@ public class Ball extends Unit {
 			states[Split].engage(1);
 		// Engaging controller
 		if (board.abilities[board.Controller].isActive && !states[Controlled].isActive){
-				states[Controlled].engage(board.abilities[board.Controller].timer);
-				System.out.println("controller on");
+			states[Controlled].engage(board.abilities[board.Controller].timer);
+			System.out.println("controller on");
 		}
 		// Deactivating slowing
 		if (states[Slowed].isActive)

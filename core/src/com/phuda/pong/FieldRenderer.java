@@ -17,54 +17,48 @@ import com.phuda.pong.Units.Bonus;
 import com.sun.javafx.geom.Vec2f;
 
 public class FieldRenderer {
-	final int w = Gdx.graphics.getWidth(), h = Gdx.graphics.getHeight();
-	SpriteBatch batch;
-	ShapeRenderer shapeRenderer;
-    Texture pauseButtonTexture, playButtonTexture, menuButtonTexture, boardRedTexture, boardBlueTexture, ballTexture,
-    bonusTimeTexture, bonusSplitterTexture, bonusControllerTexture, backGround;
+    final int w = Gdx.graphics.getWidth(), h = Gdx.graphics.getHeight();
+    SpriteBatch batch;
+    ShapeRenderer shapeRenderer;
+    Texture boardRedTexture, boardBlueTexture, ballTexture,
+            bonusTimeTexture, bonusSplitterTexture, bonusControllerTexture, backGround;
     float backGroundRotation;
     float previousScreenDark = 1f;
     float startTimer = 0f;
     Field field;
 
-	float scoreShift, target_scoreShift;
-	BitmapFont score_font;
-	
-	FieldRenderer(Field field)
-	{
+    float scoreShift, target_scoreShift;
+    BitmapFont score_font;
+
+    FieldRenderer(Field field)
+    {
         // Initialize some stuff
-		batch = new SpriteBatch();
-		shapeRenderer = new ShapeRenderer();
+        batch = new SpriteBatch();
+        shapeRenderer = new ShapeRenderer();
 
         String images_path = "images_hi/";
         backGround = new Texture(Gdx.files.internal(images_path + "background.png"));
         backGround.setFilter(TextureFilter.Linear, TextureFilter.Linear);
-        /*
-        pauseButtonTexture = new Texture(Gdx.files.internal(images_path + "pause.png"));
-        pauseButtonTexture.setFilter(TextureFilter.Linear, TextureFilter.Linear);
-        playButtonTexture = new Texture(Gdx.files.internal(images_path + "play.png"));
-        playButtonTexture.setFilter(TextureFilter.Linear, TextureFilter.Linear);
-        menuButtonTexture = new Texture(Gdx.files.internal(images_path + "menu.png"));
-        menuButtonTexture.setFilter(TextureFilter.Linear, TextureFilter.Linear); */
+
         boardRedTexture = new Texture(Gdx.files.internal(images_path + "board_red.png"));
         boardBlueTexture = new Texture(Gdx.files.internal(images_path + "board_blue.png"));
-		ballTexture = new Texture(Gdx.files.internal(images_path + "particle.png"));
+        ballTexture = new Texture(Gdx.files.internal(images_path + "particle.png"));
         ballTexture.setFilter(TextureFilter.Linear, TextureFilter.Linear);
-		bonusTimeTexture = new Texture(Gdx.files.internal(images_path + "bonus_time.png"));
+        bonusTimeTexture = new Texture(Gdx.files.internal(images_path + "bonus_time.png"));
         bonusTimeTexture.setFilter(TextureFilter.Linear, TextureFilter.Linear);
         bonusSplitterTexture = new Texture(Gdx.files.internal(images_path + "bonus_splitter.png"));
         bonusSplitterTexture.setFilter(TextureFilter.Linear, TextureFilter.Linear);
         bonusControllerTexture = new Texture(Gdx.files.internal(images_path + "bonus_controller.png"));
         bonusControllerTexture.setFilter(TextureFilter.Linear, TextureFilter.Linear);
 
-		this.field = field;
-		
-		score_font = new BitmapFont();
-		score_font.setColor(Color.WHITE);
-	}
-	
-	public void render(float delta)
-	{
+        this.field = field;
+
+        score_font = new BitmapFont();
+        score_font.setColor(Color.WHITE);
+    }
+
+    public void render(float delta)
+    {
         // Draw back-ground
         backGroundRotation += delta * 2;
         batch.begin();
@@ -138,8 +132,8 @@ public class FieldRenderer {
             field.pauseButton.draw(batch);
         else {
             field.resumeButton.draw(batch);
-	        // Menu button
-	        field.menuButton.draw(batch);
+            // Menu button
+            field.menuButton.draw(batch);
         }
         //Scores
         score_font.draw(batch, Integer.toString(field.player1Board.score), 40, h/2);
@@ -152,9 +146,9 @@ public class FieldRenderer {
                 p2.bounds.width, p2.bounds.height);
 
 
-		// balls
-		for (Ball ball : field.balls){
-			if (ball != null){
+        // balls
+        for (Ball ball : field.balls){
+            if (ball != null){
                 float color[] = {1f, 1f, 1f};
                 // if ball is controlled
                 if (ball.states[3].isActive){
@@ -182,11 +176,11 @@ public class FieldRenderer {
                 batch.setColor(1f, 1f, 1f, 1f);
                 batch.draw(ballTexture, ball.bounds.x - r, ball.bounds.y - r, r * 2, r * 2);
             }
-		}
+        }
 
-		// bonuses
-		for (Bonus bonus : field.bonuses){
-			if (bonus != null){
+        // bonuses
+        for (Bonus bonus : field.bonuses){
+            if (bonus != null){
                 Texture tex;
                 if (bonus.name.equals("timeSlower"))
                     tex = bonusTimeTexture;
@@ -196,13 +190,13 @@ public class FieldRenderer {
                     tex = bonusControllerTexture;
                 else continue; // exception case
 
-				float r = bonus.bounds.radius;
+                float r = bonus.bounds.radius;
                 batch.draw(tex, bonus.bounds.x - r, bonus.bounds.y - r,
                         r, r, r*2, r*2, 1, 1, bonus.rotation, 0, 0,
                         bonusTimeTexture.getWidth(), bonusTimeTexture.getHeight(), false, false);
-			}
-		}
-		batch.end();
+            }
+        }
+        batch.end();
 
         if (previousScreenDark != 0) {
             if (previousScreenDark < 0){
@@ -216,5 +210,5 @@ public class FieldRenderer {
             shapeRenderer.end();
             Gdx.gl.glDisable(Gdx.gl.GL_BLEND);
         }
-	}
+    }
 }

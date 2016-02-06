@@ -25,8 +25,8 @@ public class Board extends Unit {
 	public int score = 0;
 	// Ability variables
 	final int TimeSlower = 0, BallSplitter = 1, Controller = 2;
-    public Effect[] abilities = {new Effect("timeSlower"), new Effect("ballSplitter"),
-                                 new Effect("controller")};
+	public Effect[] abilities = {new Effect("timeSlower"), new Effect("ballSplitter"),
+			new Effect("controller")};
 	// Sound
 	Sound sound_reflect;
 
@@ -38,7 +38,7 @@ public class Board extends Unit {
 		// Setting points of board's bounds
 		setBoundsPoints();
 		this.field = field;
-		this.sound_reflect = Gdx.audio.newSound(Gdx.files.internal("sounds/reflect.wav"));
+		this.sound_reflect = Gdx.audio.newSound(Gdx.files.internal("sounds/reflect1.wav"));
 		// Set difficulty level to 0 to create human player
 		if (difficultyLevel != 0)
 			this.contr = new AIBoardController(this, field.balls, difficultyLevel);
@@ -144,7 +144,7 @@ public class Board extends Unit {
 		// Top board
 		if (name.equals("top"))
 			bounds.y = screenHeight / 12 * 11 - bounds.height;
-		// Bottom board
+			// Bottom board
 		else
 			bounds.y = screenHeight / 12;
 	}
@@ -237,7 +237,7 @@ public class Board extends Unit {
 						else
 							handleAngleCase2(true, ball);
 					}
-				// Collision with angle points
+					// Collision with angle points
 				else if ((point = checkBallCollision(angles, ball)) != 0) {
 					if (point == 1 || point == 2)
 						handleAngleCase2(false, ball);
@@ -294,7 +294,7 @@ public class Board extends Unit {
 			// Faces top side
 			if (topHit)
 				ball.angleBoardCollision(this, false);
-			// Faces bottom side
+				// Faces bottom side
 			else
 				ball.angleBoardCollision(this, true);
 		}
@@ -303,7 +303,7 @@ public class Board extends Unit {
 			// Faces top side
 			if (topHit)
 				ball.angleBoardCollision(this, true);
-			// Faces bottom side
+				// Faces bottom side
 			else
 				ball.angleBoardCollision(this, false);
 		}
@@ -333,7 +333,7 @@ public class Board extends Unit {
 			// Beyond left
 			if (bounds.x < 0)
 				bounds.x = 0;
-			// Beyond right
+				// Beyond right
 			else if (bounds.x > Gdx.graphics.getWidth() - bounds.width)
 				bounds.x = Gdx.graphics.getWidth() - bounds.width;
 		}
