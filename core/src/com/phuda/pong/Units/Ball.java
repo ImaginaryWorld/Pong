@@ -26,6 +26,7 @@ public class Ball extends Unit {
 			new Effect("Controlled")};
 	// Sound
 	Sound sound_bump;
+	float pitch;
 
 	public Ball(Field field, int screenWidth, int screenHeight, int num) {
 		super();
@@ -40,6 +41,7 @@ public class Ball extends Unit {
 		speed.x = MathUtils.random(-wm * 2, wm * 2);
 		speed.y = MathUtils.random(hm * 1.25f, hm * 2) * MathUtils.randomSign();
 		sound_bump = Gdx.audio.newSound(Gdx.files.internal("sounds/bump1.wav"));
+		pitch = 1;
 	}
 
 	// Updating methods
@@ -320,7 +322,8 @@ public class Ball extends Unit {
 
 	private void handleAfterSplit() {
 		// Radius
-		bounds.radius = bounds.radius / 1.5f;
+		bounds.radius /= 1.5f;
+		pitch *= 1.2f;
 		// Ethereal for a few seconds, so the balls can fly apart
 		states[Ethereal].engage(0.5f);
 		// Set split to eternal
@@ -330,7 +333,7 @@ public class Ball extends Unit {
 	// Methods that handles sounds
 	private void playSound() {
 		long s = sound_bump.play(0.5f);
-		sound_bump.setPitch(s,  (speed.y + speed.x) * 0.1f + 0.5f);
+		sound_bump.setPitch(s, pitch);
 	}
 
 	// Methods that handles exceptions

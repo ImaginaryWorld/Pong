@@ -317,8 +317,8 @@ public class Board extends Unit {
 		for (int j = 0; j < bounds.length; j++)
 			if (ball.bounds.contains(bounds[j])) {
 				// Sound of collision
-				long s = sound_reflect.play(0.6f);
-				sound_reflect.setPitch(s, (ball.speed.y + ball.speed.y) * 0.1f + 0.5f);
+				long s = sound_reflect.play(0.5f);
+				sound_reflect.setPitch(s, ball.pitch);
 				// Setting this board to as last one that ball touches
 				ball.saveLastBoard(this);
 				return j + 1;
