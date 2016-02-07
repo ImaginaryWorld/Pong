@@ -143,16 +143,25 @@ public class Ball extends Unit {
 
 	// Slowing ball if necessary
 	private void checkSlowing() {
-		if (Math.abs(field.screenHeight / 2 - bounds.y) > field.screenHeight * 5 / 12) {
-			if (states[Slowed].isActive)
+		Board player1 = field.player1Board, player2 = field.player2Board;
+		if (states[Slowed].isActive) {
+			if (!inSlowingArea(player1) && !inSlowingArea(player2))
 				states[Slowed].disengage();
 		}
-		else if (!states[Slowed].isActive) {
-			Board player1 = field.player1Board, player2 = field.player2Board;
-			if ((bounds.y > field.screenHeight - field.screenHeight / 3 && player1.abilities[player1.TimeSlower].isActive && speed.y > 0)
-					|| (bounds.y < field.screenHeight / 3 && field.player2Board.abilities[player2.TimeSlower].isActive && speed.y < 0))
+		else if ((inSlowingArea(player1) && player1.abilities[player1.TimeSlower].isActive && speed.y > 0)
+					|| (inSlowingArea(player2) && player2.abilities[player2.TimeSlower].isActive && speed.y < 0))
 				states[Slowed].engage(10);
-		}
+	}
+
+	private boolean inSlowingArea(Board player) {
+		if (player.name.equals("top"))
+			return bounds.y - field.screenHeight / 2 > field.screenHeight / 6 &&
+				bounds.y - field.screenHeight / 2 <
+						player.bounds.y + player.bounds.height - field.screenHeight / 2;
+		else
+			return field.screenHeight / 2 - bounds.y  > field.screenHeight / 6 &&
+					field.screenHeight / 2 - bounds.y <
+						field.screenHeight / 2 - player.bounds.y;
 	}
 
 	private void checkSplitting() {
