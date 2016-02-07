@@ -91,6 +91,7 @@ public class MenuScreen extends PongScreen
 
         if (nextScreen != null) {
             if (nextScreenDark > 1){
+                dispose();
                 game.setScreen(nextScreen);
             }
             nextScreenDark += delta * 2;
@@ -102,4 +103,17 @@ public class MenuScreen extends PongScreen
             Gdx.gl.glDisable(Gdx.gl.GL_BLEND);
         }
 	}
+
+    public void dispose() {
+        disposeTextures();
+    }
+
+    private void disposeTextures() {
+        backGround.dispose();
+        start_pvc_button.disposeTexture();
+        start_pvp_button.disposeTexture();
+        other2_button.disposeTexture();
+        ai_mode_slider.disposeTextures();
+        balls_slider.disposeTextures();
+    }
 }

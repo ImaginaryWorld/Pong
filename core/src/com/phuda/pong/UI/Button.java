@@ -83,4 +83,7 @@ public class Button {
 		return false;
 	}
 
+	public void disposeTexture() {
+		texture.dispose();
+	}
 }

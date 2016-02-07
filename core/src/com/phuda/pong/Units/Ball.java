@@ -205,9 +205,10 @@ public class Ball extends Unit {
 
 	// Disposition methods
 	private void setBounds(int screenWidth, int screenHeight) {
-		bounds = new Circle((float)MathUtils.random(screenWidth),
+		float radius = screenWidth / 100 + screenHeight / 100;
+		bounds = new Circle((float)MathUtils.random(radius, screenWidth - radius),
 				(float)MathUtils.random(screenHeight * 2 / 5, screenHeight - screenHeight * 2 / 5),
-				screenWidth / 100 + screenHeight / 100);
+				radius);
 	}
 
 	public boolean outOfField() {

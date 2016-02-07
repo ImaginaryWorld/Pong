@@ -77,4 +77,9 @@ public class Slider {
         font.draw(batch, label + Integer.toString(value), x - base.getWidth()/3 * hAspect,
                 y + (int)(base.getHeight()*0.7 * hAspect));
     }
+
+    public void disposeTextures() {
+        base.dispose();
+        unit.dispose();
+    }
 }
