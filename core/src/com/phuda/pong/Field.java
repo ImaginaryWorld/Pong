@@ -45,7 +45,7 @@ public class Field {
 		// Bonuses generation
 		bonuses = new Bonus[3];
 		// Buttons generation
-		pauseButton = new Button(screenWidth / 6 * 5, screenHeight / 2, "images_hi/pause.png");
+		pauseButton = new Button(screenWidth / 17 * 16, screenHeight / 2, "images_hi/pause.png");
 		resumeButton = new Button(screenWidth / 2, screenHeight - screenHeight / 3, "images_hi/play.png");
 		menuButton = new Button(screenWidth / 2, screenHeight / 3, "images_hi/menu.png");
 	}

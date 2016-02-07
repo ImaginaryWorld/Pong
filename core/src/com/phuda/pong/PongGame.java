@@ -9,7 +9,7 @@ public class PongGame extends Game {
 	public Music music;
 	@Override
 	public void create() {
-		music = Gdx.audio.newMusic(Gdx.files.internal("sounds/pong-song1.ogg"));
+		music = Gdx.audio.newMusic(Gdx.files.internal("sounds/pong-song2.ogg"));
 		music.setLooping(true);
 		System.out.println("start Game");
 		System.out.println("init PongGame");

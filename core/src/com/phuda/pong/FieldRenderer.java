@@ -126,17 +126,9 @@ public class FieldRenderer {
 
 
         batch.begin();
-        // Pause/resume button
-        if (!field.paused)
-            field.pauseButton.draw(batch);
-        else {
-            field.resumeButton.draw(batch);
-            // Menu button
-            field.menuButton.draw(batch);
-        }
         //Scores
-        score_font.draw(batch, Integer.toString(field.player1Board.score), 40, h/2);
-        score_font.draw(batch, Integer.toString(field.player2Board.score), w - 40, h/2);
+        //score_font.draw(batch, Integer.toString(field.player1Board.score), 40, h/3);
+        //score_font.draw(batch, Integer.toString(field.player2Board.score), w - 40, h/3);
         // Boards
         Board p1 = field.player1Board, p2 = field.player2Board;
         batch.draw(textures[boardRedTexture], p1.bounds.x, p1.bounds.y,
@@ -181,20 +173,32 @@ public class FieldRenderer {
         for (Bonus bonus : field.bonuses){
             if (bonus != null){
                 Texture tex;
-                if (bonus.name.equals("timeSlower"))
+                if (bonus.name.equals("timeSlower")) {
                     tex = textures[bonusTimeTexture];
-                else if (bonus.name.equals("ballSplitter"))
+                }
+                else if (bonus.name.equals("ballSplitter")) {
                     tex = textures[bonusSplitterTexture];
-                else if (bonus.name.equals("controller"))
+                }
+                else if (bonus.name.equals("controller")) {
                     tex = textures[bonusControllerTexture];
-                else
+                }
+                else {
                     continue; // exception case
+                }
 
                 float r = bonus.bounds.radius;
                 batch.draw(tex, bonus.bounds.x - r, bonus.bounds.y - r,
                         r, r, r*2, r*2, 1, 1, bonus.rotation, 0, 0,
                         textures[bonusTimeTexture].getWidth(), textures[bonusTimeTexture].getHeight(), false, false);
             }
+        }
+        // Pause/resume buttonз
+        if (!field.paused)
+            field.pauseButton.draw(batch);
+        else {
+            field.resumeButton.draw(batch);
+            // Menu button
+            field.menuButton.draw(batch);
         }
         batch.end();
 
