@@ -8,7 +8,6 @@ import com.badlogic.gdx.math.Vector2;
 import com.phuda.pong.Effects.Effect;
 import com.phuda.pong.Exc.TouchException;
 import com.phuda.pong.Field;
-import com.sun.javafx.geom.Vec2f;
 
 import java.util.ArrayList;
 
@@ -74,7 +73,9 @@ public class Ball extends Unit {
 	private void updatePosition(float delta) {
 		delta *= 70;
 		if (states[Slowed].isActive) {
-			delta *= 0.4f;
+			delta *= field.screenHeight / Math.abs(field.screenHeight / 2 - bounds.y) / 9;
+			System.out.println(delta);
+			System.out.println(bounds.y);
 		}
 		// If ball is controlled by someone
 		if (states[Controlled].isActive && lastTouchedBoard.abilities[lastTouchedBoard.Controller].isActive) {
@@ -157,11 +158,11 @@ public class Ball extends Unit {
 		if (player.name.equals("top"))
 			return bounds.y - field.screenHeight / 2 > field.screenHeight / 6 &&
 				bounds.y - field.screenHeight / 2 <
-						player.bounds.y + player.bounds.height - field.screenHeight / 2;
+						player.bounds.y - field.screenHeight / 2;
 		else
 			return field.screenHeight / 2 - bounds.y  > field.screenHeight / 6 &&
 					field.screenHeight / 2 - bounds.y <
-						field.screenHeight / 2 - player.bounds.y;
+						field.screenHeight / 2 - player.bounds.y - player.bounds.height;
 	}
 
 	private void checkSplitting() {

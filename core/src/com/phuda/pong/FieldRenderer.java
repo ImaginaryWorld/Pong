@@ -10,18 +10,17 @@ import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer.ShapeType;
 import com.badlogic.gdx.math.MathUtils;
 import com.badlogic.gdx.math.Vector2;
-import com.phuda.pong.UI.Button;
 import com.phuda.pong.Units.Ball;
 import com.phuda.pong.Units.Board;
 import com.phuda.pong.Units.Bonus;
-import com.sun.javafx.geom.Vec2f;
 
 public class FieldRenderer {
     final int w = Gdx.graphics.getWidth(), h = Gdx.graphics.getHeight();
     SpriteBatch batch;
     ShapeRenderer shapeRenderer;
-    Texture boardRedTexture, boardBlueTexture, ballTexture,
-            bonusTimeTexture, bonusSplitterTexture, bonusControllerTexture, backGround;
+    final int boardRedTexture = 0, boardBlueTexture = 1, ballTexture = 2,
+            bonusTimeTexture = 3, bonusSplitterTexture = 4, bonusControllerTexture = 5, backGround = 6;
+    Texture textures[];
     float backGroundRotation;
     float previousScreenDark = 1f;
     float startTimer = 0f;
@@ -30,26 +29,26 @@ public class FieldRenderer {
     float scoreShift, target_scoreShift;
     BitmapFont score_font;
 
-    FieldRenderer(Field field)
-    {
+    FieldRenderer(Field field) {
         // Initialize some stuff
         batch = new SpriteBatch();
         shapeRenderer = new ShapeRenderer();
-
+        // Textures initialisation
+        textures = new Texture[7];
         String images_path = "images_hi/";
-        backGround = new Texture(Gdx.files.internal(images_path + "background.png"));
-        backGround.setFilter(TextureFilter.Linear, TextureFilter.Linear);
+        textures[backGround] = new Texture(Gdx.files.internal(images_path + "background.png"));
+        textures[backGround].setFilter(TextureFilter.Linear, TextureFilter.Linear);
 
-        boardRedTexture = new Texture(Gdx.files.internal(images_path + "board_red.png"));
-        boardBlueTexture = new Texture(Gdx.files.internal(images_path + "board_blue.png"));
-        ballTexture = new Texture(Gdx.files.internal(images_path + "particle.png"));
-        ballTexture.setFilter(TextureFilter.Linear, TextureFilter.Linear);
-        bonusTimeTexture = new Texture(Gdx.files.internal(images_path + "bonus_time.png"));
-        bonusTimeTexture.setFilter(TextureFilter.Linear, TextureFilter.Linear);
-        bonusSplitterTexture = new Texture(Gdx.files.internal(images_path + "bonus_splitter.png"));
-        bonusSplitterTexture.setFilter(TextureFilter.Linear, TextureFilter.Linear);
-        bonusControllerTexture = new Texture(Gdx.files.internal(images_path + "bonus_controller.png"));
-        bonusControllerTexture.setFilter(TextureFilter.Linear, TextureFilter.Linear);
+        textures[boardRedTexture] = new Texture(Gdx.files.internal(images_path + "board_red.png"));
+        textures[boardBlueTexture] = new Texture(Gdx.files.internal(images_path + "board_blue.png"));
+        textures[ballTexture] = new Texture(Gdx.files.internal(images_path + "particle.png"));
+        textures[ballTexture].setFilter(TextureFilter.Linear, TextureFilter.Linear);
+        textures[bonusTimeTexture] = new Texture(Gdx.files.internal(images_path + "bonus_time.png"));
+        textures[bonusTimeTexture].setFilter(TextureFilter.Linear, TextureFilter.Linear);
+        textures[bonusSplitterTexture] = new Texture(Gdx.files.internal(images_path + "bonus_splitter.png"));
+        textures[bonusSplitterTexture].setFilter(TextureFilter.Linear, TextureFilter.Linear);
+        textures[bonusControllerTexture] = new Texture(Gdx.files.internal(images_path + "bonus_controller.png"));
+        textures[bonusControllerTexture].setFilter(TextureFilter.Linear, TextureFilter.Linear);
 
         this.field = field;
 
@@ -63,15 +62,15 @@ public class FieldRenderer {
         backGroundRotation += delta * 2;
         batch.begin();
         batch.setColor(MathUtils.sin(backGroundRotation)/2 + 0.5f, 1f, 1f, 0.7f);
-        batch.draw(backGround, w/2 - backGround.getWidth(), h/2 - backGround.getHeight(),
-                backGround.getWidth(), backGround.getHeight(),
-                backGround.getWidth()*2, backGround.getHeight()*2,
-                1, 1, -backGroundRotation, 0, 0, backGround.getWidth(), backGround.getHeight(),
+        batch.draw(textures[backGround], w/2 - textures[backGround].getWidth(), h/2 - textures[backGround].getHeight(),
+                textures[backGround].getWidth(), textures[backGround].getHeight(),
+                textures[backGround].getWidth()*2, textures[backGround].getHeight()*2,
+                1, 1, -backGroundRotation, 0, 0, textures[backGround].getWidth(), textures[backGround].getHeight(),
                 false, true);
-        batch.draw(backGround, w/2 - backGround.getWidth()/2, h/2 - backGround.getHeight()/2,
-                backGround.getWidth()/2, backGround.getHeight()/2,
-                backGround.getWidth(), backGround.getHeight(),
-                1, 1, backGroundRotation, 0, 0, backGround.getWidth(), backGround.getHeight(),
+        batch.draw(textures[backGround], w/2 - textures[backGround].getWidth()/2, h/2 - textures[backGround].getHeight()/2,
+                textures[backGround].getWidth()/2, textures[backGround].getHeight()/2,
+                textures[backGround].getWidth(), textures[backGround].getHeight(),
+                1, 1, backGroundRotation, 0, 0, textures[backGround].getWidth(), textures[backGround].getHeight(),
                 false, false);
         batch.setColor(1f, 1f, 1f, 1f); // reset colors for next graphics
         batch.end();
@@ -140,9 +139,9 @@ public class FieldRenderer {
         score_font.draw(batch, Integer.toString(field.player2Board.score), w - 40, h/2);
         // Boards
         Board p1 = field.player1Board, p2 = field.player2Board;
-        batch.draw(boardRedTexture, p1.bounds.x, p1.bounds.y,
+        batch.draw(textures[boardRedTexture], p1.bounds.x, p1.bounds.y,
                 p1.bounds.width, p1.bounds.height);
-        batch.draw(boardBlueTexture, p2.bounds.x, p2.bounds.y,
+        batch.draw(textures[boardBlueTexture], p2.bounds.x, p2.bounds.y,
                 p2.bounds.width, p2.bounds.height);
 
 
@@ -167,14 +166,14 @@ public class FieldRenderer {
                 for (Vector2 vec : ball.positionsHistory) {
                     batch.setColor(color[0], color[1], color[2], alpha);
                     float size = alpha * 2;
-                    batch.draw(ballTexture, vec.x - r * size, vec.y - r * size,
+                    batch.draw(textures[ballTexture], vec.x - r * size, vec.y - r * size,
                             r * 2 * size, r * 2 * size);
                     alpha += 0.02f;
                 }
                 // Reset alpha
                 batch.setBlendFunction(Gdx.gl.GL_SRC_ALPHA, Gdx.gl.GL_ONE_MINUS_SRC_ALPHA);
                 batch.setColor(1f, 1f, 1f, 1f);
-                batch.draw(ballTexture, ball.bounds.x - r, ball.bounds.y - r, r * 2, r * 2);
+                batch.draw(textures[ballTexture], ball.bounds.x - r, ball.bounds.y - r, r * 2, r * 2);
             }
         }
 
@@ -183,17 +182,18 @@ public class FieldRenderer {
             if (bonus != null){
                 Texture tex;
                 if (bonus.name.equals("timeSlower"))
-                    tex = bonusTimeTexture;
+                    tex = textures[bonusTimeTexture];
                 else if (bonus.name.equals("ballSplitter"))
-                    tex = bonusSplitterTexture;
+                    tex = textures[bonusSplitterTexture];
                 else if (bonus.name.equals("controller"))
-                    tex = bonusControllerTexture;
-                else continue; // exception case
+                    tex = textures[bonusControllerTexture];
+                else
+                    continue; // exception case
 
                 float r = bonus.bounds.radius;
                 batch.draw(tex, bonus.bounds.x - r, bonus.bounds.y - r,
                         r, r, r*2, r*2, 1, 1, bonus.rotation, 0, 0,
-                        bonusTimeTexture.getWidth(), bonusTimeTexture.getHeight(), false, false);
+                        textures[bonusTimeTexture].getWidth(), textures[bonusTimeTexture].getHeight(), false, false);
             }
         }
         batch.end();

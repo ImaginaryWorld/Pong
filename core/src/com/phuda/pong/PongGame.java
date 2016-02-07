@@ -16,6 +16,10 @@ public class PongGame extends Game {
 
 		//uncomment this to start game without menu
 		//setScreen(new GameScreen(this));
+		launchMenu();
+	}
+
+	public void launchMenu() {
 		setScreen(new MenuScreen(this));
 	}
 }

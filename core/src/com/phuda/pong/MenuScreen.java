@@ -102,5 +102,4 @@ public class MenuScreen extends PongScreen
             Gdx.gl.glDisable(Gdx.gl.GL_BLEND);
         }
 	}
-	
 }

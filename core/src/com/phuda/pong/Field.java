@@ -81,7 +81,8 @@ public class Field {
 			if (resumeButton.isPressed())
 				paused = false;
 			if (menuButton.isPressed()) {
-				screen.game.setScreen(new MenuScreen(screen.game));
+				screen.dispose();
+				screen.game.launchMenu();
 			}
 		}
 	}

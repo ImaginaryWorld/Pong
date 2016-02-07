@@ -10,8 +10,7 @@ public class GameScreen extends PongScreen
 	FieldRenderer renderer;
     int ballsCount, ai, screenWidth, screenHeight;
 
-	GameScreen(PongGame game, int _ballsCount, int _ai)
-	{
+	GameScreen(PongGame game, int _ballsCount, int _ai) {
 		super(game);
 		screenWidth = Gdx.graphics.getWidth();
 		screenHeight = Gdx.graphics.getHeight();
@@ -36,5 +35,20 @@ public class GameScreen extends PongScreen
 			game.music.play();
 		renderer.render(delta);
 	}
-	
+
+	public void dispose() {
+		// Disposing fonts and textures
+		disposeRendererParts();
+	}
+
+	/*
+     * I can't dispose batch and shapeRenderer because of errors happens.
+     * In case with batch there even some serious memory errors
+     */
+	private void disposeRendererParts() {
+		System.out.println("Parts is disposing");
+		renderer.score_font.dispose();
+		for (int i = 0; i < renderer.textures.length; i++)
+			renderer.textures[i].dispose();
+	}
 }
