@@ -79,8 +79,9 @@ public class Field {
 			if (pauseButton.isPressed())
 				paused = true;
 		} else {
-			if (resumeButton.isPressed())
-				paused = false;
+            if (winner.equals("none"))
+                if (resumeButton.isPressed())
+                    paused = false;
 			if (menuButton.isPressed()) {
 				screen.dispose();
 				screen.game.launchMenu();

@@ -217,8 +217,9 @@ public class FieldRenderer {
         }
         else { // Some-one wins
             int rotation = field.winner.equals("p1") ? 180 : 0;
+            int ypos = field.winner.equals("p1") ? h - h/4 : h/4;
             Texture t = textures[winnerTexture];
-            batch.draw(t, w/2 - t.getWidth()/2, h/2 - t.getHeight()/2, t.getWidth()/2, t.getHeight()/2,
+            batch.draw(t, w/2 - t.getWidth()/2, ypos - t.getHeight()/2, t.getWidth()/2, t.getHeight()/2,
                     t.getWidth(), t.getHeight(), 1, 1, rotation, 0, 0, t.getWidth(), t.getHeight(), false, false);
             // Menu button
             field.menuButton.draw(batch);
