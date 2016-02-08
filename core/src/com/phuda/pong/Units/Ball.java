@@ -38,7 +38,7 @@ public class Ball extends Unit {
 		this.positionsHistory = new ArrayList<Vector2>();
 		// Randomizing ball's x and y axle speed with using multipliers
 		speed.x = MathUtils.random(-wm * 2, wm * 2);
-		speed.y = MathUtils.random(hm * 1.25f, hm * 2) * MathUtils.randomSign();
+		speed.y = MathUtils.random(hm * 1.5f, hm * 2) * MathUtils.randomSign();
 		sound_bump = Gdx.audio.newSound(Gdx.files.internal("sounds/bump1.wav"));
 		pitch = 1;
 	}
@@ -57,7 +57,7 @@ public class Ball extends Unit {
 		// Checking if ball hit the wall
 		checkCollidesWithWalls();
 		// Speed decreasing
-		releaseSpeed(delta);
+		handleSpeed(delta);
 		// Save position
 		historyTimer += delta;
 		if (historyTimer >= 0.008f) {
@@ -72,11 +72,8 @@ public class Ball extends Unit {
 
 	private void updatePosition(float delta) {
 		delta *= 70;
-		if (states[Slowed].isActive) {
+		if (states[Slowed].isActive)
 			delta *= field.screenHeight / Math.abs(field.screenHeight / 2 - bounds.y) / 9;
-			System.out.println(delta);
-			System.out.println(bounds.y);
-		}
 		// If ball is controlled by someone
 		if (states[Controlled].isActive && lastTouchedBoard.abilities[lastTouchedBoard.Controller].isActive) {
 			float boardSpeed = lastTouchedBoard.speed.x;
@@ -135,9 +132,6 @@ public class Ball extends Unit {
 		if ( (bounds.x - bounds.radius < 0 && speed.x < 0) ||
 				(bounds.x + bounds.radius > Gdx.graphics.getWidth() && speed.x > 0) ) {
 			speed.x = -speed.x;
-			// A little change in speed.y for the ones that sticks on crossing field by x axle
-			if (Math.abs(speed.y) < 4)
-				speed.y += speed.y / Math.abs(speed.y) / 2;
 			playSound();
 		}
 	}
@@ -180,7 +174,8 @@ public class Ball extends Unit {
 	}
 
 	public void sideBoardCollision(Board board, float xBound) {
-		speed.x *= -1;
+		if (board.speed.x / speed.x <= 0)
+			speed.x *= -1;
 		// Don't overlap board - new center of ball in radius distance from board's side
 		bounds.x = xBound;
 		// If ball's speed are too low it receives a board's speed
@@ -215,23 +210,14 @@ public class Ball extends Unit {
 		return (bounds.y < 0) || (bounds.y > Gdx.graphics.getHeight());
 	}
 
-	private void xBoundsLimit() {
-		if (bounds.x - bounds.radius < 0) {
-			bounds.x = 0 + bounds.radius;
-			speed.x *= -1;
-		}
-		else if (bounds.x + bounds.radius > field.screenWidth) {
-			bounds.x = field.screenWidth - bounds.radius;
-			speed.x *= -1;
-		}
-	}
-
 	// Speed handling methods
-	private void releaseSpeed(float delta) {
+	private void handleSpeed(float delta) {
 		if (Math.abs(speed.x) > field.screenWidth / 60)
 			speed.x -= delta * speed.x * 6;
 		if (Math.abs(speed.y) > field.screenHeight / 90)
 			speed.y -= delta * speed.y * 6;
+		else if (Math.abs(speed.y) < field.screenHeight / 150)
+			speed.y += delta * speed.y * 6;
 	}
 
 	private void ballsSpeedExchange(Ball ball) {
@@ -281,6 +267,8 @@ public class Ball extends Unit {
 		balls.get(balls.size() - 1).changeSpeedAfterSplit(speed.x, speed.y, 30);
 		// Turn on some split consequences
 		balls.get(balls.size() - 1).handleAfterSplit();
+		if (this.states[Controlled].isActive)
+			balls.get(balls.size() - 1).states[Controlled].engage(this.states[Controlled].timer);
 		balls.get(balls.size() - 1).lastTouchedBoard = this.lastTouchedBoard;
 		// 3rd ball
 		balls.add(new Ball(field, field.screenWidth, field.screenHeight, balls.size()));
@@ -291,6 +279,8 @@ public class Ball extends Unit {
 		balls.get(balls.size() - 1).changeSpeedAfterSplit(speed.x, speed.y, -30);
 		// Turn on some split consequences
 		balls.get(balls.size() - 1).handleAfterSplit();
+		if (this.states[Controlled].isActive)
+			balls.get(balls.size() - 1).states[Controlled].engage(this.states[Controlled].timer);
 		balls.get(balls.size() - 1).lastTouchedBoard = this.lastTouchedBoard;
 	}
 

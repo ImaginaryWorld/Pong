@@ -35,24 +35,8 @@ public class Button {
         // touch zone
 		bounds = new Rectangle(init_x, init_y, width, height);
 	}
-
-    /* no usage
-	public Button(int _x, int _y, int width, int height) {
-		this.width = (int)(width * hAspect);
-		this.height = (int)(height * hAspect);
-		bounds = new Rectangle(_x - width / 2, _y - height / 2, width, height);
-		System.out.println("bounds.x: " + bounds.x);
-		System.out.println("bounds.y: " + bounds.y);
-	}
 	
-	public void setPos(int _x, int _y) {
-		init_x = _x;
-		init_y = _y;
-		bounds.x = init_x;
-		bounds.y = init_y;
-	} */
-	
-	public void draw(SpriteBatch batch){
+	public void draw(SpriteBatch batch) {
 		scale = MathUtils.lerp(scale, target_scale, .2f);
 		x = MathUtils.lerp(x, target_x, .1f);
 		y = MathUtils.lerp(y, target_y, .1f);

@@ -177,18 +177,36 @@ public class Board extends Unit {
 		for (Ball ball : balls) {
 			if (!ball.states[ball.Ethereal].isActive) {
 				// Collision with board's top bound points
-				if (checkBallCollision(topBounds, ball) != 0)
-					ball.boardCollision(this, bounds.y + bounds.height + ball.bounds.radius);
-					// Collision with board's bottom bound points
-				else if (checkBallCollision(bottomBounds, ball) != 0)
-					ball.boardCollision(this, bounds.y - ball.bounds.radius);
-					// Collision with board's left bound points
+				if (checkBallCollision(topBounds, ball) != 0) {
+					if (ball.speed.y < 0) {
+						if ((point = checkBallCollision(angles, ball)) == 0)
+							ball.boardCollision(this, bounds.y + bounds.height + ball.bounds.radius);
+						else
+							handleAngleCase(point, ball);
+					}
+					//Suspicious case - checking if ball rushes there through side and taking measures
+					else if (checkBallCollision(leftBounds, ball) != 0)
+						ball.sideBoardCollision(this, bounds.x - ball.bounds.radius);
+					else if (checkBallCollision(rightBounds, ball) != 0)
+						ball.sideBoardCollision(this, bounds.x + bounds.width + ball.bounds.radius);
+				}
+				// Collision with board's bottom bound points
+				else if (checkBallCollision(bottomBounds, ball) != 0) {
+					if (ball.speed.y > 0)
+						ball.boardCollision(this, bounds.y - ball.bounds.radius);
+						//Suspicious case - checking if ball rushes there through side and taking measures
+					else if (checkBallCollision(leftBounds, ball) != 0)
+						ball.sideBoardCollision(this, bounds.x - ball.bounds.radius);
+					else if (checkBallCollision(rightBounds, ball) != 0)
+						ball.sideBoardCollision(this, bounds.x + bounds.width + ball.bounds.radius);
+				}
+				// Collision with board's left bound points
 				else if (checkBallCollision(leftBounds, ball) != 0)
 					ball.sideBoardCollision(this, bounds.x - ball.bounds.radius);
-					// Collision with board's right bound points
+				// Collision with board's right bound points
 				else if (checkBallCollision(rightBounds, ball) != 0)
 					ball.sideBoardCollision(this, bounds.x + bounds.width + ball.bounds.radius);
-					// Collision with angle points
+				// Collision with angle points
 				else if ((point = checkBallCollision(angles, ball)) != 0)
 					handleAngleCase(point, ball);
 			}
@@ -204,6 +222,7 @@ public class Board extends Unit {
 			if (!ball.states[ball.Ethereal].isActive) {
 				// Collision with board's top bound points
 				if (checkBallCollision(topBounds, ball) != 0) {
+					// Side hit
 					if (enterSideFromTop(ball))
 						spotXBound(ball);
 					else
@@ -220,6 +239,7 @@ public class Board extends Unit {
 				else if (checkBallCollision(leftBounds, ball) != 0) {
 					if (enterSideFromTop(ball) || enterSideFromBottom(ball))
 						spotXBound(ball);
+					// Ball hits on angle
 					else {
 						if (bounds.y > ball.bounds.y)
 							handleAngleCase2(false, ball);
@@ -228,7 +248,7 @@ public class Board extends Unit {
 					}
 				}
 				// Collision with board's right bound points
-				else if (checkBallCollision(rightBounds, ball) != 0)
+				else if (checkBallCollision(rightBounds, ball) != 0) {
 					if (enterSideFromTop(ball) || enterSideFromBottom(ball))
 						spotXBound(ball);
 					else {
@@ -237,9 +257,10 @@ public class Board extends Unit {
 						else
 							handleAngleCase2(true, ball);
 					}
-					// Collision with angle points
+				}
+				// Collision with angle points
 				else if ((point = checkBallCollision(angles, ball)) != 0) {
-					if (point == 1 || point == 2)
+					if (point == 1 || point == 3)
 						handleAngleCase2(false, ball);
 					else
 						handleAngleCase2(true, ball);
@@ -250,10 +271,10 @@ public class Board extends Unit {
 
 	// Defines two cases of side hit - for right and left bound
 	void spotXBound(Ball ball) {
-		if (speed.x > 0)
-			ball.sideBoardCollision(this, bounds.x + bounds.width + ball.bounds.radius);
-		else if (speed.x < 0)
+		if (speed.x < 0)
 			ball.sideBoardCollision(this, bounds.x - ball.bounds.radius);
+		else
+			ball.sideBoardCollision(this, bounds.x + bounds.width + ball.bounds.radius);
 	}
 
 	// Defines if ball was really hit by board's side not angle (calculations for cases when ball's center are above the board's top)
@@ -281,6 +302,20 @@ public class Board extends Unit {
 				ball.boardCollision(this, bounds.y - ball.bounds.radius);
 			else
 				ball.boardCollision(this, bounds.y + bounds.height + ball.bounds.radius);
+		}
+		// Would-be bottom bound's angles cases - when ball really came in point through board's right or left side
+		else if ((point == 1 || point == 3) && ball.speed.y < 0) {
+			if (point == 1)
+				ball.sideBoardCollision(this, bounds.x - ball.bounds.radius);
+			else
+				ball.sideBoardCollision(this, bounds.x + bounds.width + ball.bounds.radius);
+		}
+		// Would-be top bound's angles cases - when ball really came in point through board's right or left side
+		else if ((point == 2 || point == 4) && ball.speed.y > 0) {
+			if (point == 2)
+				ball.sideBoardCollision(this, bounds.x - ball.bounds.radius);
+			else
+				ball.sideBoardCollision(this, bounds.x + bounds.width + ball.bounds.radius);
 		}
 		// True angle cases
 		else

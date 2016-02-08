@@ -157,7 +157,6 @@ public class Field {
 			if (bonuses[j] != null && bonuses[j] != bonus)
 				// Calculating if bonus will be too close to other one
 				if (bonus.vector.dst(bonuses[j].vector) < bonus.fullRadius * 4) {
-					System.out.println("New bonus too close to another one");
 					// Deleting new bonus
 					bonuses[elementNumber] = null;
 					return;
