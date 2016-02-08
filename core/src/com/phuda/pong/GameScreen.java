@@ -29,14 +29,16 @@ public class GameScreen extends PongScreen
 	{
 		Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
 		field.updateState(delta);
-		if (game.music.isPlaying() && field.paused)
-			game.music.pause();
+		if (game.gameMusic.isPlaying() && field.paused)
+			game.gameMusic.pause();
 		else if (!field.paused && field.startTimer > 3)
-			game.music.play();
+			game.gameMusic.play();
 		renderer.render(delta);
 	}
 
 	public void dispose() {
+		// Stopping music
+		game.gameMusic.stop();
 		// Disposing fonts and textures
 		disposeRendererParts();
 	}
@@ -46,7 +48,6 @@ public class GameScreen extends PongScreen
      * In case with batch there even some serious memory errors
      */
 	private void disposeRendererParts() {
-		System.out.println("Parts is disposing");
 		renderer.score_font.dispose();
 		for (int i = 0; i < renderer.textures.length; i++)
 			renderer.textures[i].dispose();

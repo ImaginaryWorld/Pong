@@ -24,8 +24,7 @@ public class MenuScreen extends PongScreen
     Texture backGround;
     float backGroundRotation;
 
-	MenuScreen(PongGame game)
-	{
+	MenuScreen(PongGame game) {
 		super(game);
         int x = Gdx.graphics.getWidth() / 4;
         int y = (int) (Gdx.graphics.getHeight() / 1.7);
@@ -39,8 +38,8 @@ public class MenuScreen extends PongScreen
 
         balls_slider = new Slider(x*2, y - y/2, 1, 12, 2, "Balls count: ");
         ai_mode_slider = new Slider(x*2, y - (int)(y/1.2), 1, 3, 2, "AI strength: ");
-        // Stop the music on exit in menu
-        game.music.stop();
+        // Starting menu music
+        game.menuMusic.play();
 		System.out.println("init MenuScreen");
 	}
 	
@@ -105,6 +104,7 @@ public class MenuScreen extends PongScreen
 	}
 
     public void dispose() {
+        game.menuMusic.stop();
         disposeTextures();
     }
 
