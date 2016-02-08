@@ -9,8 +9,9 @@ import com.badlogic.gdx.math.MathUtils;
 
 // custom Button class, i not like libgdx method of buttons
 public class Button {
-	
-	private int x, y, target_x, target_y, init_x, init_y;
+
+    private float x, y;
+	private int target_x, target_y, init_x, init_y;
 	private int height, width;
 	private float scale = 0f;
 	private float target_scale = 1f;
@@ -28,11 +29,14 @@ public class Button {
 		height = (int)(texture.getHeight() * hAspect);
 		init_x = _x - width/2;
 		init_y = _y - height/2;
+        // popup buttons from screen center
 		x = Gdx.graphics.getWidth()/2 - width/2;
 		y = Gdx.graphics.getHeight()/2 - height/2;
+        // touch zone
 		bounds = new Rectangle(init_x, init_y, width, height);
 	}
 
+    /* no usage
 	public Button(int _x, int _y, int width, int height) {
 		this.width = (int)(width * hAspect);
 		this.height = (int)(height * hAspect);
@@ -46,13 +50,14 @@ public class Button {
 		init_y = _y;
 		bounds.x = init_x;
 		bounds.y = init_y;
-	}
+	} */
 	
 	public void draw(SpriteBatch batch){
 		scale = MathUtils.lerp(scale, target_scale, .2f);
-		x = (int) MathUtils.lerp(x, target_x, .1f);
-		y = (int) MathUtils.lerp(y, target_y, .1f);
-		batch.draw(texture, x - (width/2 * (scale - 1)),  y - (height/2 * (scale - 1)), width * scale, height * scale);
+		x = MathUtils.lerp(x, target_x, .1f);
+		y = MathUtils.lerp(y, target_y, .1f);
+		batch.draw(texture, x - (width/2 * (scale - 1)),  y - (height/2 * (scale - 1)),
+                width * scale, height * scale);
 	}
 	
 	public boolean isPressed() {
