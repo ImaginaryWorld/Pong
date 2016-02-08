@@ -35,6 +35,12 @@ public class Button {
         // touch zone
 		bounds = new Rectangle(init_x, init_y, width, height);
 	}
+
+    public void setPos(int _x, int _y) {
+        init_x = _x - width/2;
+        init_y = _y - height/2;
+        bounds = new Rectangle(init_x, init_y, width, height);
+    }
 	
 	public void draw(SpriteBatch batch) {
 		scale = MathUtils.lerp(scale, target_scale, .2f);

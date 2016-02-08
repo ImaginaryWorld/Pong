@@ -5,6 +5,7 @@ import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.Texture.TextureFilter;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
+import com.badlogic.gdx.graphics.g2d.Sprite;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer.ShapeType;
@@ -19,11 +20,11 @@ public class FieldRenderer {
     SpriteBatch batch;
     ShapeRenderer shapeRenderer;
     final int boardRedTexture = 0, boardBlueTexture = 1, ballTexture = 2,
-            bonusTimeTexture = 3, bonusSplitterTexture = 4, bonusControllerTexture = 5, backGround = 6;
+            bonusTimeTexture = 3, bonusSplitterTexture = 4, bonusControllerTexture = 5,
+            backGround = 6, winnerTexture = 7;
     Texture textures[];
     float backGroundRotation;
     float previousScreenDark = 1f;
-    float startTimer = 0f;
     Field field;
 
     float scoreShift, target_scoreShift;
@@ -34,7 +35,7 @@ public class FieldRenderer {
         batch = new SpriteBatch();
         shapeRenderer = new ShapeRenderer();
         // Textures initialisation
-        textures = new Texture[7];
+        textures = new Texture[8];
         String images_path = "images_hi/";
         textures[backGround] = new Texture(Gdx.files.internal(images_path + "background.png"));
         textures[backGround].setFilter(TextureFilter.Linear, TextureFilter.Linear);
@@ -49,6 +50,8 @@ public class FieldRenderer {
         textures[bonusSplitterTexture].setFilter(TextureFilter.Linear, TextureFilter.Linear);
         textures[bonusControllerTexture] = new Texture(Gdx.files.internal(images_path + "bonus_controller.png"));
         textures[bonusControllerTexture].setFilter(TextureFilter.Linear, TextureFilter.Linear);
+        textures[winnerTexture] = new Texture(Gdx.files.internal(images_path + "winner.png"));
+        textures[winnerTexture].setFilter(TextureFilter.Linear, TextureFilter.Linear);
 
         this.field = field;
 
@@ -76,7 +79,17 @@ public class FieldRenderer {
         batch.end();
 
         // Score bar
-        target_scoreShift = -field.player2Board.score + field.player1Board.score;
+        target_scoreShift = (field.player1Board.score - field.player2Board.score) * 4;
+        if (target_scoreShift > w/2) {
+            field.paused = true;
+            field.menuButton.setPos(w/2, h/2);
+            field.winner = "p2";
+        }
+        else if (target_scoreShift < -w/2) {
+            field.paused = true;
+            field.menuButton.setPos(w/2, h/2);
+            field.winner = "p1";
+        }
         scoreShift += (target_scoreShift - scoreShift) * 0.06;
         float diff = target_scoreShift - scoreShift;
         // Clear screen color
@@ -192,11 +205,21 @@ public class FieldRenderer {
                         textures[bonusTimeTexture].getWidth(), textures[bonusTimeTexture].getHeight(), false, false);
             }
         }
-        // Pause/resume buttonз
-        if (!field.paused)
-            field.pauseButton.draw(batch);
-        else {
-            field.resumeButton.draw(batch);
+        // Pause/resume buttons
+        if (field.winner.equals("none")){
+            if (!field.paused)
+                field.pauseButton.draw(batch);
+            else if (field.paused) {
+                field.resumeButton.draw(batch);
+                // Menu button
+                field.menuButton.draw(batch);
+            }
+        }
+        else { // Some-one wins
+            int rotation = field.winner.equals("p1") ? 180 : 0;
+            Texture t = textures[winnerTexture];
+            batch.draw(t, w/2 - t.getWidth()/2, h/2 - t.getHeight()/2, t.getWidth()/2, t.getHeight()/2,
+                    t.getWidth(), t.getHeight(), 1, 1, rotation, 0, 0, t.getWidth(), t.getHeight(), false, false);
             // Menu button
             field.menuButton.draw(batch);
         }

@@ -18,6 +18,7 @@ public class Field {
 	GameScreen screen;
 	public int screenWidth, screenHeight, ballsCount;
 	public Board player1Board, player2Board;
+    public String winner = "none";
 	public ArrayList<Ball> balls;
 	public Bonus[] bonuses;
 	public Button pauseButton, resumeButton, menuButton;
