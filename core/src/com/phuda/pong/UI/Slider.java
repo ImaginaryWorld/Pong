@@ -8,6 +8,7 @@ import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.math.MathUtils;
 import com.badlogic.gdx.math.Rectangle;
+import com.phuda.pong.PongScreen;
 
 public class Slider {
 
@@ -20,9 +21,10 @@ public class Slider {
     private BitmapFont font;
     private float left, right;
     private float hAspect;
+    private PongScreen screen;
 
-    public Slider(int _x, int _y, int _min, int _max, int defValue, String _label) {
-        String images_path = "images_hi/";
+    public Slider(int _x, int _y, int _min, int _max, int defValue, String _label, PongScreen screen) {
+        String images_path = "images/";
         base = new Texture(Gdx.files.internal(images_path + "slider_base.png"));
         base.setFilter(Texture.TextureFilter.Linear, Texture.TextureFilter.Linear);
         unit = new Texture(Gdx.files.internal(images_path + "slider_unit.png"));
@@ -49,6 +51,8 @@ public class Slider {
         // Fonts
         font = new BitmapFont();
         font.setColor(Color.WHITE);
+        // Screen
+        this.screen = screen;
     }
 
     public void isPressed() {
@@ -56,8 +60,9 @@ public class Slider {
             int ix = Gdx.input.getX();
             int iy = (Gdx.input.getY() - Gdx.graphics.getHeight()) * -1;
             // Press on slider
-            if (bounds.contains(ix, iy))
+            if (bounds.contains(ix, iy)) {
                 ux = ix;
+            }
         }
         // Number of received point on slider
         int point = MathUtils.round((ux - left) / space);

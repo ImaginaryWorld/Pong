@@ -8,16 +8,14 @@ public class GameScreen extends PongScreen
 {
 	Field field;
 	FieldRenderer renderer;
-	public PongSoundHandler soundHandler;
     int ballsCount, ai, screenWidth, screenHeight;
 
 	GameScreen(PongGame game, int _ballsCount, int _ai, PongSoundHandler soundHandler) {
-		super(game);
+		super(game, soundHandler);
 		screenWidth = Gdx.graphics.getWidth();
 		screenHeight = Gdx.graphics.getHeight();
         ballsCount = _ballsCount;
         ai = _ai;
-		this.soundHandler = soundHandler;
 		System.out.println("init GameScreen");
 	}
 	

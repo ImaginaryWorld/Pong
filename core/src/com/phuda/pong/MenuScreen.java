@@ -23,24 +23,21 @@ public class MenuScreen extends PongScreen
     ShapeRenderer shapeRenderer = new ShapeRenderer();
     Texture backGround;
     float backGroundRotation;
-    public PongSoundHandler soundHandler;
 
 	MenuScreen(PongGame game, PongSoundHandler soundHandler) {
-		super(game);
+		super(game, soundHandler);
         int x = Gdx.graphics.getWidth() / 4;
         int y = (int) (Gdx.graphics.getHeight() / 1.7);
 
-        String images_path = "images_hi/";
-		start_pvp_button = new Button(x,   y,      images_path + "pvp.png", true);
-		start_pvc_button = new Button(x*2, y + y/3,images_path + "pvc.png", true);
-		other2_button =    new Button(x*3, y,      images_path + "undef.png", true);
+        String images_path = "images/";
+		start_pvp_button = new Button(x,   y,      images_path + "pvp.png", true, this);
+		start_pvc_button = new Button(x*2, y + y/3,images_path + "pvc.png", true, this);
+		other2_button =    new Button(x*3, y,      images_path + "undef.png", true, this);
         backGround = new Texture(Gdx.files.internal(images_path + "background.png"));
         backGround.setFilter(Texture.TextureFilter.Linear, Texture.TextureFilter.Linear);
 
-        balls_slider = new Slider(x*2, y - y/2, 1, 12, 2, "Balls count: ");
-        ai_mode_slider = new Slider(x*2, y - (int)(y/1.2), 1, 3, 2, "AI strength: ");
-        // Starting menu music
-        this.soundHandler = soundHandler;
+        balls_slider = new Slider(x*2, y - y/2, 1, 12, 2, "Balls count: ", this);
+        ai_mode_slider = new Slider(x*2, y - (int)(y/1.2), 1, 3, 2, "AI strength: ", this);
         soundHandler.playMusic(soundHandler.menuMusic);
 		System.out.println("init MenuScreen");
 	}

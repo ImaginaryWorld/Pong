@@ -26,7 +26,7 @@ public class FieldRenderer {
     float backGroundRotation;
     float previousScreenDark = 1f;
     Field field;
-
+    // Score variables
     float scoreShift;
     BitmapFont score_font;
 
@@ -36,7 +36,7 @@ public class FieldRenderer {
         shapeRenderer = new ShapeRenderer();
         // Textures initialisation
         textures = new Texture[8];
-        String images_path = "images_hi/";
+        String images_path = "images/";
         // Background
         textures[backGround] = new Texture(Gdx.files.internal(images_path + "background.png"));
         textures[backGround].setFilter(TextureFilter.Linear, TextureFilter.Linear);
@@ -78,7 +78,6 @@ public class FieldRenderer {
                 false, false);
         batch.setColor(1f, 1f, 1f, 1f); // reset colors for next graphics
         batch.end();
-
         // Score bar
         scoreShift += (field.scoreShift - scoreShift) * 0.06;
         float diff = field.scoreShift - scoreShift;
@@ -86,10 +85,10 @@ public class FieldRenderer {
         Gdx.gl.glClearColor(0.2f - diff,
                 (MathUtils.sin(backGroundRotation/4)) * 0.25f,
                 0.2f + diff, 1f);
-
+        // Previous screen legacy
         if (previousScreenDark > 0)
             previousScreenDark -= delta;
-
+        // Scores and ability bars
         shapeRenderer.begin(ShapeType.Filled);
         // score difference
         shapeRenderer.setColor(1.0f, 1.0f, 0.5f, 1f);

@@ -7,11 +7,12 @@ import com.badlogic.gdx.Screen;
 public class PongScreen implements Screen {
 
 	PongGame game;
+	public PongSoundHandler soundHandler;
 
-	PongScreen(PongGame game)
-	{
+	PongScreen(PongGame game, PongSoundHandler soundHandler) {
 		System.out.println("init PongScreen");
 		this.game = game;
+		this.soundHandler = soundHandler;
 	}
 	
 	@Override

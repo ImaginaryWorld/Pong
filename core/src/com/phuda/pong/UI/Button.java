@@ -6,6 +6,7 @@ import com.badlogic.gdx.graphics.Texture.TextureFilter;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.math.MathUtils;
+import com.phuda.pong.PongScreen;
 
 // custom Button class, i not like libgdx method of buttons
 public class Button {
@@ -19,11 +20,13 @@ public class Button {
 	private Texture texture;
 	private boolean press, over;
 	public boolean isActive;
+	private PongScreen screen;
+	int buttonSound;
     // Getting ratio of screen in desktop base (500 x 700)
     private float hAspect = (Gdx.graphics.getWidth() + Gdx.graphics.getHeight())
             / (float)(500 + 700);
 
-	public Button(int _x, int _y, String img_source, boolean isActive) {
+	public Button(int _x, int _y, String img_source, boolean isActive, PongScreen screen) {
 		texture = new Texture(Gdx.files.internal(img_source));
 		texture.setFilter(TextureFilter.Linear, TextureFilter.Linear); // smooth resizing
 		width = (int)(texture.getWidth() * hAspect);
@@ -39,6 +42,9 @@ public class Button {
 		this.isActive = isActive;
         // touch zone
 		bounds = new Rectangle(init_x, init_y, width, height);
+		this.screen = screen;
+		// Number of button's sound
+		buttonSound = screen.soundHandler.buttonSound;
 	}
 
     public void setPos(int _x, int _y) {
@@ -71,10 +77,12 @@ public class Button {
 					target_x = init_x + (Gdx.input.getDeltaX() * 6);
 					target_y = init_y + (Gdx.input.getDeltaY() * -6);
 				}
-			} else if (press) {
+			}
+			else if (press) {
 				target_scale = 1f;
 				press = false;
 				if (over) {
+					screen.soundHandler.playSound(buttonSound, 1);
 					over = false;
 					return true;
 				}

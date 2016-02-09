@@ -43,9 +43,9 @@ public class Field {
 		// Bonuses generation
 		bonuses = new Bonus[3];
 		// Buttons generation
-		pauseButton = new Button(screenWidth / 17 * 16, screenHeight / 2, "images_hi/pause.png", true);
-		resumeButton = new Button(screenWidth / 2, screenHeight - screenHeight / 3, "images_hi/play.png", false);
-		menuButton = new Button(screenWidth / 2, screenHeight / 3, "images_hi/menu.png", false);
+		pauseButton = new Button(screenWidth / 17 * 16, screenHeight / 2, "images/pause.png", true, screen);
+		resumeButton = new Button(screenWidth / 2, screenHeight - screenHeight / 3, "images/play.png", false, screen);
+		menuButton = new Button(screenWidth / 2, screenHeight / 3, "images/menu.png", false, screen);
 	}
 
 	public void updateState(float delta) {
@@ -174,12 +174,12 @@ public class Field {
 			player1Board.score += ball.bounds.radius;
 		// Checking if there's a winner
 		scoreShift = (player2Board.score - player1Board.score) * 4;
-		if (scoreShift > screenWidth / 2) {
+		if (scoreShift >= screenWidth / 2) {
 			pauseStateChange();
 			menuButton.setPos(screenWidth / 2, screenHeight / 2);
 			winner = player2Board.name;
 		}
-		else if (scoreShift < -screenWidth / 2) {
+		else if (scoreShift <= -screenWidth / 2) {
 			pauseStateChange();
 			menuButton.setPos(screenWidth / 2, screenHeight / 2);
 			winner = player1Board.name;
