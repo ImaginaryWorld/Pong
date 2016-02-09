@@ -23,23 +23,25 @@ public class MenuScreen extends PongScreen
     ShapeRenderer shapeRenderer = new ShapeRenderer();
     Texture backGround;
     float backGroundRotation;
+    public PongSoundHandler soundHandler;
 
-	MenuScreen(PongGame game) {
+	MenuScreen(PongGame game, PongSoundHandler soundHandler) {
 		super(game);
         int x = Gdx.graphics.getWidth() / 4;
         int y = (int) (Gdx.graphics.getHeight() / 1.7);
 
         String images_path = "images_hi/";
-		start_pvp_button = new Button(x,   y,      images_path + "pvp.png");
-		start_pvc_button = new Button(x*2, y + y/3,images_path + "pvc.png");
-		other2_button =    new Button(x*3, y,      images_path + "undef.png");
+		start_pvp_button = new Button(x,   y,      images_path + "pvp.png", true);
+		start_pvc_button = new Button(x*2, y + y/3,images_path + "pvc.png", true);
+		other2_button =    new Button(x*3, y,      images_path + "undef.png", true);
         backGround = new Texture(Gdx.files.internal(images_path + "background.png"));
         backGround.setFilter(Texture.TextureFilter.Linear, Texture.TextureFilter.Linear);
 
         balls_slider = new Slider(x*2, y - y/2, 1, 12, 2, "Balls count: ");
         ai_mode_slider = new Slider(x*2, y - (int)(y/1.2), 1, 3, 2, "AI strength: ");
         // Starting menu music
-        game.menuMusic.play();
+        this.soundHandler = soundHandler;
+        soundHandler.playMusic(soundHandler.menuMusic);
 		System.out.println("init MenuScreen");
 	}
 	
@@ -53,12 +55,12 @@ public class MenuScreen extends PongScreen
         if (nextScreen == null) {
             if (start_pvp_button.isPressed()) {
                 //game.setScreen(new GameScreen(game, balls_slider.value, 0));
-                nextScreen = new GameScreen(game, balls_slider.value, 0);
+                nextScreen = new GameScreen(game, balls_slider.value, 0, game.soundHandler);
             }
 
             if (start_pvc_button.isPressed()) {
                 //game.setScreen(new GameScreen(game, balls_slider.value, ai_mode_slider.value));
-                nextScreen = new GameScreen(game, balls_slider.value, ai_mode_slider.value);
+                nextScreen = new GameScreen(game, balls_slider.value, ai_mode_slider.value, game.soundHandler);
             }
 
             if (other2_button.isPressed()) {
@@ -104,7 +106,7 @@ public class MenuScreen extends PongScreen
 	}
 
     public void dispose() {
-        game.menuMusic.stop();
+        game.soundHandler.menuMusic.stop();
         disposeTextures();
     }
 

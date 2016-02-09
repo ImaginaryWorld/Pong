@@ -15,8 +15,9 @@ import java.util.ArrayList;
 
 // Class that controls game field.
 public class Field {
-	GameScreen screen;
+	public GameScreen screen;
 	public int screenWidth, screenHeight, ballsCount;
+	public float scoreShift;
 	public Board player1Board, player2Board;
     public String winner = "none";
 	public ArrayList<Ball> balls;
@@ -32,23 +33,19 @@ public class Field {
 		this.ballsCount = ballsCount;
 		// Balls generation
 		balls = new ArrayList<Ball>();
-		// Boards generation
-		if (ai != 0) {
-			// Player 1 aka top player
-			player1Board = new Board(screenWidth, screenHeight, "top", this, ai);
-		}
-		else {
-			// Player vs player
-			player1Board = new Board(screenWidth, screenHeight, "top", this, 0);
-		}
+		/*
+		 * Boards generation
+		 * Player 1 aka top player
+		 */
+		player1Board = new Board(screenWidth, screenHeight, "top", this, ai);
 		// Player 2 aka bottom player
 		player2Board = new Board(screenWidth, screenHeight, "bottom", this, 0);
 		// Bonuses generation
 		bonuses = new Bonus[3];
 		// Buttons generation
-		pauseButton = new Button(screenWidth / 17 * 16, screenHeight / 2, "images_hi/pause.png");
-		resumeButton = new Button(screenWidth / 2, screenHeight - screenHeight / 3, "images_hi/play.png");
-		menuButton = new Button(screenWidth / 2, screenHeight / 3, "images_hi/menu.png");
+		pauseButton = new Button(screenWidth / 17 * 16, screenHeight / 2, "images_hi/pause.png", true);
+		resumeButton = new Button(screenWidth / 2, screenHeight - screenHeight / 3, "images_hi/play.png", false);
+		menuButton = new Button(screenWidth / 2, screenHeight / 3, "images_hi/menu.png", false);
 	}
 
 	public void updateState(float delta) {
@@ -77,16 +74,23 @@ public class Field {
 	private void processButtons() {
 		if (!paused) {
 			if (pauseButton.isPressed())
-				paused = true;
-		} else {
+				pauseStateChange();
+		}
+		else {
             if (winner.equals("none"))
                 if (resumeButton.isPressed())
-                    paused = false;
+					pauseStateChange();
 			if (menuButton.isPressed()) {
 				screen.dispose();
 				screen.game.launchMenu();
 			}
 		}
+	}
+
+	private void buttonsSwitch() {
+		pauseButton.isActive = !pauseButton.isActive;
+		resumeButton.isActive = !resumeButton.isActive;
+		menuButton.isActive = !menuButton.isActive;
 	}
 
 	// Boards
@@ -118,12 +122,7 @@ public class Field {
 		for (int i = 0; i < balls.size(); i++) {
 			//int y = Gdx.graphics.getHeight() / 2;
 			if (balls.get(i).outOfField()) {
-				// Who is winner ?
-				if (balls.get(i).bounds.y > Gdx.graphics.getHeight() / 2) {
-					player1Board.score += balls.get(i).bounds.radius;
-				} else {
-					player2Board.score += balls.get(i).bounds.radius;
-				}
+				updateScore(balls.get(i));
 				// Deleting this ball
 				balls.remove(i);
 			}
@@ -164,5 +163,32 @@ public class Field {
 					return;
 				}
 		}
+	}
+
+	// Score
+	private void updateScore(Ball ball) {
+		// Calculate which board scores the goal
+		if (ball.bounds.y > Gdx.graphics.getHeight() / 2)
+			player2Board.score += ball.bounds.radius;
+		else
+			player1Board.score += ball.bounds.radius;
+		// Checking if there's a winner
+		scoreShift = (player2Board.score - player1Board.score) * 4;
+		if (scoreShift > screenWidth / 2) {
+			pauseStateChange();
+			menuButton.setPos(screenWidth / 2, screenHeight / 2);
+			winner = player2Board.name;
+		}
+		else if (scoreShift < -screenWidth / 2) {
+			pauseStateChange();
+			menuButton.setPos(screenWidth / 2, screenHeight / 2);
+			winner = player1Board.name;
+		}
+	}
+
+	// Pause
+	private void pauseStateChange() {
+		paused = !paused;
+		buttonsSwitch();
 	}
 }

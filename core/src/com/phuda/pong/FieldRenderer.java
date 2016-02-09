@@ -27,7 +27,7 @@ public class FieldRenderer {
     float previousScreenDark = 1f;
     Field field;
 
-    float scoreShift, target_scoreShift;
+    float scoreShift;
     BitmapFont score_font;
 
     FieldRenderer(Field field) {
@@ -37,9 +37,10 @@ public class FieldRenderer {
         // Textures initialisation
         textures = new Texture[8];
         String images_path = "images_hi/";
+        // Background
         textures[backGround] = new Texture(Gdx.files.internal(images_path + "background.png"));
         textures[backGround].setFilter(TextureFilter.Linear, TextureFilter.Linear);
-
+        // Units
         textures[boardRedTexture] = new Texture(Gdx.files.internal(images_path + "board_red.png"));
         textures[boardBlueTexture] = new Texture(Gdx.files.internal(images_path + "board_blue.png"));
         textures[ballTexture] = new Texture(Gdx.files.internal(images_path + "particle.png"));
@@ -50,17 +51,17 @@ public class FieldRenderer {
         textures[bonusSplitterTexture].setFilter(TextureFilter.Linear, TextureFilter.Linear);
         textures[bonusControllerTexture] = new Texture(Gdx.files.internal(images_path + "bonus_controller.png"));
         textures[bonusControllerTexture].setFilter(TextureFilter.Linear, TextureFilter.Linear);
+        // Inscriptions
         textures[winnerTexture] = new Texture(Gdx.files.internal(images_path + "winner.png"));
         textures[winnerTexture].setFilter(TextureFilter.Linear, TextureFilter.Linear);
-
+        // Physical field
         this.field = field;
-
+        // Fonts
         score_font = new BitmapFont();
         score_font.setColor(Color.WHITE);
     }
 
-    public void render(float delta)
-    {
+    public void render(float delta) {
         // Draw back-ground
         backGroundRotation += delta * 2;
         batch.begin();
@@ -79,19 +80,8 @@ public class FieldRenderer {
         batch.end();
 
         // Score bar
-        target_scoreShift = (field.player1Board.score - field.player2Board.score) * 4;
-        if (target_scoreShift > w/2) {
-            field.paused = true;
-            field.menuButton.setPos(w/2, h/2);
-            field.winner = "p2";
-        }
-        else if (target_scoreShift < -w/2) {
-            field.paused = true;
-            field.menuButton.setPos(w/2, h/2);
-            field.winner = "p1";
-        }
-        scoreShift += (target_scoreShift - scoreShift) * 0.06;
-        float diff = target_scoreShift - scoreShift;
+        scoreShift += (field.scoreShift - scoreShift) * 0.06;
+        float diff = field.scoreShift - scoreShift;
         // Clear screen color
         Gdx.gl.glClearColor(0.2f - diff,
                 (MathUtils.sin(backGroundRotation/4)) * 0.25f,
@@ -103,13 +93,13 @@ public class FieldRenderer {
         shapeRenderer.begin(ShapeType.Filled);
         // score difference
         shapeRenderer.setColor(1.0f, 1.0f, 0.5f, 1f);
-        shapeRenderer.rect((-w/2 + scoreShift) + w, h/4, diff, h/2);
-        // blue player 1
-        shapeRenderer.setColor(0.1f, 0.1f, 0.5f, 1f);
-        shapeRenderer.rect(0, h/4 , w/2 + scoreShift, h/2);
-        // red player 2
+        shapeRenderer.rect(w / 2 + scoreShift, h/4, diff, h/2);
+        // red player 1
         shapeRenderer.setColor(0.5f, 0.1f, 0.1f, 1f);
         shapeRenderer.rect(w, h/4, -w/2 + scoreShift, h/2);
+        // blue player 2
+        shapeRenderer.setColor(0.1f, 0.1f, 0.5f, 1f);
+        shapeRenderer.rect(0, h/4 , w/2 + scoreShift, h/2);
         // abilities bars
         // time ability
         shapeRenderer.setColor(0.1f, 0.2f, 0.7f, 1f); // blue
@@ -209,15 +199,15 @@ public class FieldRenderer {
         if (field.winner.equals("none")){
             if (!field.paused)
                 field.pauseButton.draw(batch);
-            else if (field.paused) {
+            else {
                 field.resumeButton.draw(batch);
                 // Menu button
                 field.menuButton.draw(batch);
             }
         }
         else { // Some-one wins
-            int rotation = field.winner.equals("p1") ? 180 : 0;
-            int ypos = field.winner.equals("p1") ? h - h/4 : h/4;
+            int rotation = field.winner.equals(field.player1Board.name) ? 180 : 0;
+            int ypos = field.winner.equals(field.player1Board.name) ? h - h/4 : h/4;
             Texture t = textures[winnerTexture];
             batch.draw(t, w/2 - t.getWidth()/2, ypos - t.getHeight()/2, t.getWidth()/2, t.getHeight()/2,
                     t.getWidth(), t.getHeight(), 1, 1, rotation, 0, 0, t.getWidth(), t.getHeight(), false, false);

@@ -21,11 +21,9 @@ public class Ball extends Unit {
 	public ArrayList<Vector2> positionsHistory;
 	// Effects
 	final int Ethereal = 0, Slowed = 1, Split = 2, Controlled = 3;
+	public int sound_bump, sound_reflect;
 	public Effect[] states = {new Effect("Ethereal"), new Effect("Slowed"), new Effect("Split"),
 			new Effect("Controlled")};
-	// Sound
-	Sound sound_bump;
-	float pitch;
 
 	public Ball(Field field, int screenWidth, int screenHeight, int num) {
 		super();
@@ -39,8 +37,9 @@ public class Ball extends Unit {
 		// Randomizing ball's x and y axle speed with using multipliers
 		speed.x = MathUtils.random(-wm * 2, wm * 2);
 		speed.y = MathUtils.random(hm * 1.5f, hm * 2) * MathUtils.randomSign();
-		sound_bump = Gdx.audio.newSound(Gdx.files.internal("sounds/bump1.wav"));
-		pitch = 1;
+		// Sounds numbers
+		sound_bump = field.screen.soundHandler.bump;
+		sound_reflect = field.screen.soundHandler.reflect;
 	}
 
 	// Updating methods
@@ -110,7 +109,7 @@ public class Ball extends Unit {
 					// Try to prevent sticking with that
 					states[Ethereal].engage(0.2f);
 					// Sound
-					playSound();
+					playSound(sound_bump);
 				}
 	}
 
@@ -132,7 +131,7 @@ public class Ball extends Unit {
 		if ( (bounds.x - bounds.radius < 0 && speed.x < 0) ||
 				(bounds.x + bounds.radius > Gdx.graphics.getWidth() && speed.x > 0) ) {
 			speed.x = -speed.x;
-			playSound();
+			playSound(sound_bump);
 		}
 	}
 
@@ -201,8 +200,8 @@ public class Ball extends Unit {
 	// Disposition methods
 	private void setBounds(int screenWidth, int screenHeight) {
 		float radius = screenWidth / 100 + screenHeight / 100;
-		bounds = new Circle((float)MathUtils.random(radius, screenWidth - radius),
-				(float)MathUtils.random(screenHeight * 2 / 5, screenHeight - screenHeight * 2 / 5),
+		bounds = new Circle(MathUtils.random(radius, screenWidth - radius),
+				MathUtils.random(screenHeight * 2 / 5, screenHeight - screenHeight * 2 / 5),
 				radius);
 	}
 
@@ -324,7 +323,6 @@ public class Ball extends Unit {
 	private void handleAfterSplit() {
 		// Radius
 		bounds.radius /= 1.5f;
-		pitch *= 1.2f;
 		// Ethereal for a few seconds, so the balls can fly apart
 		states[Ethereal].engage(0.5f);
 		// Set split to eternal
@@ -332,9 +330,11 @@ public class Ball extends Unit {
 	}
 
 	// Methods that handles sounds
-	private void playSound() {
-		long s = sound_bump.play(0.5f);
-		sound_bump.setPitch(s, pitch);
+	public void playSound(int soundNum) {
+		if (bounds.radius < field.screenWidth / 5 + field.screenHeight / 7)
+			field.screen.soundHandler.playSound(soundNum, 1.2f);
+		else
+			field.screen.soundHandler.playSound(soundNum, 1);
 	}
 
 	// Methods that handles exceptions

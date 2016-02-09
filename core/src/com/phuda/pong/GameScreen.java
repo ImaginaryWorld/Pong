@@ -8,14 +8,16 @@ public class GameScreen extends PongScreen
 {
 	Field field;
 	FieldRenderer renderer;
+	public PongSoundHandler soundHandler;
     int ballsCount, ai, screenWidth, screenHeight;
 
-	GameScreen(PongGame game, int _ballsCount, int _ai) {
+	GameScreen(PongGame game, int _ballsCount, int _ai, PongSoundHandler soundHandler) {
 		super(game);
 		screenWidth = Gdx.graphics.getWidth();
 		screenHeight = Gdx.graphics.getHeight();
         ballsCount = _ballsCount;
         ai = _ai;
+		this.soundHandler = soundHandler;
 		System.out.println("init GameScreen");
 	}
 	
@@ -29,16 +31,16 @@ public class GameScreen extends PongScreen
 	{
 		Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
 		field.updateState(delta);
-		if (game.gameMusic.isPlaying() && field.paused)
-			game.gameMusic.pause();
+		if (game.soundHandler.gameMusic.isPlaying() && field.paused)
+			soundHandler.pauseMusic(soundHandler.gameMusic);
 		else if (!field.paused && field.startTimer > 3)
-			game.gameMusic.play();
+			soundHandler.playMusic(soundHandler.gameMusic);
 		renderer.render(delta);
 	}
 
 	public void dispose() {
 		// Stopping music
-		game.gameMusic.stop();
+		soundHandler.stopMusic(soundHandler.gameMusic);
 		// Disposing fonts and textures
 		disposeRendererParts();
 	}

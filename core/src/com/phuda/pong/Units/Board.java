@@ -27,8 +27,6 @@ public class Board extends Unit {
 	final int TimeSlower = 0, BallSplitter = 1, Controller = 2;
 	public Effect[] abilities = {new Effect("timeSlower"), new Effect("ballSplitter"),
 			new Effect("controller")};
-	// Sound
-	Sound sound_reflect;
 
 	public Board(int screenWidth, int screenHeight, String name, Field field, int difficultyLevel) {
 		super();
@@ -38,7 +36,6 @@ public class Board extends Unit {
 		// Setting points of board's bounds
 		setBoundsPoints();
 		this.field = field;
-		this.sound_reflect = Gdx.audio.newSound(Gdx.files.internal("sounds/reflect1.wav"));
 		// Set difficulty level to 0 to create human player
 		if (difficultyLevel != 0)
 			this.contr = new AIBoardController(this, field.balls, difficultyLevel);
@@ -64,27 +61,8 @@ public class Board extends Unit {
 				speed.x = 0;
 		}
 		// AI
-		else {
-			// If AI doing nothing
-			if (!contr.catching)
-			{
-				contr.prepare(delta);
-			}
-			// If AI already in motion
-			else {
-				contr.prepareTime -= delta;
-				if (contr.prepareTime < 0)
-				{
-					speed.x = 0;
-					contr.prepareTime = 0;
-					contr.catching = false;
-				}
-			}
-			// Calculate speed of AI board if it have some time to throw back the ball
-			if (contr.prepareTime != 0 && delta != 0 && speed.x == 0)
-				speed.x = (target_x - (bounds.x + bounds.width / 2))
-						/ (contr.prepareTime / delta);
-		}
+		else
+			contr.update(delta);
 
 
 		// If board goes beyond the left or right bound - no movement to this bound side
@@ -352,8 +330,7 @@ public class Board extends Unit {
 		for (int j = 0; j < bounds.length; j++)
 			if (ball.bounds.contains(bounds[j])) {
 				// Sound of collision
-				long s = sound_reflect.play(0.5f);
-				sound_reflect.setPitch(s, ball.pitch);
+				ball.playSound(ball.sound_reflect);
 				// Setting this board to as last one that ball touches
 				ball.saveLastBoard(this);
 				return j + 1;

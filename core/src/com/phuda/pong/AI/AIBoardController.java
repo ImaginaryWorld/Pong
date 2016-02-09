@@ -22,8 +22,7 @@ public class AIBoardController {
 	public boolean catching;
 	public float prepareTime;
 	
-	public AIBoardController(Board board, ArrayList<Ball> balls, int difficultyLevel)
-	{
+	public AIBoardController(Board board, ArrayList<Ball> balls, int difficultyLevel) {
 		if (difficultyLevel == elvl || difficultyLevel == mlvl || difficultyLevel == hlvl)
 			this.difficultyLevel = difficultyLevel;
 		else
@@ -40,29 +39,47 @@ public class AIBoardController {
 		this.balls = balls;
 		catching = false;
 	}
+
+	public void update(float delta) {
+		// If AI doing nothing
+		if (!catching)
+			checkBallsPresence(delta);
+			// If AI already in motion
+		else
+			updatePrepareTime(delta);
+		// Calculate speed of AI board if it have some time to throw back the ball
+		if (prepareTime != 0 && delta != 0 && board.speed.x == 0)
+			board.speed.x = (board.target_x - (board.bounds.x + board.bounds.width / 2))
+					/ (prepareTime / delta);
+	}
+
+	public void updatePrepareTime(float delta) {
+		prepareTime -= delta;
+		if (prepareTime < 0) {
+			// Stop
+			board.speed.x = 0;
+			prepareTime = 0;
+			catching = false;
+		}
+	}
 	
-	public void prepare(float time)
-	{
-		for (int i = 0; i < balls.size(); i++)
-		{
-			if (board.name.equals("top"))
-			{
-				if (balls.get(i).speed.y > (board.bounds.y - balls.get(i).bounds.y + balls.get(i).bounds.radius) / 50)
-				{
-					if (balls.get(i).bounds.y + balls.get(i).bounds.radius < board.bounds.y)
-					{
+	private void checkBallsPresence(float time) {
+		for (int i = 0; i < balls.size(); i++) {
+			// Top board's AI
+			if (board.name.equals("top")) {
+				if (balls.get(i).speed.y > (board.bounds.y - balls.get(i).bounds.y + balls.get(i).bounds.radius) / 50) {
+					if (balls.get(i).bounds.y + balls.get(i).bounds.radius < board.bounds.y) {
 						startPreparing(balls.get(i), balls.get(i).bounds.y + balls.get(i).bounds.radius,
 								board.bounds.y, time);
 						break;
 					}
 				}
 			}
+			// Bottom board's AI
 			else if (balls.get(i).speed.y < (board.bounds.y + board.bounds.height - balls.get(i).bounds.y
-					+ balls.get(i).bounds.radius) / 50)
-			{
+					+ balls.get(i).bounds.radius) / 50) {
 				if (balls.get(i).bounds.y - balls.get(i).bounds.radius > board.bounds.y
-						+ board.bounds.height)
-				{
+						+ board.bounds.height) {
 					startPreparing(balls.get(i), balls.get(i).bounds.y - balls.get(i).bounds.radius,
 							board.bounds.y + board.bounds.height, time);
 					break;
@@ -81,20 +98,17 @@ public class AIBoardController {
 			 * because we actually need AI to pass this ball.
 			 * In easy words AI will be thinking that he'll catch the ball, but won't
 			 */
-			if (Math.random() * 10 <= difficultyLevel * 3)
+			float multiplier = (float)Math.random() * 10;
+			if (multiplier <= difficultyLevel * 3)
 				board.target_x = 
 					calculateXTouchPoint((int)(yBoardBound - yBallBound), ball);
 			/*
-			 * Sooo, I just thinking why stops on that?
+			 * Sooo, I'm just thinking why stopping on that?
 			 * Let's give him wrong target_x in other cases
 			 */
 			else
-				/*
-				 *  Random from board's center in left-most position to center in right
-				 *  (not just from 0 to width of the screen)
-				 */
-				board.target_x =(int)(board.bounds.width / 2 + Math.random() 
-					* (Gdx.graphics.getWidth() - board.bounds.width));
+				board.target_x = (int)(calculateXTouchPoint((int)(yBoardBound - yBallBound), ball) *
+						difficultyLevel * 3 / multiplier);
 			catching = true;
 			prepareTime = (board.bounds.y - ball.bounds.y) / ball.speed.y * time;
 		}

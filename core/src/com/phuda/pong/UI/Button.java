@@ -18,11 +18,12 @@ public class Button {
 	public Rectangle bounds;
 	private Texture texture;
 	private boolean press, over;
+	public boolean isActive;
     // Getting ratio of screen in desktop base (500 x 700)
     private float hAspect = (Gdx.graphics.getWidth() + Gdx.graphics.getHeight())
             / (float)(500 + 700);
 
-	public Button(int _x, int _y, String img_source) {
+	public Button(int _x, int _y, String img_source, boolean isActive) {
 		texture = new Texture(Gdx.files.internal(img_source));
 		texture.setFilter(TextureFilter.Linear, TextureFilter.Linear); // smooth resizing
 		width = (int)(texture.getWidth() * hAspect);
@@ -32,6 +33,10 @@ public class Button {
         // popup buttons from screen center
 		x = Gdx.graphics.getWidth()/2 - width/2;
 		y = Gdx.graphics.getHeight()/2 - height/2;
+		target_x = init_x;
+		target_y = init_y;
+		// Activating button if it's needed already after creating
+		this.isActive = isActive;
         // touch zone
 		bounds = new Rectangle(init_x, init_y, width, height);
 	}
@@ -39,7 +44,8 @@ public class Button {
     public void setPos(int _x, int _y) {
         init_x = _x - width/2;
         init_y = _y - height/2;
-        target_x = init_x; target_y = init_y;
+		target_x = init_x;
+		target_y = init_y;
         bounds = new Rectangle(init_x, init_y, width, height);
     }
 	
@@ -52,29 +58,31 @@ public class Button {
 	}
 	
 	public boolean isPressed() {
-		if (Gdx.input.isTouched()) {
-			int x = Gdx.input.getX();
-			int y = (Gdx.input.getY() - Gdx.graphics.getHeight()) * -1;
-			over = (bounds.contains(x, y));
-			if (bounds.contains(x, y)){ press = true; }
-			if (press) {
-				target_scale = .7f;
-				target_x = init_x + (Gdx.input.getDeltaX() * 6);
-				target_y = init_y + (Gdx.input.getDeltaY() * -6);
-			}
-		}
-		else if (press){
+		if (isActive) {
+			if (Gdx.input.isTouched()) {
+				int x = Gdx.input.getX();
+				int y = (Gdx.input.getY() - Gdx.graphics.getHeight()) * -1;
+				over = (bounds.contains(x, y));
+				if (bounds.contains(x, y)) {
+					press = true;
+				}
+				if (press) {
+					target_scale = .7f;
+					target_x = init_x + (Gdx.input.getDeltaX() * 6);
+					target_y = init_y + (Gdx.input.getDeltaY() * -6);
+				}
+			} else if (press) {
 				target_scale = 1f;
 				press = false;
-				if (over) { 
+				if (over) {
 					over = false;
-					return true; 
+					return true;
 				}
-		}
-		else { 
-			target_scale = 1f;
-			target_x = init_x;
-			target_y = init_y;
+			} else {
+				target_scale = 1f;
+				target_x = init_x;
+				target_y = init_y;
+			}
 		}
 		return false;
 	}
