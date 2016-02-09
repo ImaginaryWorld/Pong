@@ -39,6 +39,7 @@ public class Button {
     public void setPos(int _x, int _y) {
         init_x = _x - width/2;
         init_y = _y - height/2;
+        target_x = init_x; target_y = init_y;
         bounds = new Rectangle(init_x, init_y, width, height);
     }
 	
