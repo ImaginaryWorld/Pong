@@ -83,6 +83,12 @@ public class Slider {
         sx += (ux - sx) / 5;
     }
 
+    public void setValue(int value) {
+        this.value = value;
+        ux = (value - min) * space + left;
+        sx = ux;
+    }
+
     public void draw(SpriteBatch batch){
         batch.draw(base, x - base.getWidth()/2 * hAspect, y - base.getHeight()/2 * hAspect,
                 base.getWidth() * hAspect, base.getHeight() * hAspect);

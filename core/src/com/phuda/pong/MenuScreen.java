@@ -1,6 +1,8 @@
 package com.phuda.pong;
 
+import com.badlogic.gdx.Files;
 import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.files.FileHandle;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
@@ -8,6 +10,8 @@ import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.badlogic.gdx.math.MathUtils;
 import com.phuda.pong.UI.Button;
 import com.phuda.pong.UI.Slider;
+
+import java.io.*;
 
 public class MenuScreen extends PongScreen
 {
@@ -37,6 +41,8 @@ public class MenuScreen extends PongScreen
 
         balls_slider = new Slider(x*2, y - y/2, 1, 12, 2, "Balls count: ", this);
         ai_mode_slider = new Slider(x*2, y - (int)(y/1.2), 1, 3, 2, "AI strength: ", this);
+        // Loading saved configuration
+        loadConfiguration();
         soundHandler.playMusic(soundHandler.menuMusic);
 		System.out.println("init MenuScreen");
 	}
@@ -87,7 +93,7 @@ public class MenuScreen extends PongScreen
 		batch.end();
 
         if (nextScreen != null) {
-            if (nextScreenDark > 1){
+            if (nextScreenDark > 1) {
                 dispose();
                 game.setScreen(nextScreen);
             }
@@ -101,8 +107,43 @@ public class MenuScreen extends PongScreen
         }
 	}
 
+    public void loadConfiguration() {
+        int settings[];
+        try {
+            File file = new File(Gdx.files.getLocalStoragePath() + "config/settings.pon");
+            if (file.exists()) {
+                FileInputStream fileInputStream = new FileInputStream(file);
+                ObjectInputStream objectInputStream = new ObjectInputStream(fileInputStream);
+                settings = (int[])objectInputStream.readObject();
+                balls_slider.setValue(settings[0]);
+                ai_mode_slider.setValue(settings[1]);
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+        } catch (ClassNotFoundException e) {
+            e.printStackTrace();
+        }
+    }
+
+    public void saveConfiguration() {
+        int settings[] = {balls_slider.value, ai_mode_slider.value};
+        try {
+            File dir = new File(Gdx.files.getLocalStoragePath() + "config");
+            if (!dir.exists())
+                // Creating directory if it doesn't exist
+                dir.mkdirs();
+            File file = new File(Gdx.files.getLocalStoragePath() + "config/settings.pon");
+            FileOutputStream fileOutputStream = new FileOutputStream(file);
+            ObjectOutputStream objectOutputStream = new ObjectOutputStream(fileOutputStream);
+            objectOutputStream.writeObject(settings);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
     public void dispose() {
         game.soundHandler.menuMusic.stop();
+        saveConfiguration();
         disposeTextures();
     }
 
