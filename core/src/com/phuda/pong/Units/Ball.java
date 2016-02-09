@@ -131,7 +131,7 @@ public class Ball extends Unit {
 		if ( (bounds.x - bounds.radius < 0 && speed.x < 0) ||
 				(bounds.x + bounds.radius > Gdx.graphics.getWidth() && speed.x > 0) ) {
 			speed.x = -speed.x;
-			playSound(sound_bump);
+			playSound(sound_reflect);
 		}
 	}
 
