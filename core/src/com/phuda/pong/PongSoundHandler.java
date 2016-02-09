@@ -7,7 +7,7 @@ import com.badlogic.gdx.audio.Sound;
 public class PongSoundHandler {
     public Music menuMusic, gameMusic;
     private Sound sounds[];
-    final public int bump = 0, reflect = 1, buttonSound = 2, sliderSound = 3;
+    final public int bump = 0, reflect = 1, wallHit = 2, buttonSound = 3, sliderSound = 4;
 
     PongSoundHandler() {
         // Music
@@ -16,9 +16,10 @@ public class PongSoundHandler {
         gameMusic = Gdx.audio.newMusic(Gdx.files.internal("sounds/pong-song.ogg"));
         gameMusic.setLooping(true);
         // Sounds
-        sounds = new Sound[4];
+        sounds = new Sound[5];
         sounds[bump] = Gdx.audio.newSound(Gdx.files.internal("sounds/bump.wav"));
         sounds[reflect] = Gdx.audio.newSound(Gdx.files.internal("sounds/reflect.wav"));
+        sounds[wallHit] = Gdx.audio.newSound(Gdx.files.internal("sounds/wallHit.wav"));
         sounds[buttonSound] = Gdx.audio.newSound(Gdx.files.internal("sounds/buttonSound.wav"));
         sounds[sliderSound] = Gdx.audio.newSound(Gdx.files.internal("sounds/sliderSound.wav"));
     }

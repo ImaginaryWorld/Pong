@@ -21,7 +21,7 @@ public class Ball extends Unit {
 	public ArrayList<Vector2> positionsHistory;
 	// Effects
 	final int Ethereal = 0, Slowed = 1, Split = 2, Controlled = 3;
-	public int sound_bump, sound_reflect;
+	public int sound_bump, sound_reflect, sound_wallHit;
 	public Effect[] states = {new Effect("Ethereal"), new Effect("Slowed"), new Effect("Split"),
 			new Effect("Controlled")};
 
@@ -40,6 +40,7 @@ public class Ball extends Unit {
 		// Sounds numbers
 		sound_bump = field.screen.soundHandler.bump;
 		sound_reflect = field.screen.soundHandler.reflect;
+		sound_wallHit = field.screen.soundHandler.wallHit;
 	}
 
 	// Updating methods
@@ -131,7 +132,7 @@ public class Ball extends Unit {
 		if ( (bounds.x - bounds.radius < 0 && speed.x < 0) ||
 				(bounds.x + bounds.radius > Gdx.graphics.getWidth() && speed.x > 0) ) {
 			speed.x = -speed.x;
-			playSound(sound_reflect);
+			playSound(sound_wallHit);
 		}
 	}
 
