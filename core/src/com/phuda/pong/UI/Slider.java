@@ -22,6 +22,8 @@ public class Slider {
     private float left, right;
     private float hAspect;
     private PongScreen screen;
+    private int sliderSound;
+    private boolean pressed;
 
     public Slider(int _x, int _y, int _min, int _max, int defValue, String _label, PongScreen screen) {
         String images_path = "images/";
@@ -53,6 +55,8 @@ public class Slider {
         font.setColor(Color.WHITE);
         // Screen
         this.screen = screen;
+        // Sound number
+        sliderSound = screen.soundHandler.sliderSound;
     }
 
     public void isPressed() {
@@ -62,7 +66,12 @@ public class Slider {
             // Press on slider
             if (bounds.contains(ix, iy)) {
                 ux = ix;
+                pressed = true;
             }
+        }
+        else if (pressed) {
+            pressed = false;
+            screen.soundHandler.playSound(sliderSound, 1);
         }
         // Number of received point on slider
         int point = MathUtils.round((ux - left) / space);
