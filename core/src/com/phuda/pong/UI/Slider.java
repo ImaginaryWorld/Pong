@@ -49,6 +49,7 @@ public class Slider {
         // Setup default value
         ux = MathUtils.lerp(left, right, (float) (defValue - min) / (max - min));
         sx = ux;
+        value = defValue;
         // Distance between two points of slider
         space = (bounds.width / (float)(max - min));
         // Fonts

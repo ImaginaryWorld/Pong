@@ -1,6 +1,8 @@
 package com.phuda.pong;
 
+import com.badlogic.gdx.Files;
 import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.files.FileHandle;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
@@ -177,6 +179,11 @@ public class MenuScreen extends PongScreen
                 FileInputStream fileInputStream = new FileInputStream(file);
                 ObjectInputStream objectInputStream = new ObjectInputStream(fileInputStream);
                 settings = (int[])objectInputStream.readObject();
+                // If config file not corresponding our demands - considering it's an old version file and deleting it
+                if (settings.length != 4) {
+                    deleteConfigFile("config/settings.pon");
+                    return;
+                }
                 // Closing streams
                 fileInputStream.close();
                 objectInputStream.close();
@@ -212,6 +219,15 @@ public class MenuScreen extends PongScreen
         } catch (IOException e) {
             e.printStackTrace();
         }
+    }
+
+    // But I guess without special rights app couldn't delete anything
+    private void deleteConfigFile(String path) {
+        FileHandle fileHandle = Gdx.files.getFileHandle(path, Files.FileType.Local);
+        if (fileHandle.delete())
+            Gdx.app.log("Deleting", "Config file was deleted");
+        else
+            Gdx.app.log("Deleting", "Couldn't delete config file");
     }
 
     public void dispose() {
