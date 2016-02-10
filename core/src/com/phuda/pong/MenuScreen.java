@@ -21,7 +21,7 @@ public class MenuScreen extends PongScreen
     final int w = Gdx.graphics.getWidth(), h = Gdx.graphics.getHeight(),
     ball_sliderNum = 0, ai_mode_sliderNum = 1, sound_volume_sliderNum = 2, music_volume_sliderNum = 3;
 	SpriteBatch batch;
-	Button start_pvp_button, start_pvc_button, other2_button;
+	Button start_pvp_button, start_pvc_button, other2_button, title_button;
     Slider balls_slider, ai_mode_slider, sound_volume_slider, music_volume_slider;
     float nextScreenDark = 0f;
     GameScreen nextScreen = null;
@@ -38,9 +38,10 @@ public class MenuScreen extends PongScreen
         // Images path
         String images_path = "images/";
         // Buttons
-		start_pvp_button = new Button(x, y, images_path + "pvp.png", true, this);
-		start_pvc_button = new Button(x * 2, y + y / 3, images_path + "pvc.png", true, this);
-		other2_button =    new Button(x * 3, y, images_path + "undef.png", true, this);
+		start_pvp_button = new Button(x,     y + y / 3, images_path + "pvp.png", true, this);
+		start_pvc_button = new Button(x * 3, y + y / 3, images_path + "pvc.png", true, this);
+		other2_button =    new Button(x * 2,     y / 3, images_path + "settings.png", true, this);
+        title_button =     new Button(x * 2, y - y / 9, images_path + "title.png", true, this);
         // Background
         backGround = new Texture(Gdx.files.internal(images_path + "background.png"));
         backGround.setFilter(Texture.TextureFilter.Linear, Texture.TextureFilter.Linear);
@@ -118,8 +119,11 @@ public class MenuScreen extends PongScreen
 
     private void processMenuSwitch() {
         settingsMenu = !settingsMenu;
-        if (!settingsMenu)
-            other2_button.setPos(w * 3 / 4, (int)(h / 1.7f));
+        if (!settingsMenu) {
+            int x = w / 4;
+            int y = (int) (h / 1.7);
+            other2_button.setPos(x * 2, y / 3);
+        }
         else
             other2_button.setPos(w / 2, h * 6 / 7);
     }
@@ -131,7 +135,7 @@ public class MenuScreen extends PongScreen
         batch.begin();
         batch.setColor(MathUtils.sin(backGroundRotation/2)/2 + 0.5f, 1f, 1f, 1f);
         // Common drawing
-        batch.draw(backGround, w / 2 - backGround.getWidth()/2, w / 2 - backGround.getHeight()/2,
+        batch.draw(backGround, w / 2 - backGround.getWidth()/2, h / 2 - backGround.getHeight()/2,
                 backGround.getWidth()/2, backGround.getHeight()/2,
                 backGround.getWidth(), backGround.getHeight(),
                 1, 1, backGroundRotation, 0, 0, backGround.getWidth(), backGround.getHeight(),
@@ -150,6 +154,7 @@ public class MenuScreen extends PongScreen
         start_pvp_button.draw(batch);
         start_pvc_button.draw(batch);
         other2_button.draw(batch);
+        title_button.draw(batch);
         // Drawing pre-game screen scene
         if (nextScreen != null) {
             shapeRenderer.begin(ShapeRenderer.ShapeType.Filled);
