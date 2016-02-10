@@ -8,6 +8,7 @@ public class PongSoundHandler {
     public Music menuMusic, gameMusic;
     private Sound sounds[];
     final public int bump = 0, reflect = 1, wallHit = 2, buttonSound = 3, sliderSound = 4;
+    private float soundsVolume;
 
     PongSoundHandler() {
         // Music
@@ -25,7 +26,7 @@ public class PongSoundHandler {
     }
 
     public void playSound(int soundNum, float pitch) {
-        long s = sounds[soundNum].play(1);
+        long s = sounds[soundNum].play(soundsVolume);
         sounds[soundNum].setPitch(s, pitch);
     }
 
@@ -39,5 +40,14 @@ public class PongSoundHandler {
 
     public void stopMusic(Music music) {
         music.stop();
+    }
+
+    public void setSoundsVolume(int volume) {
+        soundsVolume = (float)volume / 100;
+    }
+
+    public void setMusicVolume(int volume) {
+        menuMusic.setVolume((float)volume / 100);
+        gameMusic.setVolume((float)volume / 100);
     }
 }

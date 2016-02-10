@@ -21,7 +21,7 @@ public class Button {
 	private boolean press, over;
 	public boolean isActive;
 	private PongScreen screen;
-	int buttonSound;
+	public int buttonSound;
     // Getting ratio of screen in desktop base (500 x 700)
     private float hAspect = (Gdx.graphics.getWidth() + Gdx.graphics.getHeight())
             / (float)(500 + 700);

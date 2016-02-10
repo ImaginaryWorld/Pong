@@ -22,8 +22,9 @@ public class Slider {
     private float left, right;
     private float hAspect;
     private PongScreen screen;
-    private int sliderSound;
+    public int sliderSound;
     private boolean pressed;
+    public boolean update;
 
     public Slider(int _x, int _y, int _min, int _max, int defValue, String _label, PongScreen screen) {
         String images_path = "images/";
@@ -40,10 +41,10 @@ public class Slider {
         // Distance from start to active zone
         offset = unit.getWidth() / 2 * hAspect;
         // Bounds
-        left = (x - base.getWidth()/2 * hAspect + offset);
-        right = (x + base.getWidth()/2 * hAspect - offset);
+        left = (x - base.getWidth() / 2 * hAspect + offset);
+        right = (x + base.getWidth() / 2 * hAspect - offset);
         // Touch zone
-        bounds = new Rectangle(left, y - base.getHeight()/2 * hAspect,
+        bounds = new Rectangle(left, y - base.getHeight() / 2 * hAspect,
                 right - left, base.getHeight() * hAspect);
         // Setup default value
         ux = MathUtils.lerp(left, right, (float) (defValue - min) / (max - min));
@@ -60,6 +61,10 @@ public class Slider {
     }
 
     public void isPressed() {
+        if (update) {
+            update = false;
+            screen.soundHandler.playSound(sliderSound, 1);
+        }
         if (Gdx.input.isTouched()) {
             int ix = Gdx.input.getX();
             int iy = (Gdx.input.getY() - Gdx.graphics.getHeight()) * -1;
@@ -71,7 +76,7 @@ public class Slider {
         }
         else if (pressed) {
             pressed = false;
-            screen.soundHandler.playSound(sliderSound, 1);
+            update = true;
         }
         // Number of received point on slider
         int point = MathUtils.round((ux - left) / space);
@@ -89,12 +94,27 @@ public class Slider {
         sx = ux;
     }
 
-    public void draw(SpriteBatch batch){
+    public void draw(SpriteBatch batch) {
         batch.draw(base, x - base.getWidth()/2 * hAspect, y - base.getHeight()/2 * hAspect,
                 base.getWidth() * hAspect, base.getHeight() * hAspect);
         batch.draw(unit, sx - unit.getWidth()/2 * hAspect, y - unit.getHeight()/2 * hAspect,
                 unit.getWidth() * hAspect, unit.getHeight() * hAspect);
-        font.draw(batch, label + Integer.toString(value), x - base.getWidth()/3 * hAspect,
+        // AI strength label
+        if (label.equals("AI strength: ")) {
+            String strength = null;
+            switch (value) {
+                case 1: strength = "Weak";
+                    break;
+                case 2: strength = "Medium";
+                    break;
+                case 3: strength = "Strong";
+                    break;
+            }
+            font.draw(batch, label + strength, x - base.getWidth() / 3 * hAspect,
+                    y + (int) (base.getHeight() * 0.7 * hAspect));
+        }
+        else
+            font.draw(batch, label + Integer.toString(value), x - base.getWidth()/3 * hAspect,
                 y + (int)(base.getHeight()*0.7 * hAspect));
     }
 
