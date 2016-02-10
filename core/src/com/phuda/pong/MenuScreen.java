@@ -1,5 +1,6 @@
 package com.phuda.pong;
 
+import com.badlogic.gdx.ApplicationListener;
 import com.badlogic.gdx.Files;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.files.FileHandle;
@@ -101,6 +102,7 @@ public class MenuScreen extends PongScreen
     private void processSettingsMenu() {
         // Settings
         if (other2_button.isPressed()) {
+            saveConfiguration();
             processMenuSwitch();
         }
         // Sliders processing
@@ -232,7 +234,6 @@ public class MenuScreen extends PongScreen
 
     public void dispose() {
         game.soundHandler.menuMusic.stop();
-        saveConfiguration();
         disposeTextures();
     }
 
