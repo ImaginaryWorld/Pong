@@ -5,17 +5,20 @@ import com.badlogic.gdx.audio.Music;
 import com.badlogic.gdx.audio.Sound;
 
 public class PongSoundHandler {
-    public Music menuMusic, gameMusic;
+    private Music music[];
+
     private Sound sounds[];
-    final public int bump = 0, reflect = 1, wallHit = 2, buttonSound = 3, sliderSound = 4;
+    final public int bump = 0, reflect = 1, wallHit = 2, buttonSound = 3, sliderSound = 4,
+    menuMusic = 0, gameMusic = 1;
     private float soundsVolume;
 
     PongSoundHandler() {
         // Music
-        menuMusic = Gdx.audio.newMusic(Gdx.files.internal("sounds/pong-menusong.ogg"));
-        menuMusic.setLooping(true);
-        gameMusic = Gdx.audio.newMusic(Gdx.files.internal("sounds/pong-song.ogg"));
-        gameMusic.setLooping(true);
+        music = new Music[2];
+        music[menuMusic] = Gdx.audio.newMusic(Gdx.files.internal("sounds/menu-song.ogg"));
+        music[menuMusic].setLooping(true);
+        music[gameMusic] = Gdx.audio.newMusic(Gdx.files.internal("sounds/pong-song.ogg"));
+        music[gameMusic].setLooping(true);
         // Sounds
         sounds = new Sound[5];
         sounds[bump] = Gdx.audio.newSound(Gdx.files.internal("sounds/bump.wav"));
@@ -30,16 +33,16 @@ public class PongSoundHandler {
         sounds[soundNum].setPitch(s, pitch);
     }
 
-    public void playMusic(Music music) {
-        music.play();
+    public void playMusic(int musicNum) {
+        music[musicNum].play();
     }
 
-    public void pauseMusic(Music music) {
-        music.pause();
+    public void pauseMusic(int musicNum) {
+        music[musicNum].pause();
     }
 
-    public void stopMusic(Music music) {
-        music.stop();
+    public void stopMusic(int musicNum) {
+        music[musicNum].stop();
     }
 
     public void setSoundsVolume(int volume) {
@@ -47,7 +50,11 @@ public class PongSoundHandler {
     }
 
     public void setMusicVolume(int volume) {
-        menuMusic.setVolume((float)volume / 100);
-        gameMusic.setVolume((float)volume / 100);
+        for (Music track : music)
+            track.setVolume((float)volume / 100);
+    }
+
+    public boolean isPlaying(int musicNum) {
+        return music[musicNum].isPlaying();
     }
 }

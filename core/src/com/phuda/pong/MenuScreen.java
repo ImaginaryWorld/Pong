@@ -20,6 +20,7 @@ public class MenuScreen extends PongScreen
 	// MenuRenderer menu;
     final int w = Gdx.graphics.getWidth(), h = Gdx.graphics.getHeight(),
     ball_sliderNum = 0, ai_mode_sliderNum = 1, sound_volume_sliderNum = 2, music_volume_sliderNum = 3;
+    private int menuMusic;
 	SpriteBatch batch;
 	Button start_pvp_button, start_pvc_button, other2_button, title_button;
     Slider balls_slider, ai_mode_slider, sound_volume_slider, music_volume_slider;
@@ -27,8 +28,7 @@ public class MenuScreen extends PongScreen
     GameScreen nextScreen = null;
     ShapeRenderer shapeRenderer = new ShapeRenderer();
     Texture backGround;
-    float backGroundRotation;
-    // Activating settings screen
+    private float backGroundRotation;
     private boolean settingsMenu;
 
 	MenuScreen(PongGame game, PongSoundHandler soundHandler) {
@@ -38,9 +38,9 @@ public class MenuScreen extends PongScreen
         // Images path
         String images_path = "images/";
         // Buttons
-		start_pvp_button = new Button(x,     y + y / 3, images_path + "pvp.png", true, this);
+		start_pvp_button = new Button(x, y + y / 3, images_path + "pvp.png", true, this);
 		start_pvc_button = new Button(x * 3, y + y / 3, images_path + "pvc.png", true, this);
-		other2_button =    new Button(x * 2,     y / 3, images_path + "settings.png", true, this);
+		other2_button =    new Button(x * 2, y / 3, images_path + "settings.png", true, this);
         title_button =     new Button(x * 2, y - y / 9, images_path + "title.png", true, this);
         // Background
         backGround = new Texture(Gdx.files.internal(images_path + "background.png"));
@@ -52,10 +52,12 @@ public class MenuScreen extends PongScreen
         music_volume_slider = new Slider(x * 2, h / 7, 0, 100, 40, "Music volume: ", this);
         // Loading saved configuration
         loadConfiguration();
-        // Music
         soundHandler.setSoundsVolume(sound_volume_slider.value);
         soundHandler.setMusicVolume(music_volume_slider.value);
-        soundHandler.playMusic(soundHandler.menuMusic);
+        // Numbers of sounds and music
+        menuMusic = soundHandler.menuMusic;
+        // Music starting
+        soundHandler.playMusic(menuMusic);
 		System.out.println("init MenuScreen");
 	}
 	
@@ -238,7 +240,7 @@ public class MenuScreen extends PongScreen
     }
 
     public void dispose() {
-        game.soundHandler.menuMusic.stop();
+        soundHandler.stopMusic(menuMusic);
         disposeTextures();
     }
 
