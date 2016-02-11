@@ -17,7 +17,7 @@ public class Ball extends Unit {
 	public Board lastTouchedBoard;
 	// Ball's trails
 	float historyTimer;
-	final int HISTORY_LENGTH = 12;
+	final int HISTORY_LENGTH = 12, speedRegulator = 150;
 	public ArrayList<Vector2> positionsHistory;
 	// Effects
 	final int Ethereal = 0, Slowed = 1, Split = 2, Controlled = 3;
@@ -28,15 +28,17 @@ public class Ball extends Unit {
 	public Ball(Field field, int screenWidth, int screenHeight, int num) {
 		super();
 		// Multipliers that depends on screens width and height
-		int wm = 2 + screenWidth / 250;
-		int hm = 2 + screenHeight / 350;
+		int wm = (int)(screenWidth * 1.6f / speedRegulator);
+		int hm = screenHeight / (int)(speedRegulator * 0.8f);
 		this.name = Integer.toString(++num);
 		setBounds(screenWidth, screenHeight);
 		this.field = field;
 		this.positionsHistory = new ArrayList<Vector2>();
 		// Randomizing ball's x and y axle speed with using multipliers
 		speed.x = MathUtils.random(-wm * 2, wm * 2);
-		speed.y = MathUtils.random(hm * 1.5f, hm * 2) * MathUtils.randomSign();
+		speed.y = MathUtils.random(hm * 1.5f, hm * 2);
+		if (bounds.y > screenHeight / 2)
+			speed.y *= -1;
 		// Sounds numbers
 		sound_bump = field.screen.soundHandler.bump;
 		sound_reflect = field.screen.soundHandler.reflect;
@@ -202,8 +204,8 @@ public class Ball extends Unit {
 	private void setBounds(int screenWidth, int screenHeight) {
 		float radius = screenWidth / 100 + screenHeight / 100;
 		bounds = new Circle(MathUtils.random(radius, screenWidth - radius),
-				MathUtils.random(screenHeight * 2 / 5, screenHeight - screenHeight * 2 / 5),
-				radius);
+				screenHeight / 2 - MathUtils.random(screenHeight / 7, screenHeight / 3.5f)
+				* MathUtils.randomSign(), radius);
 	}
 
 	public boolean outOfField() {
@@ -212,11 +214,11 @@ public class Ball extends Unit {
 
 	// Speed handling methods
 	private void handleSpeed(float delta) {
-		if (Math.abs(speed.x) > field.screenWidth / 60)
+		if (Math.abs(speed.x) > field.screenWidth * 5 / speedRegulator)
 			speed.x -= delta * speed.x * 6;
-		if (Math.abs(speed.y) > field.screenHeight / 90)
+		if (Math.abs(speed.y) > field.screenHeight * 3 / speedRegulator)
 			speed.y -= delta * speed.y * 6;
-		else if (Math.abs(speed.y) < field.screenHeight / 150)
+		else if (Math.abs(speed.y) < field.screenHeight / speedRegulator)
 			speed.y += delta * speed.y * 6;
 	}
 

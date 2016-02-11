@@ -60,10 +60,10 @@ public class Field {
 				// Toggle slow-motion
 				if (Gdx.input.isKeyPressed(Input.Keys.S))
 					delta = delta * 0.2f;
-				// Updating state of boards
-				processBoards(delta);
 				// Updating state of balls
 				processBalls(delta);
+				// Updating state of boards
+				processBoards(delta);
 				// Updating bonuses
 				updateFeatures(delta);
 			}

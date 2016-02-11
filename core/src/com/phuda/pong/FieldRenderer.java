@@ -156,12 +156,21 @@ public class FieldRenderer {
                 // Trail rendering
                 batch.setBlendFunction(Gdx.gl.GL_SRC_ALPHA, Gdx.gl.GL_ONE);
                 float r = ball.bounds.radius;
-                float alpha = 0.2f;
-                for (Vector2 vec : ball.positionsHistory) {
+                float alpha = 0.4f;
+                for (int i = 0; i < ball.positionsHistory.size(); i++) {
+                    Vector2 vec = ball.positionsHistory.get(i), nextVec;
+                    if (i != ball.positionsHistory.size() - 1)
+                        nextVec = ball.positionsHistory.get(i + 1);
+                    else
+                        nextVec = ball.vector;
                     batch.setColor(color[0], color[1], color[2], alpha);
-                    float size = alpha * 2;
-                    batch.draw(textures[ballTexture], vec.x - r * size, vec.y - r * size,
-                            r * 2 * size, r * 2 * size);
+                    // Drawing two trails for each history vector
+                    batch.draw(textures[ballTexture], vec.x - r * alpha, vec.y - r * alpha,
+                            r * 2 * alpha, r * 2 * alpha);
+                    alpha += 0.02f;
+                    batch.draw(textures[ballTexture], nextVec.x - (nextVec.x - vec.x) / 2 - r * alpha,
+                            nextVec.y - (nextVec.y - vec.y) / 2 - r * alpha,
+                            r * 2 * alpha, r * 2 * alpha);
                     alpha += 0.02f;
                 }
                 // Reset alpha
