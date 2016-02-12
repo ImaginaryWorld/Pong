@@ -29,13 +29,12 @@ public class Board extends Unit {
 			new Effect("controller")};
 
 	public Board(int screenWidth, int screenHeight, String name, Field field, int difficultyLevel) {
-		super();
+		super(field);
 		this.name = name;
 		// Creating rectangle that describes board as physical item
 		setBounds(screenWidth, screenHeight);
 		// Setting points of board's bounds
 		setBoundsPoints();
-		this.field = field;
 		// Set difficulty level to 0 to create human player
 		if (difficultyLevel != 0)
 			this.contr = new AIBoardController(this, field.balls, difficultyLevel);

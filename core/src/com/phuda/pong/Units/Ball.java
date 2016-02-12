@@ -17,16 +17,19 @@ public class Ball extends Unit {
 	public Board lastTouchedBoard;
 	// Ball's trails
 	float historyTimer;
-	final int HISTORY_LENGTH = 12, speedRegulator = 175;
+	final int HISTORY_LENGTH = 12;
 	public ArrayList<Vector2> positionsHistory;
 	// Effects
 	final int Ethereal = 0, Slowed = 1, Split = 2, Controlled = 3;
 	public int sound_bump, sound_reflect, sound_wallHit;
+	private int speedRegulator;
 	public Effect[] states = {new Effect("Ethereal"), new Effect("Slowed"), new Effect("Split"),
 			new Effect("Controlled")};
 
 	public Ball(Field field, int screenWidth, int screenHeight, int num) {
-		super();
+		super(field);
+		speedRegulator = 350 - field.ballsSpeed * 2;
+		System.out.println(field.ballsSpeed);
 		// Multipliers that depends on screens width and height
 		int wm = (int)(screenWidth * 1.6f / speedRegulator);
 		int hm = screenHeight / (int)(speedRegulator * 0.8f);

@@ -10,7 +10,8 @@ public class Unit {
 	public Field field;
 	public Unit lastTouchedUnit;
 
-	Unit() {
+	Unit(Field field) {
+		this.field = field;
 		vector = new Vector2();
 		speed = new Vector2();
 	}

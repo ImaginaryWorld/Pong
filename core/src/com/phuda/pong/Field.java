@@ -16,7 +16,7 @@ import java.util.ArrayList;
 // Class that controls game field.
 public class Field {
 	public GameScreen screen;
-	public int screenWidth, screenHeight, ballsCount;
+	public int screenWidth, screenHeight, ballsCount, ballsSpeed;
 	public float scoreShift;
 	public Board player1Board, player2Board;
     public String winner = "none";
@@ -26,18 +26,19 @@ public class Field {
 	float startTimer = 0f;
 	boolean paused;
 
-	Field(GameScreen screen, int ballsCount, int ai, int screenWidth, int screenHeight) {
+	Field(GameScreen screen) {
 		this.screen = screen;
-		this.screenWidth = screenWidth;
-		this.screenHeight = screenHeight;
-		this.ballsCount = ballsCount;
+		this.screenWidth = screen.screenWidth;
+		this.screenHeight = screen.screenHeight;
+		this.ballsCount = screen.ballsCount;
+		this.ballsSpeed = screen.ballsSpeed;
 		// Balls generation
 		balls = new ArrayList<Ball>();
 		/*
 		 * Boards generation
 		 * Player 1 aka top player
 		 */
-		player1Board = new Board(screenWidth, screenHeight, "top", this, ai);
+		player1Board = new Board(screenWidth, screenHeight, "top", this, screen.ai);
 		// Player 2 aka bottom player
 		player2Board = new Board(screenWidth, screenHeight, "bottom", this, 0);
 		// Bonuses generation

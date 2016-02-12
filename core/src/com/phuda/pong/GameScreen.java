@@ -8,14 +8,15 @@ public class GameScreen extends PongScreen
 {
 	Field field;
 	FieldRenderer renderer;
-    int ballsCount, ai, screenWidth, screenHeight,
+    public int ballsCount, ballsSpeed, ai, screenWidth, screenHeight,
 	gameMusic;
 
-	GameScreen(PongGame game, int _ballsCount, int _ai, PongSoundHandler soundHandler) {
+	GameScreen(PongGame game, int _ballsCount, int _ai, int ballsSpeed, PongSoundHandler soundHandler) {
 		super(game, soundHandler);
 		screenWidth = Gdx.graphics.getWidth();
 		screenHeight = Gdx.graphics.getHeight();
         ballsCount = _ballsCount;
+		this.ballsSpeed = ballsSpeed;
         ai = _ai;
 		// Music number
 		gameMusic = soundHandler.gameMusic;
@@ -24,7 +25,7 @@ public class GameScreen extends PongScreen
 	
 	public void show()
 	{
-		field = new Field(this, ballsCount, ai, screenWidth, screenHeight);
+		field = new Field(this);
 		renderer = new FieldRenderer(field);
 	}
 

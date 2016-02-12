@@ -18,16 +18,17 @@ public class MenuScreen extends PongScreen
 {
 	// Menu menu;
 	// MenuRenderer menu;
-    final int w = Gdx.graphics.getWidth(), h = Gdx.graphics.getHeight(),
-    ball_sliderNum = 0, ai_mode_sliderNum = 1, sound_volume_sliderNum = 2, music_volume_sliderNum = 3;
+    private final int w = Gdx.graphics.getWidth(), h = Gdx.graphics.getHeight();
     private int menuMusic;
-	SpriteBatch batch;
-	Button start_pvp_button, start_pvc_button, other2_button, title_button;
-    Slider balls_slider, ai_mode_slider, sound_volume_slider, music_volume_slider;
-    float nextScreenDark = 0f;
-    GameScreen nextScreen = null;
-    ShapeRenderer shapeRenderer = new ShapeRenderer();
-    Texture backGround;
+	private SpriteBatch batch;
+	private Button start_pvp_button, start_pvc_button, other2_button, title_button;
+    final private int balls_max_slider = 0, ai_mode_slider = 1, sound_volume_slider = 2, music_volume_slider = 3,
+    balls_speed_slider = 4;
+    private Slider[] sliders;
+    private float nextScreenDark = 0f;
+    private GameScreen nextScreen = null;
+    private ShapeRenderer shapeRenderer = new ShapeRenderer();
+    private Texture backGround;
     private float backGroundRotation;
     private boolean settingsMenu;
 
@@ -46,14 +47,16 @@ public class MenuScreen extends PongScreen
         backGround = new Texture(Gdx.files.internal(images_path + "background.png"));
         backGround.setFilter(Texture.TextureFilter.Linear, Texture.TextureFilter.Linear);
         // Sliders
-        balls_slider = new Slider(x * 2, h * 4 / 7, 1, 12, 2, "Balls max count: ", this);
-        ai_mode_slider = new Slider(x * 2, h * 3 / 7, 1, 3, 2, "AI strength: ", this);
-        sound_volume_slider = new Slider(x * 2, h * 2 / 7, 0, 100, 40, "Sound volume: ", this);
-        music_volume_slider = new Slider(x * 2, h / 7, 0, 100, 40, "Music volume: ", this);
+        sliders = new Slider[5];
+        sliders[balls_max_slider] = new Slider(x, h * 4 / 7, 1, 12, 2, "Balls max count: ", this);
+        sliders[ai_mode_slider] = new Slider(x, h * 3 / 7, 1, 3, 2, "AI strength: ", this);
+        sliders[sound_volume_slider] = new Slider(x, h * 2 / 7, 0, 100, 40, "Sound volume: ", this);
+        sliders[music_volume_slider] = new Slider(x, h / 7, 0, 100, 40, "Music volume: ", this);
+        sliders[balls_speed_slider] = new Slider(x * 3, h * 4 / 7, 0, 100, 75, "Balls speed: ", this);
         // Loading saved configuration
         loadConfiguration();
-        soundHandler.setSoundsVolume(sound_volume_slider.value);
-        soundHandler.setMusicVolume(music_volume_slider.value);
+        soundHandler.setSoundsVolume(sliders[sound_volume_slider].value);
+        soundHandler.setMusicVolume(sliders[music_volume_slider].value);
         // Numbers of sounds and music
         menuMusic = soundHandler.menuMusic;
         // Music starting
@@ -79,13 +82,16 @@ public class MenuScreen extends PongScreen
         if (nextScreen == null) {
             // Player vs player button
             if (start_pvp_button.isPressed()) {
-                //game.setScreen(new GameScreen(game, balls_slider.value, 0));
-                nextScreen = new GameScreen(game, balls_slider.value, 0, game.soundHandler);
+                //game.setScreen(new GameScreen(game, balls_max_slider.value, 0));
+                nextScreen = new GameScreen(game, sliders[balls_max_slider].value, 0,
+                        sliders[balls_speed_slider].value, game.soundHandler);
+                System.out.println(sliders[balls_speed_slider].value);
             }
             // Player vs AI button
             if (start_pvc_button.isPressed()) {
-                //game.setScreen(new GameScreen(game, balls_slider.value, ai_mode_slider.value));
-                nextScreen = new GameScreen(game, balls_slider.value, ai_mode_slider.value, game.soundHandler);
+                //game.setScreen(new GameScreen(game, balls_max_slider.value, ai_mode_slider.value));
+                nextScreen = new GameScreen(game, sliders[balls_max_slider].value,
+                        sliders[ai_mode_slider].value, sliders[balls_speed_slider].value, game.soundHandler);
             }
             // Settings button
             if (other2_button.isPressed()) {
@@ -109,14 +115,12 @@ public class MenuScreen extends PongScreen
             processMenuSwitch();
         }
         // Sliders processing
-        balls_slider.isPressed();
-        ai_mode_slider.isPressed();
-        sound_volume_slider.isPressed();
-        music_volume_slider.isPressed();
-        if (sound_volume_slider.update)
-            soundHandler.setSoundsVolume(sound_volume_slider.value);
-        if (music_volume_slider.update)
-            soundHandler.setMusicVolume(music_volume_slider.value);
+        for (Slider slider : sliders)
+            slider.isPressed();
+        if (sliders[sound_volume_slider].update)
+            soundHandler.setSoundsVolume(sliders[sound_volume_slider].value);
+        if (sliders[music_volume_slider].update)
+            soundHandler.setMusicVolume(sliders[music_volume_slider].value);
     }
 
     private void processMenuSwitch() {
@@ -172,10 +176,8 @@ public class MenuScreen extends PongScreen
         // Buttons
         other2_button.draw(batch);
         // Sliders
-        balls_slider.draw(batch);
-        ai_mode_slider.draw(batch);
-        sound_volume_slider.draw(batch);
-        music_volume_slider.draw(batch);
+        for (Slider slider : sliders)
+            slider.draw(batch);
     }
 
     // Load/save configurations
@@ -189,7 +191,7 @@ public class MenuScreen extends PongScreen
                 ObjectInputStream objectInputStream = new ObjectInputStream(fileInputStream);
                 settings = (int[])objectInputStream.readObject();
                 // If config file not corresponding our demands - considering it's an old version file and deleting it
-                if (settings.length != 4) {
+                if (settings.length != sliders.length) {
                     deleteConfigFile("config/settings.pon");
                     return;
                 }
@@ -197,10 +199,8 @@ public class MenuScreen extends PongScreen
                 fileInputStream.close();
                 objectInputStream.close();
                 // Setting values
-                balls_slider.setValue(settings[ball_sliderNum]);
-                ai_mode_slider.setValue(settings[ai_mode_sliderNum]);
-                sound_volume_slider.setValue(settings[sound_volume_sliderNum]);
-                music_volume_slider.setValue(settings[music_volume_sliderNum]);
+                for (int i = 0; i < sliders.length; i++)
+                    sliders[i].setValue(settings[i]);
             }
         } catch (IOException e) {
             e.printStackTrace();
@@ -210,8 +210,9 @@ public class MenuScreen extends PongScreen
     }
 
     public void saveConfiguration() {
-        int settings[] = {balls_slider.value, ai_mode_slider.value,
-                sound_volume_slider.value, music_volume_slider.value};
+        int settings[] = new int[5];
+        for (int i = 0; i < settings.length; i++)
+            settings[i] = sliders[i].value;
         try {
             File dir = new File(Gdx.files.getLocalStoragePath() + "config");
             if (!dir.exists())
@@ -249,7 +250,7 @@ public class MenuScreen extends PongScreen
         start_pvc_button.disposeTexture();
         start_pvp_button.disposeTexture();
         other2_button.disposeTexture();
-        ai_mode_slider.disposeTextures();
-        balls_slider.disposeTextures();
+        for (Slider slider : sliders)
+            slider.disposeTextures();
     }
 }

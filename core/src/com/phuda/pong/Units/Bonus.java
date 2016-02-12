@@ -15,7 +15,7 @@ public class Bonus extends Unit {
 
     public Bonus(Field field, int screenWidth, int screenHeight, float time)
     {
-        super();
+        super(field);
         fullRadius = screenWidth / 50 + screenHeight / 50;
         setBounds(screenWidth, screenHeight);
         this.field = field;
