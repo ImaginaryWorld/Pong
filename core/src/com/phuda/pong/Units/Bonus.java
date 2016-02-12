@@ -54,4 +54,8 @@ public class Bonus extends Unit {
         else if (time < 2)
             bounds.radius -= bounds.radius * delta;
     }
+
+    public void playSound(int soundNum) {
+        field.screen.soundHandler.playSound(soundNum, 1);
+    }
 }
