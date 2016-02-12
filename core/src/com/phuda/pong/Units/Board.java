@@ -134,12 +134,12 @@ public class Board extends Unit {
 		bottomBounds = new Vector2[18];
 		for (int i = 0; i < bottomBounds.length; i++)
 			bottomBounds[i] = new Vector2(bounds.x + bounds.width / 19 * (i + 1), bounds. y);
-		leftBounds = new Vector2[4];
+		leftBounds = new Vector2[5];
 		for (int i = 0; i < leftBounds.length; i++)
-			leftBounds[i] = new Vector2(bounds.x, bounds.y + bounds.height / 5 * (i + 1));
-		rightBounds = new Vector2[4];
+			leftBounds[i] = new Vector2(bounds.x, bounds.y + bounds.height / (leftBounds.length + 1) * (i + 1));
+		rightBounds = new Vector2[5];
 		for (int i = 0; i < rightBounds.length; i++)
-			rightBounds[i] = new Vector2(bounds.x + bounds.width, bounds.y + bounds.height / 5 * (i + 1));
+			rightBounds[i] = new Vector2(bounds.x + bounds.width, bounds.y + bounds.height / (rightBounds.length + 1) * (i + 1));
 		angles = new Vector2[4];
 		angles[0] = new Vector2(bounds.x, bounds.y);
 		angles[1] = new Vector2(bounds.x, bounds.y + bounds.height);
@@ -150,173 +150,141 @@ public class Board extends Unit {
 	// Checking bounds after ball's "turn"
 	private void checkAllBounds(ArrayList<Ball> balls) {
 		// Number of vector that refers to the point which ball contains
-		int point;
 
 		for (Ball ball : balls) {
-			if (!ball.states[ball.Ethereal].isActive) {
-				// Collision with board's top bound points
-				if (checkBallCollision(topBounds, ball) != 0) {
-					if (ball.speed.y < 0) {
-						if ((point = checkBallCollision(angles, ball)) == 0)
-							ball.boardCollision(this, bounds.y + bounds.height + ball.bounds.radius);
-						else
-							handleAngleCase(point, ball);
-					}
-					//Suspicious case - checking if ball rushes there through side and taking measures
-					else if (checkBallCollision(leftBounds, ball) != 0)
-						ball.sideBoardCollision(this, bounds.x - ball.bounds.radius);
-					else if (checkBallCollision(rightBounds, ball) != 0)
-						ball.sideBoardCollision(this, bounds.x + bounds.width + ball.bounds.radius);
+			if (!(ball.states[ball.Ethereal].isActive && ball.lastTouchedUnit == this)) {
+				if (checking(ball))
+					return;
+				// If ball is inside board's bound - slightly return ball back and check again
+				if (bounds.contains(ball.bounds.x, ball.bounds.y)) {
+					Gdx.app.log("Debugging", "the case");
+					ball.bounds.x -= ball.speed.x / 2;
+					ball.bounds.y -= ball.speed.y / 2;
+					checking(ball);
 				}
-				// Collision with board's bottom bound points
-				else if (checkBallCollision(bottomBounds, ball) != 0) {
-					if (ball.speed.y > 0)
-						ball.boardCollision(this, bounds.y - ball.bounds.radius);
-						//Suspicious case - checking if ball rushes there through side and taking measures
-					else if (checkBallCollision(leftBounds, ball) != 0)
-						ball.sideBoardCollision(this, bounds.x - ball.bounds.radius);
-					else if (checkBallCollision(rightBounds, ball) != 0)
-						ball.sideBoardCollision(this, bounds.x + bounds.width + ball.bounds.radius);
-				}
-				// Collision with board's left bound points
-				else if (checkBallCollision(leftBounds, ball) != 0)
-					ball.sideBoardCollision(this, bounds.x - ball.bounds.radius);
-				// Collision with board's right bound points
-				else if (checkBallCollision(rightBounds, ball) != 0)
-					ball.sideBoardCollision(this, bounds.x + bounds.width + ball.bounds.radius);
-				// Collision with angle points
-				else if ((point = checkBallCollision(angles, ball)) != 0)
-					handleAngleCase(point, ball);
 			}
 		}
+	}
+
+	private boolean checking(Ball ball) {
+		// Setting variables so later won't need to call method every time
+		int anglePoint = checkBallCollision(angles, ball);
+		boolean topCheck = (checkBallCollision(topBounds, ball) != 0),
+		bottomCheck = (checkBallCollision(bottomBounds, ball) != 0),
+		rightCheck = (checkBallCollision(rightBounds, ball) != 0),
+		leftCheck = (checkBallCollision(leftBounds, ball) != 0);
+		// Checking conditions
+		if (anglePoint != 0) {
+			switch (anglePoint) {
+				case 1:
+					if (ball.speed.x > 0 && ball.speed.y > 0) {
+						ball.angleBoardCollision(this, true);
+						return true;
+					}
+					break;
+				case 2:
+					if (ball.speed.x > 0 && ball.speed.y < 0) {
+						ball.angleBoardCollision(this, true);
+						return true;
+					}
+					break;
+				case 3:
+					if (ball.speed.x < 0 && ball.speed.y > 0) {
+						ball.angleBoardCollision(this, true);
+						return true;
+					}
+					break;
+				case 4:
+					if (ball.speed.x < 0 && ball.speed.y < 0) {
+						ball.angleBoardCollision(this, true);
+						return true;
+					}
+					break;
+			}
+		}
+		if (topCheck) {
+			if (ball.speed.y < 0) {
+				ball.boardCollision(this, bounds.y + bounds.height + ball.bounds.radius);
+				return true;
+			}
+		}
+		if (bottomCheck) {
+			if (ball.speed.y > 0) {
+				ball.boardCollision(this, bounds.y - ball.bounds.radius);
+				return true;
+			}
+		}
+		if (rightCheck) {
+			if (ball.speed.x < 0) {
+				ball.sideBoardCollision(this, bounds.x + bounds.width + ball.bounds.radius);
+				return true;
+			}
+		}
+		if (leftCheck) {
+			if (ball.speed.x > 0) {
+				ball.sideBoardCollision(this, bounds.x - ball.bounds.radius);
+				return true;
+			}
+		}
+		return false;
 	}
 
 	// Checking bounds after board's "turn"
 	private void checkAllBounds2(ArrayList<Ball> balls) {
 		// Vector that refers to the point that ball contains
-		int point;
+		int anglePoint;
+		boolean rightCheck, leftCheck;
 
 		for (Ball ball : balls) {
-			if (!ball.states[ball.Ethereal].isActive) {
-				// Collision with board's top bound points
-				if (checkBallCollision(topBounds, ball) != 0) {
-					// Side hit
-					if (enterSideFromTop(ball))
-						spotXBound(ball);
-					else
-						handleAngleCase2(true, ball);
-				}
-				// Collision with board's bottom bound points
-				else if (checkBallCollision(bottomBounds, ball) != 0) {
-					if (enterSideFromBottom(ball))
-						spotXBound(ball);
-					else
-						handleAngleCase2(false, ball);
-				}
-				// Collision with board's left bound points
-				else if (checkBallCollision(leftBounds, ball) != 0) {
-					if (enterSideFromTop(ball) || enterSideFromBottom(ball))
-						spotXBound(ball);
-					// Ball hits on angle
-					else {
-						if (bounds.y > ball.bounds.y)
-							handleAngleCase2(false, ball);
-						else
-							handleAngleCase2(true, ball);
-					}
-				}
-				// Collision with board's right bound points
-				else if (checkBallCollision(rightBounds, ball) != 0) {
-					if (enterSideFromTop(ball) || enterSideFromBottom(ball))
-						spotXBound(ball);
-					else {
-						if (bounds.y > ball.bounds.y)
-							handleAngleCase2(false, ball);
-						else
-							handleAngleCase2(true, ball);
-					}
-				}
-				// Collision with angle points
-				else if ((point = checkBallCollision(angles, ball)) != 0) {
-					if (point == 1 || point == 3)
-						handleAngleCase2(false, ball);
-					else
-						handleAngleCase2(true, ball);
-				}
+			if (!(ball.states[ball.Ethereal].isActive && ball.lastTouchedUnit == this)) {
+				// Setting variables so later won't need to call method every time
+				anglePoint = checkBallCollision(angles, ball);
+				rightCheck = (checkBallCollision(rightBounds, ball) != 0);
+				leftCheck = (checkBallCollision(leftBounds, ball) != 0);
+				if (anglePoint != 0 && !((enterSideFromTop(ball)) || enterSideFromBottom(ball)))
+					handleAngleCase(ball, anglePoint % 2 == 0);
+				else if (rightCheck)
+					ball.sideBoardCollision(this, bounds.x + bounds.width + ball.bounds.radius);
+				else if (leftCheck)
+					ball.sideBoardCollision(this, bounds.x - ball.bounds.radius);
 			}
 		}
 	}
 
-	// Defines two cases of side hit - for right and left bound
-	void spotXBound(Ball ball) {
-		if (speed.x < 0)
-			ball.sideBoardCollision(this, bounds.x - ball.bounds.radius);
-		else
-			ball.sideBoardCollision(this, bounds.x + bounds.width + ball.bounds.radius);
-	}
-
-	// Defines if ball was really hit by board's side not angle (calculations for cases when ball's center are above the board's top)
+	/*
+	 * Defines if ball was really hit by board's side not angle
+	 * (calculations for cases when ball's center are above the board's top)
+	 */
 	boolean enterSideFromTop(Ball ball) {
 		return bounds.y + bounds.height - ball.bounds.y > 0;
 	}
 
-	// Defines if ball was really hit by board's side not angle (calculations for cases when ball's center are below the board's bottom)
+	/*
+	 * Defines if ball was really hit by board's side not angle
+	 * (calculations for cases when ball's center are below the board's bottom)
+	 */
 	boolean enterSideFromBottom(Ball ball) {
 		return ball.bounds.y - bounds.y > 0;
 	}
 
 	// Angle cases are very special, so there's an extra method for them
-	void handleAngleCase(int point, Ball ball) {
-		// Would-be left bound's angles cases - when ball really came in point through board's top or bottom
-		if ((point == 1 || point == 2) && ball.speed.x < 0) {
-			if (point == 1)
-				ball.boardCollision(this, bounds.y - ball.bounds.radius);
-			else
-				ball.boardCollision(this, bounds.y + bounds.height + ball.bounds.radius);
-		}
-		// Would-be right bound's angles cases - when ball really came in point through board's top or bottom
-		else if ((point == 3 || point == 4) && ball.speed.x > 0) {
-			if (point == 3)
-				ball.boardCollision(this, bounds.y - ball.bounds.radius);
-			else
-				ball.boardCollision(this, bounds.y + bounds.height + ball.bounds.radius);
-		}
-		// Would-be bottom bound's angles cases - when ball really came in point through board's right or left side
-		else if ((point == 1 || point == 3) && ball.speed.y < 0) {
-			if (point == 1)
-				ball.sideBoardCollision(this, bounds.x - ball.bounds.radius);
-			else
-				ball.sideBoardCollision(this, bounds.x + bounds.width + ball.bounds.radius);
-		}
-		// Would-be top bound's angles cases - when ball really came in point through board's right or left side
-		else if ((point == 2 || point == 4) && ball.speed.y > 0) {
-			if (point == 2)
-				ball.sideBoardCollision(this, bounds.x - ball.bounds.radius);
-			else
-				ball.sideBoardCollision(this, bounds.x + bounds.width + ball.bounds.radius);
-		}
-		// True angle cases
-		else
-			ball.angleBoardCollision(this, true);
-	}
-
-	// Angle cases are very special, so there's an extra method for them
-	void handleAngleCase2(boolean topHit, Ball ball) {
+	void handleAngleCase(Ball ball, boolean topHit) {
 		// If ball goes up
 		if (ball.speed.y > 0) {
 			// Faces top side
 			if (topHit)
 				ball.angleBoardCollision(this, false);
-				// Faces bottom side
-			else
+			// Faces bottom side
+			else {
 				ball.angleBoardCollision(this, true);
+			}
 		}
 		// If ball goes down
 		else {
 			// Faces top side
 			if (topHit)
 				ball.angleBoardCollision(this, true);
-				// Faces bottom side
+			// Faces bottom side
 			else
 				ball.angleBoardCollision(this, false);
 		}
@@ -329,10 +297,6 @@ public class Board extends Unit {
 	private int checkBallCollision(final Vector2[] bounds, Ball ball) {
 		for (int j = 0; j < bounds.length; j++)
 			if (ball.bounds.contains(bounds[j])) {
-				// Sound of collision
-				ball.playSound(ball.sound_reflect);
-				// Setting this board to as last one that ball touches
-				ball.saveLastBoard(this);
 				return j + 1;
 			}
 		return 0;

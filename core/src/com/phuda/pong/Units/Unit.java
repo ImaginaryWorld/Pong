@@ -8,6 +8,7 @@ public class Unit {
 	public Vector2 speed;
 	public String name;
 	public Field field;
+	public Unit lastTouchedUnit;
 
 	Unit() {
 		vector = new Vector2();

@@ -17,7 +17,7 @@ public class Ball extends Unit {
 	public Board lastTouchedBoard;
 	// Ball's trails
 	float historyTimer;
-	final int HISTORY_LENGTH = 12, speedRegulator = 150;
+	final int HISTORY_LENGTH = 12, speedRegulator = 175;
 	public ArrayList<Vector2> positionsHistory;
 	// Effects
 	final int Ethereal = 0, Slowed = 1, Split = 2, Controlled = 3;
@@ -108,7 +108,8 @@ public class Ball extends Unit {
 			if (this != ball && !ball.states[Ethereal].isActive)
 				if (bounds.overlaps(ball.bounds)) {
 					// Balls exchange their speeds and sets last touched unit
-					ballsSpeedExchange(ball);
+					ballsExchange(ball);
+					// Saving as last touched unit
 					// Try to prevent sticking with that
 					states[Ethereal].engage(0.2f);
 					// Sound
@@ -121,8 +122,7 @@ public class Ball extends Unit {
 			return;
 		for (int i = 0; i < bonuses.length; i++)
 			if (bonuses[i] != null)
-				if (bounds.overlaps(bonuses[i].bounds))
-				{
+				if (bounds.overlaps(bonuses[i].bounds)) {
 					// Somebody got a bonus!
 					lastTouchedBoard.abilities[bonuses[i].getIndex()].engage(5);
 					// Deleting bonus
@@ -172,6 +172,7 @@ public class Ball extends Unit {
 		speed.y = -speed.y;
 		// Give some speed by friction
 		speed.x += board.speed.x / 5;
+		hitConsequenses(board);
 		changeStatesHitByBoard(board);
 	}
 
@@ -183,6 +184,7 @@ public class Ball extends Unit {
 		// If ball's speed are too low it receives a board's speed
 		if (Math.abs(speed.x) < Math.abs(board.speed.x))
 			speed.x = board.speed.x;
+		hitConsequenses(board);
 		changeStatesHitByBoard(board);
 	}
 
@@ -197,6 +199,7 @@ public class Ball extends Unit {
 		// Changing speed.y
 		if (ySpeedChange)
 			speed.y = -speed.y;
+		hitConsequenses(board);
 		changeStatesHitByBoard(board);
 	}
 
@@ -222,7 +225,7 @@ public class Ball extends Unit {
 			speed.y += delta * speed.y * 6;
 	}
 
-	private void ballsSpeedExchange(Ball ball) {
+	private void ballsExchange(Ball ball) {
 		float xTemp = ball.speed.x;
 		float yTemp = ball.speed.y;
 		// If balls weights are same
@@ -250,11 +253,14 @@ public class Ball extends Unit {
 				this.speed.y = yTemp / 3;
 			}
 		}
+		lastTouchedUnit = ball;
+		ball.lastTouchedUnit = this;
 	}
 
 	// Methods that handles special fields
 	public void saveLastBoard(Board board) {
 		lastTouchedBoard = board;
+		lastTouchedUnit = board;
 	}
 
 	// Methods that handles cases of using bonuses
@@ -266,7 +272,7 @@ public class Ball extends Unit {
 		balls.get(balls.size() - 1).bounds.x = bounds.x;
 		balls.get(balls.size() - 1).bounds.y = bounds.y;
 		// Speed changing
-		balls.get(balls.size() - 1).changeSpeedAfterSplit(speed.x, speed.y, 30);
+		balls.get(balls.size() - 1).changeSpeedAfterSplit(speed.x, speed.y, 20);
 		// Turn on some split consequences
 		balls.get(balls.size() - 1).handleAfterSplit();
 		if (this.states[Controlled].isActive)
@@ -278,12 +284,20 @@ public class Ball extends Unit {
 		balls.get(balls.size() - 1).bounds.x = bounds.x;
 		balls.get(balls.size() - 1).bounds.y = bounds.y;
 		// Speed changing
-		balls.get(balls.size() - 1).changeSpeedAfterSplit(speed.x, speed.y, -30);
+		balls.get(balls.size() - 1).changeSpeedAfterSplit(speed.x, speed.y, -20);
 		// Turn on some split consequences
 		balls.get(balls.size() - 1).handleAfterSplit();
 		if (this.states[Controlled].isActive)
 			balls.get(balls.size() - 1).states[Controlled].engage(this.states[Controlled].timer);
 		balls.get(balls.size() - 1).lastTouchedBoard = this.lastTouchedBoard;
+	}
+
+	private void hitConsequenses(Board board) {
+		// Sound of collision
+		if (!states[Ethereal].isActive)
+			playSound(sound_reflect);
+		// Setting this board to as last one that ball touches
+		saveLastBoard(board);
 	}
 
 	private void changeStatesHitByBoard(Board board) {
