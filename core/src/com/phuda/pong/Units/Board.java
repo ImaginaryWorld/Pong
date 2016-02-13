@@ -2,6 +2,7 @@ package com.phuda.pong.Units;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.audio.Sound;
+import com.badlogic.gdx.math.Circle;
 import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.math.Vector2;
 import com.phuda.pong.Effects.Effect;
@@ -42,7 +43,7 @@ public class Board extends Unit {
 
 	public void updateState(float delta, ArrayList<Ball> balls) {
 		// Checking collisions with the balls (first one - after balls "turn")
-		checkAllBounds(balls);
+		checkAllBounds(balls, delta);
 		// Changing x coordinate and processing touches
 		processAction(delta);
 		// Checking collisions with the balls (second - after board "turn")
@@ -147,82 +148,100 @@ public class Board extends Unit {
 	}
 
 	// Checking bounds after ball's "turn"
-	private void checkAllBounds(ArrayList<Ball> balls) {
+	private void checkAllBounds(ArrayList<Ball> balls, float delta) {
 		// Number of vector that refers to the point which ball contains
 
 		for (Ball ball : balls) {
 			if (!(ball.states[ball.Ethereal].isActive && ball.lastTouchedUnit == this)) {
-				if (checking(ball))
+				if (checking(ball, delta))
 					return;
 				// If ball is inside board's bound - slightly return ball back and check again
 				if (bounds.contains(ball.bounds.x, ball.bounds.y)) {
 					Gdx.app.log("Debugging", "the case");
 					ball.bounds.x -= ball.speed.x / 2;
 					ball.bounds.y -= ball.speed.y / 2;
-					checking(ball);
+					checking(ball, delta);
 				}
 			}
 		}
 	}
 
-	private boolean checking(Ball ball) {
-		// Setting variables so later won't need to call method every time
-		int anglePoint = checkBallCollision(angles, ball);
-		boolean topCheck = (checkBallCollision(topBounds, ball) != 0),
-		bottomCheck = (checkBallCollision(bottomBounds, ball) != 0),
-		rightCheck = (checkBallCollision(rightBounds, ball) != 0),
-		leftCheck = (checkBallCollision(leftBounds, ball) != 0);
-		// Checking conditions
-		if (anglePoint != 0) {
-			switch (anglePoint) {
-				case 1:
-					if (ball.speed.x > 0 && ball.speed.y > 0) {
-						ball.angleBoardCollision(this, true);
-						return true;
-					}
-					break;
-				case 2:
-					if (ball.speed.x > 0 && ball.speed.y < 0) {
-						ball.angleBoardCollision(this, true);
-						return true;
-					}
-					break;
-				case 3:
-					if (ball.speed.x < 0 && ball.speed.y > 0) {
-						ball.angleBoardCollision(this, true);
-						return true;
-					}
-					break;
-				case 4:
-					if (ball.speed.x < 0 && ball.speed.y < 0) {
-						ball.angleBoardCollision(this, true);
-						return true;
-					}
-					break;
+	private boolean checking(Ball ball, float delta) {
+		if (ball.positionsHistory.size() < 2)
+			return false;
+		// Setting ball in previous position
+		Circle previousPoint = new Circle();
+		previousPoint.setRadius(ball.bounds.radius);
+		previousPoint.setPosition(ball.positionsHistory.get(ball.positionsHistory.size() - 2));
+		float xStep, yStep, divisor;
+		divisor = 5;
+		xStep = ball.speed.x / divisor * delta * 70;
+		yStep = ball.speed.y / divisor * delta * 70;
+		for (float i = 0; i < divisor; i++) {
+			previousPoint.x += xStep;
+			previousPoint.y += yStep;
+			// Setting variables so later won't need to call method every time
+			int anglePoint = checkBallCollision(angles, previousPoint);
+			boolean topCheck = (checkBallCollision(topBounds, previousPoint) != 0),
+					bottomCheck = (checkBallCollision(bottomBounds, previousPoint) != 0),
+					rightCheck = (checkBallCollision(rightBounds, previousPoint) != 0),
+					leftCheck = (checkBallCollision(leftBounds, previousPoint) != 0);
+			// Checking conditions
+			if (anglePoint != 0 && !((enterSide(previousPoint)) || enterSide(previousPoint))) {
+				switch (anglePoint) {
+					case 1:
+						if (ball.speed.x > 0 && ball.speed.y > 0) {
+							ball.angleBoardCollision(this, true);
+							ball.bounds.setPosition(previousPoint.x * 2 - ball.bounds.x, previousPoint.y * 2 - ball.bounds.y);
+							return true;
+						}
+						break;
+					case 2:
+						if (ball.speed.x > 0 && ball.speed.y < 0) {
+							ball.angleBoardCollision(this, true);
+							ball.bounds.setPosition(previousPoint.x * 2 - ball.bounds.x, previousPoint.y * 2 - ball.bounds.y);
+							return true;
+						}
+						break;
+					case 3:
+						if (ball.speed.x < 0 && ball.speed.y > 0) {
+							ball.angleBoardCollision(this, true);
+							ball.bounds.setPosition(previousPoint.x * 2 - ball.bounds.x, previousPoint.y * 2 - ball.bounds.y);
+							return true;
+						}
+						break;
+					case 4:
+						if (ball.speed.x < 0 && ball.speed.y < 0) {
+							ball.angleBoardCollision(this, true);
+							ball.bounds.setPosition(previousPoint.x * 2 - ball.bounds.x, previousPoint.y * 2 - ball.bounds.y);
+							return true;
+						}
+						break;
+				}
 			}
-		}
-		if (topCheck) {
-			if (ball.speed.y < 0) {
-				ball.boardCollision(this, bounds.y + bounds.height + ball.bounds.radius);
-				return true;
+			if (topCheck) {
+				if (ball.speed.y < 0 && !(enterSide(previousPoint))) {
+					ball.boardCollision(this, previousPoint.y * 2 - ball.bounds.y);
+					return true;
+				}
 			}
-		}
-		if (bottomCheck) {
-			if (ball.speed.y > 0) {
-				ball.boardCollision(this, bounds.y - ball.bounds.radius);
-				return true;
+			if (bottomCheck) {
+				if (ball.speed.y > 0 && !(enterSide(previousPoint))) {
+					ball.boardCollision(this, previousPoint.y * 2 - ball.bounds.y);
+					return true;
+				}
 			}
-		}
-		if (rightCheck) {
-			if (ball.speed.x < 0) {
-				ball.sideBoardCollision(this, bounds.x + bounds.width + ball.bounds.radius);
-				return true;
+			if (rightCheck) {
+				if (ball.speed.x < 0) {
+					ball.sideBoardCollision(this, previousPoint.x * 2 - ball.bounds.x);
+					return true;
+				}
 			}
-		}
-		if (leftCheck) {
-			if (ball.speed.x > 0) {
-				ball.sideBoardCollision(this, bounds.x - ball.bounds.radius);
-				return true;
+			if (leftCheck) {
+				if (ball.speed.x > 0) {
+					ball.sideBoardCollision(this, previousPoint.x * 2 - ball.bounds.x);
+					return true;
+				}
 			}
 		}
 		return false;
@@ -237,11 +256,13 @@ public class Board extends Unit {
 		for (Ball ball : balls) {
 			if (!(ball.states[ball.Ethereal].isActive && ball.lastTouchedUnit == this)) {
 				// Setting variables so later won't need to call method every time
-				anglePoint = checkBallCollision(angles, ball);
-				rightCheck = (checkBallCollision(rightBounds, ball) != 0);
-				leftCheck = (checkBallCollision(leftBounds, ball) != 0);
-				if (anglePoint != 0 && !((enterSideFromTop(ball)) || enterSideFromBottom(ball)))
+				anglePoint = checkBallCollision(angles, ball.bounds);
+				rightCheck = (checkBallCollision(rightBounds, ball.bounds) != 0);
+				leftCheck = (checkBallCollision(leftBounds, ball.bounds) != 0);
+				if (anglePoint != 0 && !enterSide(ball.bounds)) {
 					handleAngleCase(ball, anglePoint % 2 == 0);
+					System.out.println(anglePoint % 2 == 0);
+				}
 				else if (rightCheck)
 					ball.sideBoardCollision(this, bounds.x + bounds.width + ball.bounds.radius);
 				else if (leftCheck)
@@ -250,20 +271,8 @@ public class Board extends Unit {
 		}
 	}
 
-	/*
-	 * Defines if ball was really hit by board's side not angle
-	 * (calculations for cases when ball's center are above the board's top)
-	 */
-	boolean enterSideFromTop(Ball ball) {
-		return bounds.y + bounds.height - ball.bounds.y > 0;
-	}
-
-	/*
-	 * Defines if ball was really hit by board's side not angle
-	 * (calculations for cases when ball's center are below the board's bottom)
-	 */
-	boolean enterSideFromBottom(Ball ball) {
-		return ball.bounds.y - bounds.y > 0;
+	boolean enterSide(Circle ball) {
+		return bounds.y + bounds.height - ball.y > 0 && ball.y - bounds.y > 0;
 	}
 
 	// Angle cases are very special, so there's an extra method for them
@@ -293,9 +302,9 @@ public class Board extends Unit {
 	 * Checking if ball overlaps with board's bound points. If so - changing meaning of
 	 * touchTime (both board's and ball's) and creating collision sound
 	 */
-	private int checkBallCollision(final Vector2[] bounds, Ball ball) {
+	private int checkBallCollision(final Vector2[] bounds, Circle ball) {
 		for (int j = 0; j < bounds.length; j++)
-			if (ball.bounds.contains(bounds[j])) {
+			if (ball.contains(bounds[j])) {
 				return j + 1;
 			}
 		return 0;

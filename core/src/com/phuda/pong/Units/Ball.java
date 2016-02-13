@@ -173,7 +173,7 @@ public class Ball extends Unit {
 	}
 
 	public void boardCollision(Board board, float yBound) {
-		// Don't overlap board - new center of ball in radius distance from board's side
+		// New calculated position of rebounded ball
 		bounds.y = yBound;
 		speed.y = -speed.y;
 		// Give some speed by friction
@@ -183,10 +183,10 @@ public class Ball extends Unit {
 	}
 
 	public void sideBoardCollision(Board board, float xBound) {
+		// New calculated position of rebounded ball
+		bounds.x = xBound;
 		if (board.speed.x / speed.x <= 0)
 			speed.x *= -1;
-		// Don't overlap board - new center of ball in radius distance from board's side
-		bounds.x = xBound;
 		// If ball's speed are too low it receives a board's speed
 		if (Math.abs(speed.x) < Math.abs(board.speed.x))
 			speed.x = board.speed.x;
