@@ -185,6 +185,9 @@ public class Field {
 			menuButton.setPos(screenWidth / 2, screenHeight / 2);
 			winner = player1Board.name;
 		}
+		else
+			// Just playing sound of scoring the goal
+			screen.soundHandler.playSound(ball.sound_goalSound, 1);
 	}
 
 	// Pause

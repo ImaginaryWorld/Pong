@@ -21,7 +21,7 @@ public class Ball extends Unit {
 	public ArrayList<Vector2> positionsHistory;
 	// Effects
 	final int Ethereal = 0, Slowed = 1, Split = 2, Controlled = 3;
-	public int sound_bump, sound_reflect, sound_wallHit, sound_bonusSound;
+	public int sound_bump, sound_reflect, sound_wallHit, sound_bonusSound, sound_goalSound;
 	private int speedRegulator;
 	public Effect[] states = {new Effect("Ethereal"), new Effect("Slowed"), new Effect("Split"),
 			new Effect("Controlled")};
@@ -47,6 +47,7 @@ public class Ball extends Unit {
 		sound_reflect = field.screen.soundHandler.reflect;
 		sound_wallHit = field.screen.soundHandler.wallHit;
 		sound_bonusSound = field.screen.soundHandler.bonusSound;
+		sound_goalSound = field.screen.soundHandler.goalSound;
 	}
 
 	// Updating methods
@@ -178,7 +179,7 @@ public class Ball extends Unit {
 		speed.y = -speed.y;
 		// Give some speed by friction
 		speed.x += board.speed.x;
-		hitConsequenses(board);
+		hitConsequences(board);
 		changeStatesHitByBoard(board);
 	}
 
@@ -190,7 +191,7 @@ public class Ball extends Unit {
 		// If ball's speed are too low it receives a board's speed
 		if (Math.abs(speed.x) < Math.abs(board.speed.x))
 			speed.x = board.speed.x;
-		hitConsequenses(board);
+		hitConsequences(board);
 		changeStatesHitByBoard(board);
 	}
 
@@ -205,7 +206,7 @@ public class Ball extends Unit {
 		// Changing speed.y
 		if (ySpeedChange)
 			speed.y = -speed.y;
-		hitConsequenses(board);
+		hitConsequences(board);
 		changeStatesHitByBoard(board);
 	}
 
@@ -298,7 +299,7 @@ public class Ball extends Unit {
 		balls.get(balls.size() - 1).lastTouchedBoard = this.lastTouchedBoard;
 	}
 
-	private void hitConsequenses(Board board) {
+	private void hitConsequences(Board board) {
 		// Sound of collision
 		if (!states[Ethereal].isActive)
 			playSound(sound_reflect);

@@ -154,7 +154,7 @@ public class Board extends Unit {
 		for (Ball ball : balls) {
 			if (!(ball.states[ball.Ethereal].isActive && ball.lastTouchedUnit == this)) {
 				if (checking(ball, delta))
-					return;
+					continue;
 				// If ball is inside board's bound - slightly return ball back and check again
 				if (bounds.contains(ball.bounds.x, ball.bounds.y)) {
 					Gdx.app.log("Debugging", "the case");
@@ -254,15 +254,14 @@ public class Board extends Unit {
 		boolean rightCheck, leftCheck;
 
 		for (Ball ball : balls) {
-			if (!(ball.states[ball.Ethereal].isActive && ball.lastTouchedUnit == this)) {
+			// Cases when board very close to screen bounds excepted
+			if (bounds.x - ball.bounds.radius > 0 && bounds.x + bounds.width + ball.bounds.radius < field.screenWidth) {
 				// Setting variables so later won't need to call method every time
 				anglePoint = checkBallCollision(angles, ball.bounds);
 				rightCheck = (checkBallCollision(rightBounds, ball.bounds) != 0);
 				leftCheck = (checkBallCollision(leftBounds, ball.bounds) != 0);
-				if (anglePoint != 0 && !enterSide(ball.bounds)) {
+				if (anglePoint != 0 && !enterSide(ball.bounds))
 					handleAngleCase(ball, anglePoint % 2 == 0);
-					System.out.println(anglePoint % 2 == 0);
-				}
 				else if (rightCheck)
 					ball.sideBoardCollision(this, bounds.x + bounds.width + ball.bounds.radius);
 				else if (leftCheck)
