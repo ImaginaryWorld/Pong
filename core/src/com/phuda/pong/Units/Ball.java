@@ -21,7 +21,7 @@ public class Ball extends Unit {
 	public ArrayList<Vector2> positionsHistory;
 	// Effects
 	final int Ethereal = 0, Slowed = 1, Split = 2, Controlled = 3;
-	public int sound_bump, sound_reflect, sound_wallHit, sound_bonusSound, sound_goalSound;
+	public int sound_bump, sound_reflect, sound_wallHit, sound_bonusSound, sound_goalSound, sound_winnerSound;
 	private int speedRegulator;
 	public Effect[] states = {new Effect("Ethereal"), new Effect("Slowed"), new Effect("Split"),
 			new Effect("Controlled")};
@@ -48,6 +48,7 @@ public class Ball extends Unit {
 		sound_wallHit = field.screen.soundHandler.wallHit;
 		sound_bonusSound = field.screen.soundHandler.bonusSound;
 		sound_goalSound = field.screen.soundHandler.goalSound;
+		sound_winnerSound = field.screen.soundHandler.winnerSound;
 	}
 
 	// Updating methods

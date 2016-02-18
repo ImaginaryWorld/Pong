@@ -8,7 +8,8 @@ public class PongSoundHandler {
     private Music music[];
 
     private Sound sounds[];
-    final public int bump = 0, reflect = 1, wallHit = 2, bonusSound = 3, goalSound = 4, buttonSound = 5, sliderSound = 6,
+    final public int bump = 0, reflect = 1, wallHit = 2, bonusSound = 3,
+    goalSound = 4, buttonSound = 5, sliderSound = 6, winnerSound = 7,
     menuMusic = 0, gameMusic = 1;
     private float soundsVolume;
 
@@ -20,7 +21,7 @@ public class PongSoundHandler {
         music[gameMusic] = Gdx.audio.newMusic(Gdx.files.internal("sounds/pong-song.ogg"));
         music[gameMusic].setLooping(true);
         // Sounds
-        sounds = new Sound[7];
+        sounds = new Sound[8];
         sounds[bump] = Gdx.audio.newSound(Gdx.files.internal("sounds/bump.wav"));
         sounds[reflect] = Gdx.audio.newSound(Gdx.files.internal("sounds/reflect.wav"));
         sounds[wallHit] = Gdx.audio.newSound(Gdx.files.internal("sounds/wallHit.wav"));
@@ -28,6 +29,7 @@ public class PongSoundHandler {
         sounds[goalSound] = Gdx.audio.newSound(Gdx.files.internal("sounds/goalSound.wav"));
         sounds[buttonSound] = Gdx.audio.newSound(Gdx.files.internal("sounds/buttonSound.wav"));
         sounds[sliderSound] = Gdx.audio.newSound(Gdx.files.internal("sounds/sliderSound.wav"));
+        sounds[winnerSound] = Gdx.audio.newSound(Gdx.files.internal("sounds/winnerSound.wav"));
     }
 
     public void playSound(int soundNum, float pitch) {
