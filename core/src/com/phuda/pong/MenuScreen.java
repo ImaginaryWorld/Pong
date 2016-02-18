@@ -241,7 +241,7 @@ public class MenuScreen extends PongScreen
     }
 
     public void dispose() {
-        soundHandler.stopMusic(menuMusic);
+        soundHandler.stopMusic();
         disposeTextures();
     }
 

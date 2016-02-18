@@ -179,13 +179,13 @@ public class Field {
 			pauseStateChange();
 			menuButton.setPos(screenWidth / 2, screenHeight / 2);
 			winner = player2Board.name;
-			screen.soundHandler.playSound(ball.sound_winnerSound, 1);
+			screen.soundHandler.playMusic(screen.winnerMusic);
 		}
 		else if (scoreShift <= -screenWidth / 2) {
 			pauseStateChange();
 			menuButton.setPos(screenWidth / 2, screenHeight / 2);
 			winner = player1Board.name;
-			screen.soundHandler.playSound(ball.sound_winnerSound, 1);
+			screen.soundHandler.playMusic(screen.winnerMusic);
 		}
 		else
 			// Just playing sound of scoring the goal

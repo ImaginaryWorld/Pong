@@ -9,7 +9,7 @@ public class GameScreen extends PongScreen
 	Field field;
 	FieldRenderer renderer;
     public int ballsCount, ballsSpeed, ai, screenWidth, screenHeight,
-	gameMusic;
+	gameMusic, winnerMusic;
 
 	GameScreen(PongGame game, int _ballsCount, int _ai, int ballsSpeed, PongSoundHandler soundHandler) {
 		super(game, soundHandler);
@@ -20,6 +20,7 @@ public class GameScreen extends PongScreen
         ai = _ai;
 		// Music number
 		gameMusic = soundHandler.gameMusic;
+		winnerMusic = soundHandler.winnerMusic;
 		System.out.println("init GameScreen");
 	}
 	
@@ -42,7 +43,7 @@ public class GameScreen extends PongScreen
 
 	public void dispose() {
 		// Stopping music
-		soundHandler.stopMusic(soundHandler.gameMusic);
+		soundHandler.stopMusic();
 		// Disposing fonts and textures
 		disposeRendererParts();
 	}

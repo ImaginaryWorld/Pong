@@ -9,27 +9,27 @@ public class PongSoundHandler {
 
     private Sound sounds[];
     final public int bump = 0, reflect = 1, wallHit = 2, bonusSound = 3,
-    goalSound = 4, buttonSound = 5, sliderSound = 6, winnerSound = 7,
-    menuMusic = 0, gameMusic = 1;
+    goalSound = 4, buttonSound = 5, sliderSound = 6,
+    menuMusic = 0, gameMusic = 1,  winnerMusic = 2;
     private float soundsVolume;
 
     PongSoundHandler() {
         // Music
-        music = new Music[2];
+        music = new Music[3];
         music[menuMusic] = Gdx.audio.newMusic(Gdx.files.internal("sounds/menu-song.ogg"));
         music[menuMusic].setLooping(true);
         music[gameMusic] = Gdx.audio.newMusic(Gdx.files.internal("sounds/pong-song.ogg"));
         music[gameMusic].setLooping(true);
+        music[winnerMusic] = Gdx.audio.newMusic(Gdx.files.internal("sounds/winnerMusic.wav"));
         // Sounds
-        sounds = new Sound[8];
+        sounds = new Sound[7];
         sounds[bump] = Gdx.audio.newSound(Gdx.files.internal("sounds/bump.wav"));
         sounds[reflect] = Gdx.audio.newSound(Gdx.files.internal("sounds/reflect.wav"));
         sounds[wallHit] = Gdx.audio.newSound(Gdx.files.internal("sounds/wallHit.wav"));
-        sounds[bonusSound] = Gdx.audio.newSound(Gdx.files.internal(("sounds/bonusSound.wav")));
+		sounds[bonusSound] = Gdx.audio.newSound(Gdx.files.internal(("sounds/bonusSound.wav")));
         sounds[goalSound] = Gdx.audio.newSound(Gdx.files.internal("sounds/goalSound.wav"));
         sounds[buttonSound] = Gdx.audio.newSound(Gdx.files.internal("sounds/buttonSound.wav"));
         sounds[sliderSound] = Gdx.audio.newSound(Gdx.files.internal("sounds/sliderSound.wav"));
-        sounds[winnerSound] = Gdx.audio.newSound(Gdx.files.internal("sounds/winnerSound.wav"));
     }
 
     public void playSound(int soundNum, float pitch) {
@@ -45,9 +45,10 @@ public class PongSoundHandler {
         music[musicNum].pause();
     }
 
-    public void stopMusic(int musicNum) {
-        music[musicNum].stop();
-    }
+	public void stopMusic() {
+		for (Music track : music)
+			track.stop();
+	}
 
     public void setSoundsVolume(int volume) {
         soundsVolume = (float)volume / 100;
