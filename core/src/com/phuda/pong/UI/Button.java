@@ -23,14 +23,35 @@ public class Button {
 	private PongScreen screen;
 	public int buttonSound;
     // Getting ratio of screen in desktop base (500 x 700)
-    private float hAspect = (Gdx.graphics.getWidth() + Gdx.graphics.getHeight())
-            / (float)(500 + 700);
+    private final float hAspect = (Gdx.graphics.getWidth() + Gdx.graphics.getHeight())
+            / (500f + 700f);
 
 	public Button(int _x, int _y, String img_source, boolean isActive, PongScreen screen) {
 		texture = new Texture(Gdx.files.internal(img_source));
 		texture.setFilter(TextureFilter.Linear, TextureFilter.Linear); // smooth resizing
 		width = (int)(texture.getWidth() * hAspect);
 		height = (int)(texture.getHeight() * hAspect);
+		init_x = _x - width/2;
+		init_y = _y - height/2;
+		// popup buttons from screen center
+		x = Gdx.graphics.getWidth()/2 - width/2;
+		y = Gdx.graphics.getHeight()/2 - height/2;
+		target_x = init_x;
+		target_y = init_y;
+		// Activating button if it's needed already after creating
+		this.isActive = isActive;
+		// touch zone
+		bounds = new Rectangle(init_x, init_y, width, height);
+		this.screen = screen;
+		// Number of button's sound
+		buttonSound = screen.soundHandler.buttonSound;
+	}
+
+	public Button(int _x, int _y, String img_source, boolean isActive, PongScreen screen, float size) {
+		texture = new Texture(Gdx.files.internal(img_source));
+		texture.setFilter(TextureFilter.Linear, TextureFilter.Linear); // smooth resizing
+		width = (int)(texture.getWidth() * hAspect * size);
+		height = (int)(texture.getHeight() * hAspect * size);
 		init_x = _x - width/2;
 		init_y = _y - height/2;
         // popup buttons from screen center
@@ -54,6 +75,12 @@ public class Button {
 		target_y = init_y;
         bounds = new Rectangle(init_x, init_y, width, height);
     }
+
+	public void changeTexture(String img_source) {
+		this.texture.dispose();
+		this.texture = new Texture(Gdx.files.internal(img_source));
+		texture.setFilter(TextureFilter.Linear, TextureFilter.Linear);
+	}
 	
 	public void draw(SpriteBatch batch) {
 		scale = MathUtils.lerp(scale, target_scale, .2f);

@@ -44,9 +44,9 @@ public class Field {
 		// Bonuses generation
 		bonuses = new Bonus[3];
 		// Buttons generation
-		pauseButton = new Button(screenWidth / 17 * 16, screenHeight / 2, "images/pause.png", true, screen);
-		resumeButton = new Button(screenWidth / 2, screenHeight - screenHeight / 3, "images/play.png", false, screen);
-		menuButton = new Button(screenWidth / 2, screenHeight / 3, "images/menu.png", false, screen);
+		pauseButton = new Button(screenWidth / 18 * 16, screenHeight / 2, "images/pause.png", true, screen);
+		resumeButton = new Button(screenWidth / 2, screenHeight - screenHeight / 2, "images/play.png", false, screen);
+		menuButton = new Button(screenWidth / 18 * 16, screenHeight / 3, "images/menu.png", false, screen, 0.5f);
 	}
 
 	public void updateState(float delta) {
@@ -77,14 +77,18 @@ public class Field {
 			if (pauseButton.isPressed())
 				pauseStateChange();
 		}
-		else {
-            if (winner.equals("none"))
-                if (resumeButton.isPressed())
-					pauseStateChange();
-			if (menuButton.isPressed()) {
+		else if (resumeButton.isPressed()) {
+			if (winner.equals("none"))
+				pauseStateChange();
+			else {
+				screen.game.setScreen(new GameScreen(screen.game, ballsCount, screen.ai, ballsSpeed, screen.game.soundHandler));
 				screen.dispose();
-				screen.game.launchMenu();
+				Gdx.app.log("Screen changing", "screen have been disposed");
 			}
+		}
+		else if (menuButton.isPressed()) {
+			screen.dispose();
+			screen.game.launchMenu();
 		}
 	}
 
@@ -175,17 +179,16 @@ public class Field {
 			player1Board.score += ball.bounds.radius;
 		// Checking if there's a winner
 		scoreShift = (player2Board.score - player1Board.score) * 4;
-		if (scoreShift >= screenWidth / 2) {
-			pauseStateChange();
-			menuButton.setPos(screenWidth / 2, screenHeight / 2);
+		if (scoreShift >= screenHeight / 2) {
+			//
+			scoreShift = screenHeight / 2;
 			winner = player2Board.name;
-			screen.soundHandler.playMusic(screen.winnerMusic);
+			gameFinishChangeState();
 		}
-		else if (scoreShift <= -screenWidth / 2) {
-			pauseStateChange();
-			menuButton.setPos(screenWidth / 2, screenHeight / 2);
+		else if (scoreShift <= -screenHeight / 2) {
+			scoreShift = -screenHeight / 2;
 			winner = player1Board.name;
-			screen.soundHandler.playMusic(screen.winnerMusic);
+			gameFinishChangeState();
 		}
 		else
 			// Just playing sound of scoring the goal
@@ -196,5 +199,11 @@ public class Field {
 	private void pauseStateChange() {
 		paused = !paused;
 		buttonsSwitch();
+	}
+
+	private void gameFinishChangeState() {
+		pauseStateChange();
+		resumeButton.changeTexture("images/replay.png");
+		screen.soundHandler.playMusic(screen.winnerMusic);
 	}
 }

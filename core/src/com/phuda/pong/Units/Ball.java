@@ -29,7 +29,6 @@ public class Ball extends Unit {
 	public Ball(Field field, int screenWidth, int screenHeight, int num) {
 		super(field);
 		speedRegulator = 350 - field.ballsSpeed * 2;
-		System.out.println(field.ballsSpeed);
 		// Multipliers that depends on screens width and height
 		int wm = (int)(screenWidth * 1.6f / speedRegulator);
 		int hm = screenHeight / (int)(speedRegulator * 0.8f);

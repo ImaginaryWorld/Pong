@@ -92,13 +92,13 @@ public class FieldRenderer {
         shapeRenderer.begin(ShapeType.Filled);
         // score difference
         shapeRenderer.setColor(1.0f, 1.0f, 0.5f, 1f);
-        shapeRenderer.rect(w / 2 + scoreShift, h/4, diff, h/2);
+        shapeRenderer.rect(w / 12, h / 2 + scoreShift / 5, w / 16, diff / 5);
         // red player 1
         shapeRenderer.setColor(0.5f, 0.1f, 0.1f, 1f);
-        shapeRenderer.rect(w, h/4, -w/2 + scoreShift, h/2);
+        shapeRenderer.rect(w / 12, h / 2 + h / 10, w / 16, -h / 10 + scoreShift / 5);
         // blue player 2
         shapeRenderer.setColor(0.1f, 0.1f, 0.5f, 1f);
-        shapeRenderer.rect(0, h/4 , w/2 + scoreShift, h/2);
+        shapeRenderer.rect(w / 12, h / 2 - h / 10, w / 16, h / 10 + scoreShift / 5);
         // abilities bars
         // time ability
         shapeRenderer.setColor(0.1f, 0.2f, 0.7f, 1f); // blue
@@ -203,24 +203,21 @@ public class FieldRenderer {
                         textures[bonusTimeTexture].getWidth(), textures[bonusTimeTexture].getHeight(), false, false);
             }
         }
-        // Pause/resume buttons
-        if (field.winner.equals("none")){
-            if (!field.paused)
-                field.pauseButton.draw(batch);
-            else {
-                field.resumeButton.draw(batch);
-                // Menu button
-                field.menuButton.draw(batch);
+        if (!field.paused)
+        		// Pause/resume buttons
+            field.pauseButton.draw(batch);
+        else {
+            // Some-one wins
+			if (!field.winner.equals("none")) {
+                int rotation = field.winner.equals(field.player1Board.name) ? 180 : 0;
+                int ypos = field.winner.equals(field.player1Board.name) ? h - h / 4 : h / 4;
+                Texture t = textures[winnerTexture];
+                batch.draw(t, w / 2 - t.getWidth() / 2, ypos - t.getHeight() / 2, t.getWidth() / 2, t.getHeight() / 2,
+                        t.getWidth(), t.getHeight(), 1, 1, rotation, 0, 0, t.getWidth(), t.getHeight(), false, false);
             }
-        }
-        else { // Some-one wins
-            int rotation = field.winner.equals(field.player1Board.name) ? 180 : 0;
-            int ypos = field.winner.equals(field.player1Board.name) ? h - h/4 : h/4;
-            Texture t = textures[winnerTexture];
-            batch.draw(t, w/2 - t.getWidth()/2, ypos - t.getHeight()/2, t.getWidth()/2, t.getHeight()/2,
-                    t.getWidth(), t.getHeight(), 1, 1, rotation, 0, 0, t.getWidth(), t.getHeight(), false, false);
-            // Menu button
-            field.menuButton.draw(batch);
+			field.resumeButton.draw(batch);
+			// Menu button
+			field.menuButton.draw(batch);
         }
         batch.end();
 

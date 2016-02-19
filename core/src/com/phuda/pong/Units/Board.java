@@ -48,8 +48,8 @@ public class Board extends Unit {
 		processAction(delta);
 		// Checking collisions with the balls (second - after board "turn")
 		checkAllBounds2(balls);
-		// Updating ability
-		updateAbility(delta);
+		// Updating abilities
+		updateAbilities(delta);
 	}
 
 	private void processAction(float delta) {
@@ -90,7 +90,7 @@ public class Board extends Unit {
 		angles[3].x = bounds.x + bounds.width;
 	}
 
-	private void updateAbility(float delta) {
+	private void updateAbilities(float delta) {
 		for (Effect ability: abilities) {
 			if (ability.isActive)
 				ability.timer -= delta;
@@ -192,28 +192,32 @@ public class Board extends Unit {
 					case 1:
 						if (ball.speed.x > 0 && ball.speed.y > 0) {
 							ball.angleBoardCollision(this, true);
-							ball.bounds.setPosition(previousPoint.x * 2 - ball.bounds.x, previousPoint.y * 2 - ball.bounds.y);
+							ball.bounds.setPosition(ball.bounds.x - xStep * (divisor - 1 - i),
+									ball.bounds.y - yStep * (divisor - 1 - i));
 							return true;
 						}
 						break;
 					case 2:
 						if (ball.speed.x > 0 && ball.speed.y < 0) {
 							ball.angleBoardCollision(this, true);
-							ball.bounds.setPosition(previousPoint.x * 2 - ball.bounds.x, previousPoint.y * 2 - ball.bounds.y);
+							ball.bounds.setPosition(ball.bounds.x - xStep * (divisor - 1 - i),
+									ball.bounds.y - yStep * (divisor - 1 - i));
 							return true;
 						}
 						break;
 					case 3:
 						if (ball.speed.x < 0 && ball.speed.y > 0) {
 							ball.angleBoardCollision(this, true);
-							ball.bounds.setPosition(previousPoint.x * 2 - ball.bounds.x, previousPoint.y * 2 - ball.bounds.y);
+							ball.bounds.setPosition(ball.bounds.x - xStep * (divisor - 1 - i),
+									ball.bounds.y - yStep * (divisor - 1 - i));
 							return true;
 						}
 						break;
 					case 4:
 						if (ball.speed.x < 0 && ball.speed.y < 0) {
 							ball.angleBoardCollision(this, true);
-							ball.bounds.setPosition(previousPoint.x * 2 - ball.bounds.x, previousPoint.y * 2 - ball.bounds.y);
+							ball.bounds.setPosition(ball.bounds.x - xStep * (divisor - 1 - i),
+									ball.bounds.y - yStep * (divisor - 1 - i));
 							return true;
 						}
 						break;
@@ -221,25 +225,25 @@ public class Board extends Unit {
 			}
 			if (topCheck) {
 				if (ball.speed.y < 0 && !(enterSide(previousPoint))) {
-					ball.boardCollision(this, previousPoint.y * 2 - ball.bounds.y);
+					ball.boardCollision(this, ball.bounds.y - yStep * (divisor - 1 - i));
 					return true;
 				}
 			}
 			if (bottomCheck) {
 				if (ball.speed.y > 0 && !(enterSide(previousPoint))) {
-					ball.boardCollision(this, previousPoint.y * 2 - ball.bounds.y);
+					ball.boardCollision(this, ball.bounds.y - yStep * (divisor - 1 - i));
 					return true;
 				}
 			}
 			if (rightCheck) {
 				if (ball.speed.x < 0) {
-					ball.sideBoardCollision(this, previousPoint.x * 2 - ball.bounds.x);
+					ball.sideBoardCollision(this, ball.bounds.x - xStep * (divisor - 1 - i));
 					return true;
 				}
 			}
 			if (leftCheck) {
 				if (ball.speed.x > 0) {
-					ball.sideBoardCollision(this, previousPoint.x * 2 - ball.bounds.x);
+					ball.sideBoardCollision(this, ball.bounds.x - xStep * (divisor - 1 - i));
 					return true;
 				}
 			}
